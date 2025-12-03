@@ -1,0 +1,21 @@
+{
+  "id": 278,
+  "name": "Tree Of Abundance",
+  "cost": 2,
+  "type": "summon",
+  "attack": 0,
+  "defense": 3,
+  "tribe": "treefolk",
+  "rarity": "common",
+  "description": "You may use herbs as tributes. Whenever you create a token, create twice that many instead.",
+  "passiveEffects": [
+    {
+      "passive": "tokenCanTribute",
+      "tokenType": "herb"
+    },
+    {
+      "passive": "createTokenModifier",
+      "amountModifer": "*2" 
+    }
+  ]
+}

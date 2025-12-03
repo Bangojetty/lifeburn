@@ -1,0 +1,73 @@
+{
+  "id": 24,
+  "name": "Rock Arms",
+  "cost": 2,
+  "type": "spell",
+  "tribe": "golem",
+  "rarity": "common",
+  "description": "Target summon gets +2/+2 this turn. If it's a golem, it gains trample and you may choose one: \n {c0}-Draw a card. \n {c0}-Create a stone.",
+  "stackEffects": [
+    {
+      "effect": "grantPassive",
+      "targetType": "summon",
+	  "passives": [
+	    {
+		  "passive": "changeStats",
+		  "statModifiers": [
+			  {
+				"statType": "attack",
+				"operatorType": "add",
+				"amount": 2
+			  },
+			  {
+				"statType": "defense",
+				"operatorType": "add",
+				"amount": 2
+			  }
+		  ],
+		  "thisTurn": true
+	    }
+	  ],
+      "additionalEffects": [
+        {
+          "conditions": [
+            {
+              "condition": "rootTargetTribe",
+              "tribe": "golem" 
+            }
+          ],
+          "effect": "grantKeyword",
+		  "targetBasedOn": "rootAffected",
+          "keyword": "trample",
+          "thisTurn": true
+        },
+        {
+          "conditions": [
+            {
+              "condition": "rootTargetTribe",
+              "tribe": "golem" 
+            } 
+          ],
+          "effect": "choose",
+		  "choiceIndex": 0,
+		  "optional": true,
+          "choices": [
+            [
+              {
+                "effect": "draw",
+                "amount": 1
+              }
+            ],
+            [
+              {
+                "effect": "createToken",
+                "tokenType": "stone",
+                "amount": 1
+              }
+            ]
+          ]
+        }
+      ]
+    }
+  ]
+}

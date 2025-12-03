@@ -1,0 +1,19 @@
+{
+  "id": 86,
+  "name": "Shatter",
+  "cost": 4,
+  "type": "spell",
+  "tribe": "merfolk",
+  "rarity": "common",
+  "description": "Counter target summon spell. Gain 1 LP.",
+  "stackEffects": [
+  {
+    "effect": "counter",
+    "targetType": "summon"
+  },
+  {
+    "effect": "gainLife",
+    "amount": 1
+  }
+  ]
+}

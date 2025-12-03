@@ -1,0 +1,19 @@
+{
+  "id": 35,
+  "name": "Rock Avalanche",
+  "cost": 8,
+  "type": "spell",
+  "tribe": "golem",
+  "rarity": "common",
+  "description": "Deal 3 damage to all non-golem summons.",
+  "stackEffects": [
+	  {
+		"effect": "dealDamage",
+		"amount": 3,
+		"cardType": "summon",
+		"restrictions": [
+		"nonGolem"
+		]
+	  }
+    ] 
+}

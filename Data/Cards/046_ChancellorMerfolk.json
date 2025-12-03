@@ -1,0 +1,32 @@
+{
+  "id": 46,
+  "name": "Chancellor Merfolk",
+  "cost": 0,
+  "type": "summon",
+  "attack": 2,
+  "defense": 2,
+  "keywords": ["dive"],
+  "tribe": "merfolk",
+  "rarity": "common",
+  "description": "You may reveal Chancellor Merfolk from your opening hand. If you do, create a 1/1 merfolk with dive.",
+  "triggeredEffects": [
+	  {
+		"trigger": "openingHand",
+		"optional": true,
+		"optionMessage": "Reveal Chancellor Merfolk to create a 1/1 Merfolk with Dive?",
+		"effects": [
+		    {
+			  "effect": "reveal",
+			  "self": true
+		    },
+		    {
+			  "effect": "createToken",
+			  "tokenType": "merfolk",
+			  "attack": 1,
+			  "defense": 1,
+			  "keyword": "dive"
+  		    }
+		]
+	  }
+    ]
+}

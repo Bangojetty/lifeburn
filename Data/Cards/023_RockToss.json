@@ -1,0 +1,36 @@
+{
+  "id": 23,
+  "name": "Rock Toss",
+  "cost": 3,
+  "type": "spell",
+  "tribe": "golem",
+  "rarity": "common",
+  "description": "Deal 2 damage to target summon. If you control a stone, deal 3 instead and make a stone.",
+  "stackEffects": [
+    {
+      "effect": "dealDamage",
+      "targetType": "summon",
+      "amount": 2,
+      "amountModifier": "+1",
+      "modifierConditions": [
+        {
+          "condition": "control",
+          "tokenType": "stone",
+          "minAmount": 1
+        }
+      ],
+    },
+	{
+		"conditions": [
+		  {
+			"condition": "control",
+			"tokenType": "stone",
+			"minAmount": 1
+		  }
+		],
+		"effect": "createToken",
+		"tokenType": "stone",
+		"amount": 1
+	}
+  ]
+}

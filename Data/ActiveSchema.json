@@ -1,0 +1,34 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Active",
+  "type": "object",
+  "properties": {
+  "conditions": {
+    "type": "array",
+    "items": {
+      "$ref": "ConditionSchema.json"
+    }
+  },
+	"costType": {
+    "$ref": "DefinitionSchema.json#/costType"
+  },
+  "self": {
+    "type": "boolean" 
+  },
+  "oncePerTurn": {
+    "type": "boolean"
+  },
+	"amount": {
+		"type": "integer"
+	},
+	"playerChosenAmount": {
+		"type": "boolean"
+	},
+	"effects": {
+		"type": "array",
+		"items": {
+			"$ref": "EffectSchema.json"
+		}
+	}
+  }
+}

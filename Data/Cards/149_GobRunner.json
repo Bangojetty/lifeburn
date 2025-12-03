@@ -1,0 +1,11 @@
+{
+  "id": 149,
+  "name": "Gob Runner",
+  "cost": 0,
+  "type": "summon",
+  "attack": 3,
+  "defense": 1,
+  "keywords": ["blitz"],
+  "tribe": "goblin",
+  "rarity": "common",
+}

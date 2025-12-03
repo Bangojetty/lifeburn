@@ -1,0 +1,27 @@
+{
+  "id": 179,
+  "name": "Obliterate",
+  "cost": 8,
+  "type": "spell",
+  "tribe": "goblin",
+  "rarity": "common",
+  "description": "Destroy any target in play, then each player takes 8 damage. Obliterate cannot reduce players LPs below 1 LP. Players can't gain LPs for the rest of the game.",
+  "stackEffects": [
+    {
+      "effect": "destroy",
+      "targetType": "any"
+    },
+    {
+      "effect": "dealDamage",
+      "targetType": "player",
+      "all": true,
+      "amount": 8,
+      "restricion": "cantReduceBelowOne"
+    },
+    {
+      "effect": "cantGainLife",
+      "targetType": "player",
+      "all": true
+    }
+  ]
+}

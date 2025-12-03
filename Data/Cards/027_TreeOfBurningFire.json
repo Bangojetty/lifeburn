@@ -1,0 +1,29 @@
+{
+  "id": 27,
+  "name": "Tree Of Burning Fire",
+  "cost": 0,
+  "type": "summon",
+  "attack": 0,
+  "defense": 2,
+  "tribe": "treefolk",
+  "rarity": "common",
+  "description": "Herbs you control have: Sacrifice: deal 1 damage to any target.",
+  "passiveEffects": [
+    {
+      "passive": "grantActive",
+      "tokenType": "herb",
+      "actives": [
+        {
+          "costType": "sacrifice",
+          "effects": [  
+            {
+              "effect": "dealdamage",
+              "targetType": "any",
+              "amount": 1
+            }
+          ]
+        }
+      ]
+    }
+  ] 
+}

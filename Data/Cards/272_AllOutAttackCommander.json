@@ -1,0 +1,45 @@
+{
+  "id": 272,
+  "name": "All Out Attack Commander",
+  "cost": 1,
+  "type": "summon",
+  "attack": 1,
+  "defense": 1,
+  "tribe": "goblin",
+  "rarity": "common",
+  "description": "Cannot special summon. When All Out Attack Commander enters play, set your life total to 1. Return all goblins from all graveyards to play under their owners control. They gain Blitz.",
+  "passiveEffects": [
+    {
+      "passive": "cantSpecialSummon"
+    }
+  ],
+  "triggeredEffects": [
+    {
+      "trigger": "enteredZone",
+      "zone": "play",
+      "effects": [
+        {
+          "effect": "setLifeTotal",
+          "amount": 1
+        },
+        {
+          "effect": "sendToZone",
+          "zone": "graveyard",
+          "all": true,
+          "cardType": "summon",
+          "tribe": "goblin", 
+          "destination": "play",
+          "ownersControl": true,
+		  "description": "Return all goblins from all graveyards to play under their owners control.",
+          "additionalEffects": [
+            {
+              "effect": "grantKeyword",
+              "targetBasedOn": "rootAffected",
+              "keyword": "blitz"
+            }
+          ]
+        }
+      ] 
+    }
+  ] 
+}

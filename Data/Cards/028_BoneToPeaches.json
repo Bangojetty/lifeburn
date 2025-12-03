@@ -1,0 +1,20 @@
+{
+  "id": 28,
+  "name": "Bone To Peaches",
+  "cost": 1,
+  "type": "spell",
+  "tribe": "Treefolk",
+  "rarity": "common",
+  "description": "Destroy target token. Create an herb.",
+  "stackEffects": [
+	  {
+		  "effect": "destroy",
+		  "targetType": "token"
+	  },
+	  {
+		  "effect": "createToken",
+		  "tokenType": "herb",
+		  "amount": 1
+	  }
+  ]
+}

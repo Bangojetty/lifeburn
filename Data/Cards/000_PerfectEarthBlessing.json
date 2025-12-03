@@ -1,0 +1,19 @@
+{
+  "id": 0,
+  "name": "Perfect Earth Blessing",
+  "cost": 0,
+  "type": "spell",
+  "keywords": ["scorch"],
+  "tribe": "golem",
+  "rarity": "rare",
+  "description": "Tutor a golem summon to your hand and reveal it.",
+  "stackEffects": [
+    {
+      "effect": "tutor",
+      "cardType": "summon",
+      "tribe": "golem",
+      "destination": "hand",
+      "reveal": true
+    }
+  ]
+}

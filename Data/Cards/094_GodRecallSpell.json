@@ -1,0 +1,21 @@
+{
+  "id": 94,
+  "name": "God Recall Spell",
+  "cost": 10,
+  "type": "spell",
+  "tribe": "merfolk",
+  "rarity": "rare",
+  "description": "Draw 3 cards and reveal them. The next spell you cast this turn doesnt cost LPs.",
+  "stackEffects": [
+	  {
+		"effect": "draw",
+		"amount": 3
+	  },
+	  {
+		"effect": "modifyCost",
+		"targetBasedOn": "nextSpell",
+		"amountBasedOn": "zero",
+		"thisTurn": true
+	  }
+  ]
+}

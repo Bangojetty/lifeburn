@@ -1,0 +1,20 @@
+{
+  "id": 49,
+  "name": "Poseidon's Blessing",
+  "cost": 0,
+  "type": "spell",
+  "keywords": ["scorch"],
+  "tribe": "merfolk",
+  "rarity": "rare",
+  "description": "Tutor a merfolk to hand and reveal it.",
+  "stackEffects": [
+    {
+      "effect": "tutor",
+      "cardType": "summon",
+      "tribe": "merfolk",
+      "zone": "deck",
+      "destination": "hand",
+      "reveal": true
+    }
+  ]
+}

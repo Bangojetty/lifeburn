@@ -1,0 +1,11 @@
+{
+  "id": 277,
+  "name": "Potted Flower",
+  "cost": 0,
+  "type": "summon",
+  "attack": 2,
+  "defense": 2,
+  "keywords": ["sprout"],
+  "tribe": "treefolk",
+  "rarity": "common"
+}

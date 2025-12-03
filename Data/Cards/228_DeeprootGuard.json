@@ -1,0 +1,30 @@
+{
+  "id": 228,
+  "name": "Deeproot Guard",
+  "cost": 0,
+  "type": "summon",
+  "attack": 0,
+  "defense": 5,
+  "tribe": "treefolk",
+  "rarity": "common",
+  "description": "when Deeproot Guard enters play, opponent may have you sacrifice Deeproot Guard. If they do, create 2 herbs.",
+  "triggeredEffects": [
+    {
+      "trigger": "enteredZone",
+      "zone": "play",
+      "optional": true,
+      "opponentsChoice": true,
+	  "optionMessage": "Have opponent sacfrifice Deeproot Guard and have them create 2 herbs?",
+      "effects": [
+        {
+          "effect": "sacrifice"
+        },
+		{
+		  "effect": "createToken",
+		  "tokenType": "herb",
+		  "amount": 2
+		}
+	  ]
+	}
+  ] 
+}

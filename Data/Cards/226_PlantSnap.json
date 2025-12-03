@@ -1,0 +1,35 @@
+{
+  "id": 226,
+  "name": "Plant Snap",
+  "cost": 4,
+  "type": "spell",
+  "tribe": "treefolk",
+  "rarity": "common",
+  "description": "Create a 0/1 Plant token, exile a card from a graveyard, and gain 2 LPs. \n Exile Plant Snap to cast it from your graveyard.",
+  "activatedEffects": [
+	  {
+		"effect": "CastCard",
+		"zone": "graveyard",
+		"exileAfter": true
+	  }	
+  ],
+  "stackEffects": [
+    {
+      "effect": "createToken",
+      "tokenType": "plant",
+      "attack": 0,
+      "defense": 1,
+      "amount": 1
+    },
+    {
+      "effect": "sendToZone",
+      "targetZone": "graveyard",
+      "player": "any",
+      "destination": "exile" 
+    },
+    {
+      "effect": "gainLife",
+      "amount": 2  
+    }
+  ]
+}

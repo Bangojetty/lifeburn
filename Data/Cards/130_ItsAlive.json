@@ -1,0 +1,34 @@
+{
+  "id": 130,
+  "name": "It's Alive",
+  "cost": 5,
+  "type": "spell",
+  "tribe": "shadow",
+  "rarity": "common",
+  "description": "Lose half your LPs, rounded down. Return target summon from your graveyard to play. If it's a ghost, gain 5 LPs.",
+  "stackEffects": [
+  {
+    "effect": "loseLife",
+    "amountBasedOn": "lifeTotal",
+    "amountModifer": "/2down"  
+  },
+  {
+    "effect": "sendToZone",
+    "zone": "graveyard",
+    "cardType": "summon",
+    "destination": "play",
+    "additionalEffects": [
+      {
+        "conditions": [
+          {
+            "condition": "isTribe",
+            "tribe": "shadow" 
+          }
+        ],
+        "effect": "gainLife",
+        "amount": 5
+      }
+    ] 
+  }
+  ]
+}

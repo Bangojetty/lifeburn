@@ -1,0 +1,30 @@
+{
+  "id": 48,
+  "name": "Eidolon Of The Tides",
+  "cost": 0,
+  "type": "summon",
+  "attack": 1,
+  "defense": 1,
+  "tribe": "merfolk",
+  "rarity": "common",
+  "description": "When Eidolon Of The Tides enters play, if you have exactly 0 or 5 cards in hand, you may sacrifice Eidolon Of The Tides and tutor a merfolk into play.",
+  "triggeredEffects": [
+  {
+    "trigger": "enteredZone",
+    "zone": "play",
+    "effects": [
+      {
+        "conditions": [
+          {
+            "condition": "handSize",
+            "amounts": [0, 5]
+          }
+        ],
+        "effect": "tutor",
+        "cardType": "summon",
+        "destination": "play"
+      }
+    ]
+  }
+  ] 
+}

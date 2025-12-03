@@ -1,0 +1,36 @@
+{
+  "id": 22,
+  "name": "Lord Golem",
+  "cost": 2,
+  "type": "summon",
+  "attack": 4,
+  "defense": 4,
+  "tribe": "golem",
+  "rarity": "common",
+  "description": "When Lord Golem enters play, create a 2/1 golem. Golems you control have trample.",
+  "triggeredEffects": [
+    {
+      "trigger": "enteredZone",
+      "zone": "play",
+      "effects": [
+        {
+          "effect": "createToken",
+          "tokenType": "golem",
+          "attack": 2,
+          "defense": 1,
+          "amount": 1
+        }
+      ]
+    }
+  ],
+  "passiveEffects": [
+    {
+      "passive": "grantKeyword",
+      "keyword": "trample",
+      "tribe": "golem",
+	  "restrictions": [
+	  "youControl"
+	  ]
+    }
+  ]
+}

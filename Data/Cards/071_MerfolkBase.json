@@ -1,0 +1,34 @@
+{
+  "id": 71,
+  "name": "Merfolk Base",
+  "cost": 2,
+  "type": "summon",
+  "attack": 1,
+  "defense": 1,
+  "tribe": "merfolk",
+  "rarity": "common",
+  "description": "You may exile a merfolk summon from hand to cast this card without paying its cost. When Merfolk Base enters play, create three 1/1 merfolk tokens.",
+  "alternateCosts": [
+  {
+    "altCostType": "exileFromHand",
+    "cardType": "summon",
+    "tribe": "merfolk",
+    "amount": 1
+  }
+  ],
+  "triggeredEffects": [
+  {  
+    "trigger": "enteredZone",
+    "zone": "play",
+    "effects": [
+      {
+        "effect": "createToken",
+        "tokenType": "merfolk",
+        "attack": 1,
+        "defense": 1,
+        "amount": 3
+      }
+    ] 
+  }
+  ]
+}

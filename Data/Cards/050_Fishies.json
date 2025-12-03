@@ -1,0 +1,21 @@
+{
+  "id": 50,
+  "name": "Fishies",
+  "cost": 0,
+  "type": "object",
+  "tribe": "merfolk",
+  "rarity": "common",
+  "description": "Sacrifice Fishies to put a merfolk summon from hand into play.",
+  "activatedEffects": [
+  {
+    "costType": "sacrifice",
+    "effects": [
+      {
+        "effect": "castCard",
+        "cardType": "summon",
+        "tribe": "merfolk"
+      }
+    ]
+  }
+  ] 
+}

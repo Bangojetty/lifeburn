@@ -1,0 +1,23 @@
+{
+  "id": 232,
+  "name": "Barrage",
+  "cost": 3,
+  "type": "spell",
+  "tribe": "goblin",
+  "rarity": "common",
+  "description": "Create a 1/1 goblin token. Deal damage equal to the number of goblins you control to any target.",
+  "stackEffects": [
+    {
+      "effect": "createToken",
+      "tokenType": "goblin",
+      "attack": 1,
+      "defense": 1,
+      "amount": 1
+    },
+    {
+      "effect": "dealDamage",
+      "targetType": "any",
+      "amountBasedOn": "goblinsControlled"
+    }
+  ]
+}

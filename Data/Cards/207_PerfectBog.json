@@ -1,0 +1,25 @@
+{
+  "id": 207,
+  "name": "Perfect Bog",
+  "cost": 1,
+  "type": "spell",
+  "tribe": "treefolk",
+  "rarity": "common",
+  "description": "Create an herb. Draw a card. Opponents gain 3 LPs.",
+  "stackEffects": [
+    {
+      "effect": "createToken",
+	  "tokenType": "herb",
+      "amount": 1
+    },
+    {
+      "effect": "draw",
+      "amount": 1  
+    },
+    {
+      "effect": "gainLife",
+      "isOpponent": true,
+      "amount": 3 
+    }
+  ]
+}

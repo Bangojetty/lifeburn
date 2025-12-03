@@ -1,0 +1,16 @@
+{
+  "id": 120,
+  "name": "Reap",
+  "cost": 2,
+  "type": "spell",
+  "tribe": "shadow",
+  "rarity": "common",
+  "description": "Target opponent discards 2.",
+  "stackEffects": [
+  {
+    "effect": "discard",
+    "targetType": "opponent",
+    "amount": 2
+  }
+  ]
+}

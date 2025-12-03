@@ -1,0 +1,39 @@
+{
+  "id": 2,
+  "name": "Golem Thrower",
+  "cost": 0,
+  "type": "summon",
+  "attack": 0,
+  "defense": 1,
+  "tribe": "golem",
+  "rarity": "common",
+  "description": "When Golem Thrower enters play, choose one: \n {c0}-Deal 1 damage to target summon. \n {c0}-Create a stone.",
+  "triggeredEffects": [
+    {
+      "trigger": "enteredZone",
+      "zone": "play",
+      "effects": [
+        {
+          "effect": "choose",
+		  "choiceIndex": 0,
+          "choices": [
+            [
+              {
+                "effect": "dealDamage",
+                "targetType": "summon",
+                "amount": 1
+              }
+            ],
+            [
+              {
+                "effect": "createToken",
+                "tokenType": "stone",
+                "amount": 1
+              }
+            ]
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "id": 33,
+  "name": "Stoned",
+  "cost": 4,
+  "type": "spell",
+  "tribe": "golem",
+  "rarity": "common",
+  "description": "Create half the amount of stones you control, rounded down. You may draw a card.",
+  "stackEffects": [
+  {
+    "effect": "createToken",
+	"tokenType": "stone",
+    "amountBasedOn": "stonesControlled",
+    "amountModifier": "/2down"
+  },
+  {
+    "effect": "draw",
+    "amount": 1,
+    "optional": true,
+	"optionMessage": "Draw a card?"
+  }
+  ]
+}

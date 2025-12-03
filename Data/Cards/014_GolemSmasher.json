@@ -1,0 +1,45 @@
+{
+  "id": 14,
+  "name": "Golem Smasher",
+  "cost": 0,
+  "type": "summon",
+  "attack": 0,
+  "defense": 1,
+  "keywords": ["trample"],
+  "tribe": "golem",
+  "rarity": "common",
+  "description": "Golem Smasher's attack is equal to the number of stones you control. \n Discard a golem summon: Golem Smasher can't take damage this turn.",
+  "passiveEffects": [
+    {
+      "passive": "changeStats",
+	  "statModifiers": [
+		{
+		  "statType": "attack",
+		  "operatorType": "add",
+		  "amountBasedOn": "stonesControlled"
+		}
+	  ],
+	  "self": true
+    }
+  ],
+  "activatedEffects": [
+	  {
+		  "costType": "discard",
+		  "cardType": "summon",
+		  "tribe": "golem",
+		  "amount": 1,
+		  "effects": [
+			  {
+				  "effect": "grantPassive",
+				  "self": true,
+				  "passives": [
+				    {
+					  "passive": "cantTakeDamage",
+					  "thisTurn": true
+				    }
+				  ]
+			  }
+		  ]
+	  }
+  ]
+}

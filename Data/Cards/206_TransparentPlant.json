@@ -1,0 +1,57 @@
+{
+  "id": 206,
+  "name": "Transparent Plant",
+  "cost": 0,
+  "type": "summon",
+  "attack": 0,
+  "defense": 2,
+  "tribe": "treefolk",
+  "rarity": "common",
+  "description": "You may reveal Transparent Plant from your opening hand to sprout 2. \n Discard Transparent Plant card: Target treefolk gets +2/+0 turn.",
+  "triggeredEffects": [
+    {
+      "trigger": "openingHand",
+      "optional": true,
+	  "optionMessage": "Reveal Transparent Plant to create 2 Herbs?",
+	  "additionalCosts": [
+		{
+			"costType": "reveal"
+		}
+	  ],
+      "effects": [
+        {
+          "effect": "createToken",
+          "tokenType": "herb",
+          "amount": 2  
+        }
+      ]
+    }
+  ],
+  "activatedEffects": [
+    {
+      "costType": "discard",
+      "self": true,
+      "targetType": "summon",
+      "tribe": "treefolk", 
+      "effects": [
+        {
+          "effect": "grantPassive",
+		  "passives":[
+			  {
+				"passive": "changeStats",
+				"statModifiers": [
+					{
+						"statType": "attack",
+						"operatorType": "add",
+						"amount": 2
+					}
+				],
+				"thisTurn": true
+			  }
+		  ]
+        }
+	
+      ]
+    }
+  ]
+}

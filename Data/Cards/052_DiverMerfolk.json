@@ -1,0 +1,30 @@
+{
+  "id": 52,
+  "name": "Diver Merfolk",
+  "cost": 0,
+  "type": "summon",
+  "attack": 2,
+  "defense": 1,
+  "keywords": ["dive"],
+  "tribe": "merfolk",
+  "rarity": "common",
+  "description": "When Diver Merfolk enters play, gain 1 LP. The next spell an opponent casts has exhaustion.",
+  "triggeredEffects": [
+  {
+    "trigger": "enteredZone",
+    "zone": "play",
+    "effects": [
+      {
+        "effect": "gainLife",
+        "amount": 1 
+      },
+      {
+        "effect": "grantKeyword", 
+        "isOpponent": true,
+        "targetBasedOn": "nextSpellOpponent",
+        "keyword": "exhaust"
+      }
+    ] 
+  }
+  ] 
+}

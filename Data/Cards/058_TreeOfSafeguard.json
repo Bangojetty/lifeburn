@@ -1,0 +1,43 @@
+{
+  "id": 58,
+  "name": "Tree Of Safeguard",
+  "cost": 0,
+  "type": "summon",
+  "attack": 0,
+  "defense": 3,
+  "tribe": "treefolk",
+  "rarity": "common",
+  "description": "All summons lose keyword effects. When Tree Of Safeguard enters play, sacrifice it unless you reveal a treefolk card from hand.",
+  "passiveEffects": [
+    {
+      "passive": "disableKeyword",
+      "all": true
+    }
+  ],
+  "triggeredEffects": [
+    {
+      "trigger": "enteredZone",
+      "zone": "play",
+      "effects": [
+        {
+          "effect": "choose",
+		  "choiceIndex": 0,
+          "choices": [
+            [
+              { 
+                "effect": "sacrifice"
+              }
+            ],
+            [
+              {
+                "effect": "reveal",
+                "tribe": "treefolk",
+                "manditoryTarget": true
+              }
+            ]
+          ]  
+        }
+      ]
+    }
+  ] 
+}

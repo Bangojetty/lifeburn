@@ -1,0 +1,39 @@
+{
+  "id": 188,
+  "name": "Tree Savant",
+  "cost": 0,
+  "type": "summon",
+  "attack": 0,
+  "defense": 1,
+  "tribe": "treefolk",
+  "rarity": "common",
+  "description": "When Tree Savant enters play, if it was your first summon this game, you may look at the top 10 cards of your deck and put a card from among them into your hand. Put the rest on the bottom of your library in a random order.",
+  "triggeredEffects": [
+    {
+	  "conditions": [
+		{
+		  "condition": "firstSummon"
+		}
+	  ],
+      "trigger": "enteredZone",
+	  "self": true,
+      "zone": "play",
+      "effects": [
+        {
+          "effect": "lookAtDeck",
+          "amount": 10,
+          "deckDestinations": [
+            {
+              "deckDestination": "hand",
+              "amount": 1
+            },
+            {
+              "deckDestination": "bottom",
+              "ordering": "random"
+            }
+          ]
+        }
+      ]
+    }
+  ] 
+}

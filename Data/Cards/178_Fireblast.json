@@ -1,0 +1,43 @@
+{
+  "id": 178,
+  "name": "Fireblast",
+  "cost": 5,
+  "type": "spell",
+  "tribe": "goblin",
+  "rarity": "common",
+  "description": "You may exile a card from hand to play with card without paying it's cost. Deal 4 damage to target summon. If you control a Goblin, deal 6 damage instead.",
+  "alternateCosts": [
+    {
+      "altCostType": "exileFromHand",
+      "amount": 1  
+    }
+  ],
+  "stackEffects": [
+    {
+      "conditions": [
+        {
+          "condition": "control",
+          "cardType": "summon",
+          "tribe": "goblin",
+          "maxAmount": 0 
+        }
+      ],
+      "effect": "dealDamage",
+      "targetType": "summon",
+      "amount": 4
+    }, 
+    {
+      "conditions": [
+        {
+          "condition": "control",
+          "cardType": "summon",
+          "tribe": "goblin",
+          "minAmount": 1 
+        }
+      ],
+      "effect": "dealDamage",
+      "targetType": "summon",
+      "amount": 6
+    }
+  ] 
+}

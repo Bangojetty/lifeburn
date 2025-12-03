@@ -1,0 +1,25 @@
+{
+  "id": 30,
+  "name": "Dig Up",
+  "cost": 3,
+  "type": "spell",
+  "tribe": "golem",
+  "rarity": "common",
+  "description": "As an additional cost to cast Dig Up, sacrifice a stone. Tutor a golem summon to hand.",
+  "additionalCosts": [
+  {
+    "costType": "sacrifice",
+    "tokenType":"stone",
+    "amount": 1
+  }
+  ],
+  "stackEffects": [
+  {
+    "effect": "tutor",
+    "cardType": "summon",
+    "tribe": "golem",
+    "zone": "deck",
+    "destination": "hand"
+  }
+  ]
+}

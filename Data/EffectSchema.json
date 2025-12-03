@@ -1,0 +1,309 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"title": "Effect",
+	"type": "object",
+	"properties": {
+		"conditions": {
+			"type": "array",
+			"items": {
+				"$ref": "ConditionSchema.json"
+			}
+		},
+		"effect": {
+			"type": "string",
+			"enum": [
+				"draw",
+				"dealDamage",
+				"gainLife",
+				"tutor",
+				"createToken",
+				"bypassSummonLimit",
+				"loseLife",
+				"modifyCost",
+				"reveal",
+				"sendToZone",
+				"forceAttack",
+				"changeStats",
+				"grantKeyword",
+				"lookAtDeck",
+				"shuffleDeck",
+				"destroy",
+				"counter",
+				"applySpellburn",
+				"copySpell",
+				"discard",
+				"gainControl",
+				"goToPhase",
+				"extraTurn",
+				"endTurn",
+				"modifyHandSize",
+				"playerModifier",
+				"modifyDamage",
+				"endGame",
+				"castCard",
+				"removeCounter",
+				"mill",
+				"sacrifice",
+				"exileAndReturn",
+				"choose",
+				"grantPassive",
+				"detain",
+				"modifySummonLimit",
+				"changeSource",
+				"discardOpponent",
+				"addCounter",
+				"canAttack",
+				"bypassHerbLifeReduction",
+				"modifyType",
+				"repeatAllEffects",
+				"cantGainLife",
+				"cantAttackOrBlock",
+				"cantAttack",
+				"attach",
+				"repeat",
+				"cardSetStraight",
+				"cardRitualOfDarkness",
+				"setLifeTotal",
+				"cantTribute"
+			]
+		},
+		"mandatoryTarget": {
+			"type": "boolean" 
+		},
+		"futureProof": {
+			"type": "boolean" 
+		},
+		"amount": {
+			"type": "integer"
+		},
+		"amountToHand": {
+			"type": "integer" 
+		},
+		"attack": {
+			"type": "integer"
+		},
+		"defense": {
+			"type": "integer"
+		},
+		"reveal": {
+			"type": "boolean"
+		},
+		"isOpponent": {
+			"type": "boolean"
+		},
+		"optional": {
+			"type": "boolean"
+		},
+		"optionMessage": {"type": "string"},
+		"opponentsChoice": {
+			"type": "boolean"
+		},
+		"all": {
+			"type": "boolean"
+		},
+		"youChooseDamage": {
+			"type": "boolean"
+		},
+		"canSeparate": {
+			"type": "boolean"
+		},
+		"tokenAttacking": {	
+			"type": "boolean" 
+		},
+		"sameZone": {
+			"type": "boolean" 
+		},
+		"minTargets": {
+			"type": "integer" 
+		},
+		"maxTargets": {
+			"type": "integer"
+		},
+		"upTo": {
+			"type": "integer"
+		},
+		"attacking": {
+			"type": "boolean" 
+		},
+		"ownersControl": {
+			"type": "boolean"
+		},
+		"passives": {
+			"type": "array",
+			"items": {
+				"$ref": "PassiveSchema.json"
+			}
+		},
+		"duration": {
+			"type": "string",
+			"enum": [ "thisTurn", "drawPhase", "restOfGame", "untilThisLeaves" ]
+		},
+		"owner": {
+			"type": "string",
+			"enum": [ "player", "opponent" ]
+		},
+		"revealType": {
+			"type": "string",
+			"enum": [ "non-summon", "summon" ]
+		},
+		"keyword": {
+			"$ref": "DefinitionSchema.json#/keyword"
+		},
+		"keywordAmount": {
+			"type": "integer"
+		},
+		"cardType": {
+			"$ref": "DefinitionSchema.json#/cardType"
+		},
+		"tribe": {
+			"$ref": "DefinitionSchema.json#/tribe"
+		},
+		"zone": {
+			"$ref": "DefinitionSchema.json#/zone"
+		},
+		"destination": {
+			"$ref": "DefinitionSchema.json#/zone"
+		},
+		"tokenType": {
+			"$ref": "DefinitionSchema.json#/tokenType"
+		},
+		"targetZones": {
+			"type": "array",
+			"items": {
+				"$ref": "DefinitionSchema.json#/zone"
+			}
+		},
+		"tokenPassive": {
+			"$ref": "PassiveSchema.json"
+		},
+		"deckDestinations": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"destination": {
+						"type": "string",
+						"enum": ["top", "bottom", "hand", "graveyard"]
+					},
+					"amount": {
+						"type": "integer"
+					},
+					"cardType": {
+						"$ref": "DefinitionSchema.json#/cardType" 
+					},
+					"tribe": {
+						"$ref": "DefinitionSchema.json#/tribe"
+					},
+					"ordering": {
+						"type": "string",
+						"enum": [ "same", "random", "any" ]
+					}
+				}
+			}
+		},
+		"targetType": {
+			"type": "string",
+			"enum": [ "summon", "player", "permanent", "spell", "graveyard", "non-summon", "opponent", "token", "any"]
+		},
+		"counterType": {
+			"type": "string",
+			"enum": ["1/1", "haunt"]
+		},
+		"targetBasedOn": {
+			"type": "string",
+			"enum": [ "tribe", "exiledCard", "rootTarget", "weakest", "strongest", "nextSpell", "nextSummon", "attackedPlayer", "rootController"]
+		},
+		"playerBasedOn": {
+			"type": "string",
+			"enum": [ "ownerOfTarget" ]
+		},
+		"amountBasedOn": {
+			"type": "string",
+			"enum": [
+				"revealed",
+				"stonesControlled",
+				"stonesInPlay",
+				"amountModifier",
+				"opponentExcessSummons",
+				"playerChoice",
+				"targetCost",
+				"costOfTarget",
+				"rootAmount",
+				"decksize",
+				"lifeTotal",
+				"x",
+				"activatedCost",
+				"zero",
+				"costModifier",
+				"goblinsControlled",
+				"plantsControlled",
+				"herbsControlled",
+				"attack",
+				"merfolkInGraveyard",
+				"untilCardType",
+				"deckSize",
+				"defenseGreaterThanAttack",
+				"summonsThatDiedThisTurn"
+			]
+		},
+		"basedOnType": {
+			"$ref": "DefinitionSchema.json#/cardType"
+		},
+		"basedOnTribe": {
+			"$ref": "DefinitionSchema.json#/tribe"
+		},
+		"amountModifier": {
+			"type": "string"
+		},
+		"modifierConditions": {
+			"type": "array",
+			"items": {
+				"$ref": "ConditionSchema.json"
+			}
+		},
+		"repeatCostType": {
+			"$ref": "DefinitionSchema.json#/costType"
+		},
+		"repeatCostAmount": {
+			"type": "integer" 
+		},
+		"repeatSameTarget": {
+			"type": "boolean" 
+		},
+		"restriction": {
+			"$ref": "DefinitionSchema.json#/restriction"
+		},
+		"restrictionMax": {
+			"type": "integer"
+		},
+		"restrictionMin": {
+			"type": "integer"
+		},
+		"player": {
+			"type": "string",
+			"enum": ["player", "opponent", "any"]
+		},
+		"exceptions": {
+			"type": "array",
+			"items": {
+				"type": "string",
+				"enum": [ "golem", "self" ]
+			}
+		},
+		"additionalEffects": {
+			"type": "array",
+			"items": {
+				"$ref": "#"
+			}
+		},
+		"choices": {
+			"type": "array",
+			"items": {
+				"type": "array",
+				"items": {
+					"$ref": "#"
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,31 @@
+{
+  "id": 208,
+  "name": "Tree Giant",
+  "cost": 1,
+  "type": "summon",
+  "attack": 0,
+  "defense": 5,
+  "tribe": "treefolk",
+  "rarity": "common",
+  "description": "Treefolk you control deal damage equal to their defense instead of attack. \n Discard Tree Giant: exile up to 2 cards from target graveyard.",
+  "activatedEffects": [
+	  {
+		"costType": "discard",
+		"self": true,
+		"effects": [
+			{
+				"effect": "sendToZone",
+				"targetZone": "graveyard",
+				"destination": "exile",
+				"amount": 2
+			}
+		]
+	  }
+  ],
+  "passiveEffects": [
+    {
+      "passive": "defenseUsedForAttack",
+      "tribe": "treefolk"
+    }
+  ]
+}

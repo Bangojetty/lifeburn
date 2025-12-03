@@ -1,0 +1,24 @@
+{
+  "id": 230,
+  "name": "Tree of Life",
+  "cost": 0,
+  "type": "summon",
+  "attack": 0,
+  "defense": 1,
+  "tribe": "treefolk",
+  "rarity": "common",
+  "description": "Sacrifice Tree of Life: Cast a treefolk summon from hand without paying its tribute cost",
+  "activatedEffects": [
+    {
+      "costType": "sacrifice",
+      "effects": [
+        {
+          "effect": "castCard",
+          "targetZone": "hand",
+          "cardType": "summon",
+          "tribe": "treefolk"
+        }
+      ]
+    }
+  ] 
+}

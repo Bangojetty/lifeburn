@@ -1,0 +1,28 @@
+{
+  "id": 106,
+  "name": "Shadow Of The Grave",
+  "cost": 0,
+  "type": "summon",
+  "attack": -1,
+  "defense": -1,
+  "tribe": "shadow",
+  "rarity": "common",
+  "description": "Shadow Of The Grave gets +1/+1 for each summon in your graveyard.",
+  "passiveEffects": [
+    {
+      "passive": "changeStats",
+	  "statModfiiers": [
+			{
+				"statType": "attack",
+				"operatorType": "add",
+				"amountBasedOn": "summonsInGraveyard"
+			},
+			{
+				"statType": "defense",
+				"operatorType": "add",
+				"amountBasedOn": "summonsInGraveyard"
+			}
+		],
+    }
+  ] 
+}

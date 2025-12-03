@@ -1,0 +1,18 @@
+{
+  "id": 38,
+  "name": "Foundry",
+  "cost": 6,
+  "type": "spell",
+  "tribe": "golem",
+  "rarity": "common",
+  "description": "Create 2/1 golems equal to the number of stones you control.",
+  "stackEffects": [
+  {
+    "effect": "createToken",
+    "tokenType": "golem",
+    "attack": 2,
+    "defense": 1, 
+    "amountBasedOn": "stonesControlled"
+  }
+  ]
+}

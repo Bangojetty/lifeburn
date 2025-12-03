@@ -1,0 +1,30 @@
+{
+  "id": 15,
+  "name": "Replacer Golem",
+  "cost": 0,
+  "type": "summon",
+  "attack": 2,
+  "defense": 1,
+  "tribe": "golem",
+  "rarity": "common",
+  "description": "When Replacer Golem leaves play, tutor a spell that creates stones to hand and reveal it.",
+  "triggeredEffects": [
+    {
+      "trigger": "leftZone",
+      "zone": "play",
+      "effects": [
+        {
+          "effect": "tutor",
+		  "description": "Tutor a spell that creates stones to hand and reveal it",
+          "cardType": "spell",
+          "restrictions": [
+		  "createsStones"
+		  ],
+		  "zone": "deck",
+		  "destination": "hand",
+          "reveal": true
+        }
+      ]
+    }
+  ]
+}

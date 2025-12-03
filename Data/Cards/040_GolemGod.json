@@ -1,0 +1,19 @@
+{
+  "id": 40,
+  "name": "Golem God",
+  "cost": 12,
+  "type": "summon",
+  "attack": 12,
+  "defense": 12,
+  "keywords": ["taunt"],
+  "tribe": "golem",
+  "rarity": "rare",
+  "description": "You may sacrifice 5 stones to summon Golem God from hand.",
+  "alternateCosts": [
+  {
+    "altCostType": "sacrifice",
+    "tokenType": "stone",
+    "amount": 5
+  }
+  ]
+}

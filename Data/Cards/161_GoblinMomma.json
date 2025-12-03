@@ -1,0 +1,34 @@
+{
+  "id": 161,
+  "name": "Goblin Momma",
+  "cost": 1,
+  "type": "summon",
+  "attack": 2,
+  "defense": 3,
+  "keywords": ["blitz"],
+  "tribe": "goblin",
+  "rarity": "common",
+  "description": "When Goblin Momma enters play create a 1/1 goblin token and a 0/1 goblin token.",
+  "triggeredEffects": [
+    {
+      "trigger": "enteredZone",
+      "zone": "play",
+      "effects": [
+        {
+          "effect": "createToken",
+          "tokenType": "goblin",
+          "attack": 1,
+          "defense": 1,
+          "amount": 1
+        },
+        {
+          "effect": "createToken",
+          "tokenType": "goblin",
+          "attack": 0,
+          "defense": 1,
+          "amount": 1  
+        }
+      ]
+    }
+  ]
+}

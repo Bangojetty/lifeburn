@@ -1,0 +1,20 @@
+{
+  "id": 76,
+  "name": "Snag",
+  "cost": 3,
+  "type": "spell",
+  "tribe": "merfolk",
+  "rarity": "common",
+  "description": "Return target summon to its owner's hand. Gain 1 LP.",
+  "stackEffects": [
+  {
+    "effect": "sendToZone",
+    "targetType": "summon",
+    "destination": "hand"
+  },
+  {
+    "effect": "gainLife",
+    "amount": 1
+  }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "id": 209,
+  "name": "Spirit Tree",
+  "cost": 1,
+  "type": "summon",
+  "attack": 1,
+  "defense": 4,
+  "keywords": ["sprout"],
+  "tribe": "treefolk",
+  "rarity": "common",
+  "description": " When Spirit Tree enters play, draw a card, then exile a card from a graveyard.",
+  "triggeredEffects": [
+    {
+      "trigger": "enteredZone",
+      "zone": "play",
+      "effects": [
+        {
+          "effect": "draw",
+          "amount": 1
+        },
+        {
+          "effect": "sendToZone",
+          "targetZone": "graveyard",
+          "destination": "exile",
+          "amount": 1
+        }
+      ]
+    }
+  ]
+}

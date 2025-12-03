@@ -1,0 +1,20 @@
+{
+  "id": 31,
+  "name": "Stones",
+  "cost": 4,
+  "type": "spell",
+  "tribe": "golem",
+  "rarity": "common",
+  "description": "Create 3 stones. Draw a card.",
+  "stackEffects": [
+  {
+    "effect": "createToken",
+    "tokenType": "stone",
+    "amount": 3  
+  },
+  {
+    "effect": "draw",
+    "amount": 1
+  }
+  ]  
+}

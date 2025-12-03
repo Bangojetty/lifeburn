@@ -1,0 +1,19 @@
+{
+  "id": 262,
+  "name": "Burst Lightning",
+  "cost": 1,
+  "type": "spell",
+  "keywords": ["exhaust"],
+  "tribe": "goblin",
+  "rarity": "common",
+  "stackEffects": [
+    {
+      "effect": "dealDamage",
+      "targetType": "summon",
+      "amount": 2,
+      "repeatCostType": "loseLife",
+      "repeatCostAmount": 2,
+      "repeatSameTarget": true 
+    }
+  ]
+}

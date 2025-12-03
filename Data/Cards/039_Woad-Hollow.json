@@ -1,0 +1,35 @@
+{
+  "id": 39,
+  "name": "Woad-Hollow",
+  "cost": 0,
+  "type": "summon",
+  "attack": 0,
+  "defense": 0,
+  "tribe": "treefolk",
+  "rarity": "common",
+  "description": "When Woad-Hollow is milled or dies, create 2 herbs.",
+  "triggeredEffects": [
+    {
+      "trigger": "death",
+      "self": true,
+      "effects": [
+        {
+          "effect": "createToken",
+          "tokenType": "herb",
+          "amount": 2
+        }
+      ]
+    },
+    {
+      "trigger": "mill",
+      "self": true,
+      "effects": [
+        {
+          "effect": "createToken",
+          "tokenType": "herb",
+          "amount": 2
+        }
+      ]
+    }
+  ]
+}

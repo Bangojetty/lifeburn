@@ -1,0 +1,27 @@
+{
+  "id": 202,
+  "name": "Cliffside Sprout",
+  "cost": 0,
+  "type": "summon",
+  "attack": 0,
+  "defense": 1,
+  "keywords": ["sprout"],
+  "tribe": "treefolk",
+  "rarity": "common",
+  "description": "At the beginning of your draw phase, create a 0/1 plant token.",
+  "triggeredEffects": [  
+    {
+      "trigger": "phase",
+      "phase": "draw",
+      "effects": [
+        {
+          "effect": "createToken",
+          "tokenType": "plant",
+          "attack": 0,
+          "defense": 1,
+          "amount": 1 
+        }
+      ] 
+    }
+  ]
+}

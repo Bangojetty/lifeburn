@@ -1,0 +1,19 @@
+{
+  "id": 41,
+  "name": "Stone Wall",
+  "cost": 7,
+  "type": "spell",
+  "tribe": "golem",
+  "rarity": "common",
+  "description": "target opponent can't attack this turn. Gain 3 LPs.",
+  "stackEffects": [
+  {
+    "effect": "cantAttack",
+	"targetType": "opponent"
+  },
+  {
+    "effect": "gainLife",
+    "amount": 3
+  }
+  ]
+}

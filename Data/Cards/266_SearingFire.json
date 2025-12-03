@@ -1,0 +1,22 @@
+{
+  "id": 266,
+  "name": "Searing Fire",
+  "cost": 5,
+  "type": "spell",
+  "tribe": "goblin",
+  "rarity": "common",
+  "description": "If Searing Fire is the first spell you cast this game, it costs 0. Deal 3 damage to any target.",
+  "costModifiers": [
+    {
+      "modifier": "firstSpell",
+      "additionalModifer": "=0"
+    }
+  ],
+  "stackEffects": [
+    {
+      "effect": "dealDamage",
+      "targetType": "any",
+      "amount": 3
+    }
+  ]
+}

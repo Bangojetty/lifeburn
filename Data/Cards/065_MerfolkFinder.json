@@ -1,0 +1,26 @@
+{
+  "id": 65,
+  "name": "Merfolk Finder",
+  "cost": 1,
+  "type": "summon",
+  "attack": 2,
+  "defense": 3,
+  "tribe": "merfolk",
+  "rarity": "common",
+  "description": "When Merfolk Finder enters play, tutor a merfolk from your deck to your hand and reveal it.",
+  "triggeredEffects": [
+  {
+    "trigger": "enteredZone",
+    "zone": "play",
+    "effects": [
+      {
+        "effect": "tutor",
+        "cardType": "summon",
+        "tribe": "merfolk",
+        "destination": "hand",
+        "reveal": true
+      }
+    ]
+  }
+  ]
+}

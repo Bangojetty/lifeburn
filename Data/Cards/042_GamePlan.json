@@ -1,0 +1,24 @@
+{
+  "id": 42,
+  "name": "Game Plan",
+  "cost": 0,
+  "type": "spell",
+  "tribe": "merfolk",
+  "rarity": "common",
+  "description": "Draw 2 cards. Reveal your hand. Opponents draw a card.",
+  "stackEffects": [
+  {
+    "effect": "draw",
+    "amount": 2
+  },
+  {
+    "effect": "reveal",
+	"all": true
+  },
+  {
+    "effect": "draw",
+    "isOpponent": true,
+    "amount": 1
+  } 
+  ]
+}

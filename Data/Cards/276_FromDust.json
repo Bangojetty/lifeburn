@@ -1,0 +1,38 @@
+{
+  "id": 276,
+  "name": "From Dust",
+  "cost": 0,
+  "type": "spell",
+  "tribe": "treefolk",
+  "rarity": "common",
+  "description": "Choose one: \n {c0}-Exile 2 target cards from a graveyard. \n {c0}-Destroy target token. \n {c0}-Create an herb",
+  "stackEffects": [
+    {
+      "effect": "choose",
+	  "choiceIndex": 0,
+      "choices": [
+        [
+          {
+            "effect": "sendToZone",
+            "targetZone": "graveyard",
+            "destination": "exile",
+            "amount": 2
+          }
+        ],
+        [
+          {
+            "effect": "destroy",
+            "targetType": "token" 
+          }
+        ],
+        [
+          {
+            "effect": "createToken",
+            "tokenType": "herb",
+            "amount": 1 
+          }
+        ]
+      ]
+    }
+  ] 
+}

@@ -1,0 +1,37 @@
+{
+  "id": 129,
+  "name": "Fable",
+  "cost": 4,
+  "type": "spell",
+  "tribe": "shadow",
+  "rarity": "common",
+  "description": "Draw 2, then put up to 4 cards from your hand into your graveyard or on top of your deck in any order. Mill up to 3.",
+  "stackEffects": [
+  {
+    "effect": "draw",
+    "amount": 2
+  },
+  {
+    "effect": "sendToZone",
+    "zone": "hand",
+	"destination": "deck",
+    "deckDestinations": [
+		{
+			"deckDestination": "top",
+			"amountIsPlayerChosen": true,
+			"ordering": "any"
+		},
+		{
+			"deckDestination": "graveyard",
+			"amountIsPlayerChosen": true
+		}
+	],
+    "upTo": 4,
+	"ordering": "any"
+  },
+  {
+    "effect": "mill",
+    "upTo": 3
+  }
+  ]
+}

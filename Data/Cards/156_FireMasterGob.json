@@ -1,0 +1,42 @@
+{
+  "id": 156,
+  "name": "Fire Master Gob",
+  "cost": 0,
+  "type": "summon",
+  "attack": 1,
+  "defense": 1,
+  "tribe": "goblin",
+  "rarity": "common",
+  "description": "Anytime you cast a red spell, deal 1 to each opponent, if that spell was spellburnt, deal 5 damage instead.",
+  "triggeredEffects": [
+    {
+      "trigger": "cast",
+      "cardType": "spell",
+      "tribe": "goblin",
+      "effects": [
+        {
+          "conditions": [
+            {
+              "condition": "triggerWasSpellburnt"
+            }
+          ],
+          "effect": "dealDamage",
+          "targetType": "opponent",
+          "all": true,
+          "amount": 5
+        },
+        {
+          "conditions": [
+            {
+              "condition": "triggerNotSpellburnt"
+            }
+          ],
+          "effect": "dealDamage",
+          "targetType": "opponent",
+          "all": true,
+          "amount": 1
+        }
+      ]
+    }
+  ]
+}

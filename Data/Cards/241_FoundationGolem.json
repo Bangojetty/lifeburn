@@ -1,0 +1,25 @@
+{
+  "id": 241,
+  "name": "Foundation Golem",
+  "cost": 0,
+  "type": "summon",
+  "attack": 0,
+  "defense": 3,
+  "tribe": "golem",
+  "rarity": "common",
+  "description": "At the beginning of your end step, double the amount of stones in play",
+  "triggeredEffects": [
+  {
+    "trigger": "phase",
+    "phase": "end",
+    "isOpponent": false,  
+    "effects": [
+      {
+        "effect": "createToken",
+        "tokenType": "stone",
+        "amountBasedOn": "stonesInPlay"
+      }
+    ]
+  }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "id": 189,
+  "name": "Grapple Roots",
+  "cost": 0,
+  "type": "summon",
+  "attack": 0,
+  "defense": 2,
+  "tribe": "treefolk",
+  "rarity": "common",
+  "description": "Pay 4 life: Grapple Roots cant take damage this turn.",
+  "activatedEffects": [
+    {
+      "costType": "loseLife",
+      "amount": 4,
+      "effects": [
+        {
+          "effect": "grantPassive",
+          "passive": "cantTakeDamage",
+          "thisTurn": true
+        }
+      ] 
+    }
+  ] 
+}

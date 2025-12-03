@@ -1,0 +1,37 @@
+{
+  "id": 258,
+  "name": "Recurring Nightmare",
+  "cost": 0,
+  "type": "summon",
+  "attack": 3,
+  "defense": 1,
+  "keywords": ["haunt"],
+  "tribe": "shadow",
+  "rarity": "common",
+  "description": "At the beginning of your draw phase, if Recurring Nightmare is in your graveyard, you may put it on top of your deck.",
+  "triggeredEffects": [  
+    {
+      "conditions": [  
+        {
+          "condition": "inZone",
+          "zone": "graveyard"
+        }
+      ],
+      "trigger": "phase",
+      "phase": "draw",
+      "optional": true,
+	  "optionMessage": "Put Recurring Nightmare on top of your deck?",
+      "effects": [
+        {
+          "effect": "sendToZone",
+          "destination": "deck",
+          "deckDestinations": [
+            {
+              "deckDestination": "top"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

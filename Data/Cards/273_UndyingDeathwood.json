@@ -1,0 +1,53 @@
+{
+  "id": 273,
+  "name": "Undying Deathwood",
+  "cost": 2,
+  "type": "summon",
+  "attack": 4,
+  "defense": 4,
+  "tribe": "treefolk",
+  "rarity": "common",
+  "description": "When you mill 5 or more cards, you may cast Undying Deathwood from your graveyard or hand without paying its tribute cost",
+  "triggeredEffects": [
+    {
+      "trigger": "mill",
+      "amount": 5,
+      "optional": true,
+	  "optionMessage": "Cast Undying Deathwood without paying it's tribute cost?",
+      "effects": [
+        {
+          "effect": "castCard",
+          "self": true,
+          "targetZones": [
+            "graveyard",
+            "hand"
+          ]
+        }
+      ]
+    },
+    {
+      "trigger": "enteredZone",
+      "zone": "play",
+      "effects": [
+        {
+          "effect": "choose",
+		  "choiceIndex": 0,
+          "choices": [
+            [
+              {
+                "effect": "grantKeyword",
+                "keyword": "haunt"
+              }
+            ],
+            [
+              {
+                "effect": "grantKeyword",
+                "keyword": "sprout"
+              }
+            ]
+          ]
+        }
+      ]
+    }
+  ] 
+}

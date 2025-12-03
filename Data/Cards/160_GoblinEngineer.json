@@ -1,0 +1,26 @@
+{
+  "id": 160,
+  "name": "Goblin Engineer",
+  "cost": 1,
+  "type": "summon",
+  "attack": 3,
+  "defense": 2,
+  "tribe": "goblin",
+  "rarity": "common",
+  "description": "When Goblin Engineer enters play, tutor a goblin card from your deck to hand and reveal it.",
+  "triggeredEffects": [
+    {
+      "trigger": "enteredZone",
+      "zone": "play",
+      "effects": [  
+        {
+          "effect": "tutor",
+          "cardType": "summon",
+          "tribe": "goblin", 
+          "destination": "hand",
+          "reveal": true
+        }
+      ]
+    }
+  ]
+}

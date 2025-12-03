@@ -1,0 +1,26 @@
+{
+  "id": 201,
+  "name": "Plate Plant",
+  "cost": 0,
+  "type": "summon",
+  "attack": 0,
+  "defense": 1,
+  "tribe": "treefolk",
+  "rarity": "common",
+  "description": "When Plant Plant enters play, create two 0/1 Plant tokens.",
+  "triggeredEffects": [
+    {
+      "trigger": "enteredZone",
+      "zone": "play",
+      "effects": [
+        {
+          "effect": "createToken",
+          "tokenType": "plant",
+          "attack": 0,
+          "defense": 1,
+          "amount": 2
+        }
+      ]
+    }
+  ]
+}

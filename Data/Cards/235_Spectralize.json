@@ -1,0 +1,31 @@
+{
+  "id": 235,
+  "name": "Spectralize",
+  "cost": 4,
+  "type": "spell",
+  "tribe": "shadow",
+  "rarity": "common",
+  "description": "Exile target summon and return it to play. Give it Spectral. If it's a ghost, gain 2 LPs",
+  "stackEffects": [
+    {
+      "effect": "exileAndReturn",
+      "targetType": "summon",
+      "additionalEffects": [
+        {
+          "effect": "grantKeyword",
+          "keyword": "spectral" 
+        },
+        {
+          "conditions": [
+            {
+              "condition": "rootTargetTribe",
+              "tribe": "shadow"
+            }
+          ],
+          "effect": "gainLife",
+          "amount": 2
+        }
+      ]
+    }
+  ]
+}

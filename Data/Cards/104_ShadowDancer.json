@@ -1,0 +1,23 @@
+{
+  "id": 104,
+  "name": "Shadow Dancer",
+  "cost": 0,
+  "type": "summon",
+  "attack": 2,
+  "defense": 1,
+  "tribe": "shadow",
+  "rarity": "common",
+  "description": "When Shadow Dancer enters play, mill 4.",
+  "triggeredEffects": [
+  {
+    "trigger": "enteredZone",
+    "zone": "play",
+    "effects": [
+      {
+        "effect": "mill",
+        "amount": 4
+      }
+    ] 
+  }
+  ] 
+}

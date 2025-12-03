@@ -1,0 +1,24 @@
+{
+  "id": 98,
+  "name": "Grave Digger",
+  "cost": 0,
+  "type": "summon",
+  "attack": 2,
+  "defense": 1,
+  "tribe": "shadow",
+  "rarity": "common",
+  "description": "When Grave Digger dies, mill until a spell is milled.",
+  "triggeredEffects": [
+    {
+      "trigger": "death",
+	  "self": true,
+      "effects": [
+        {
+          "effect": "mill",
+          "amountBasedOn": "untilCardType",
+          "cardType": "spell"
+        }
+      ]
+    }
+  ]
+}

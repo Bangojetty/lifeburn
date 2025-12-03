@@ -1,0 +1,43 @@
+{
+  "id": 194,
+  "name": "Sprout an Army",
+  "cost": 0,
+  "type": "spell",
+  "tribe": "treefolk",
+  "rarity": "common",
+  "description": "Choose one: \n {c0}-Sacrifice any amount of herb and create that many 4/4 treefolk tokens, and you can't gain LPs the rest of the game. \n {c0}-Double the amount of herb tokens you control.",
+  "stackEffects": [
+    {
+      "effect": "choose",
+	  "choiceIndex": 0,
+      "choices": [
+        [
+          {
+            "effect": "cantGainLife"
+          },
+          {
+            "effect": "sacrifice",
+            "tokenType": "herb",
+            "amountBasedOn": "playerChoice",
+            "additionalEffects": [  
+              {
+                "effect": "createToken",
+                "tokenType": "treefolk",
+                "attack": 4,
+                "defense": 4,
+                "amountBasedOn": "rootAmount"  
+              }
+            ]  
+          }
+        ],
+        [
+          {
+            "effect": "createToken",
+            "tokenType": "herb",
+            "amountBasedOn": "herbsControlled"
+          }
+        ]
+      ]
+    }
+  ] 
+}

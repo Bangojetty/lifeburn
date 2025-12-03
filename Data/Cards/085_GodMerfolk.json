@@ -1,0 +1,35 @@
+{
+  "id": 85,
+  "name": "God Merfolk",
+  "cost": 4,
+  "type": "summon",
+  "attack": 2,
+  "defense": 2,
+  "tribe": "merfolk",
+  "rarity": "common",
+  "description": "At the beginning of each player's draw phase, double God Merfolk's attack and defense.",
+  "triggeredEffects": [
+   {
+    "trigger": "phase",
+    "phase": "draw", 
+    "effect": "grantPassive",
+	"passives": [
+	    {
+		 "passive": "changeStats",
+		 "statModfiiers": [
+			{
+				"statType": "attack",
+				"operatorType": "multiply",
+				"amount": 2
+			},
+			{
+				"statType": "defense",
+				"operatorType": "multiply",
+				"amount": 2
+			}
+		  ]
+	    }
+	  ]
+    }
+  ]
+}

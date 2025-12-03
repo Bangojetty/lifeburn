@@ -1,0 +1,29 @@
+{
+  "id": 267,
+  "name": "Goblin Channeler",
+  "cost": 0,
+  "type": "summon",
+  "attack": 0,
+  "defense": 2,
+  "tribe": "goblin",
+  "rarity": "common",
+  "description": "Whenever a player casts a spell that costs 2 or less, they take 2 damage.",
+  "triggeredEffects": [  
+    {
+      "trigger": "cast",
+      "player": "any", 
+      "cardType": "spell",
+      "restrictions": [
+	  "cost"
+	  ],
+      "restrictionMax": 2,
+      "effects": [
+        {
+          "effect": "dealDamage",
+          "targetBasedOn": "rootController",
+          "amount": 2 
+        }
+      ] 
+    }
+  ]
+}

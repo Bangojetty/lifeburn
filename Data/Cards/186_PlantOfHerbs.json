@@ -1,0 +1,42 @@
+{
+  "id": 186,
+  "name": "Plant of Herbs",
+  "cost": 0,
+  "type": "summon",
+  "attack": 0,
+  "defense": 1,
+  "tribe": "treefolk",
+  "rarity": "common",
+  "description": "When Plant of Herbs enters play, choose one: \n {c0}-Create a 1/1 plant with Sprout 1. \n {c0}-Create 2 Herb tokens.",
+  "triggeredEffects": [
+    {
+      "trigger": "enteredZone",
+      "zone": "play",
+      "effects": [
+        {
+          "effect": "choose",
+		  "choiceIndex": 0,
+          "choices": [
+            [
+              {
+                "effect": "createToken",
+                "tokenType": "plant",
+                "attack": 1,
+                "defense": 1,
+                "keyword": "sprout",
+                "keywordAmount": 1
+              }
+            ],
+            [
+              {
+                "effect": "createToken",
+                "tokenType": "herb",
+                "amount": 2 
+              }
+            ]
+          ]
+        }
+      ]
+    }
+  ]
+}

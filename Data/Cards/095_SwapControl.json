@@ -1,0 +1,22 @@
+{
+  "id": 95,
+  "name": "Swap Control",
+  "cost": 15,
+  "type": "spell",
+  "tribe": "merfolk",
+  "rarity": "common",
+  "description": "Gain control of target non-merfolk summon. Gain 5 LPs.",
+  "stackEffects": [
+  {
+    "effect": "gainControl",
+    "targetType": "summon",
+    "restrictions": [
+	"nonMerfolk" 
+	]
+  },
+  {
+    "effect": "gainLife",
+    "amount": 5
+  }
+  ]
+}

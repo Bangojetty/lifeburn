@@ -1,0 +1,28 @@
+{
+  "id": 154,
+  "name": "Goblin Ritualist",
+  "cost": 0,
+  "type": "summon",
+  "attack": 1,
+  "defense": 1,
+  "tribe": "goblin",
+  "rarity": "common",
+  "description": "When Goblin Ritualist enters play, you may cast a spell for your graveyard with LP cost 1, 2, or 3.",
+  "triggeredEffects": [  
+    {
+      "trigger": "enteredZone",
+      "zone": "play",
+      "effects": [
+        {
+          "effect": "castCard",
+          "targetZones": ["graveyard"],
+          "restrictions": [
+		  "cost"
+		  ],
+          "restrictionMax": 3,
+          "restrictionMin": 1
+        }
+      ]
+    }
+  ]
+}

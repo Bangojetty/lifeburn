@@ -1,0 +1,27 @@
+{
+  "id": 252,
+  "name": "Merfolk Mage",
+  "cost": 0,
+  "type": "summon",
+  "attack": 1,
+  "defense": 1,
+  "tribe": "merfolk",
+  "rarity": "common",
+  "description": "When Merfolk Mage enters play, copy the next spell you cast with LP cost 2 or less. You may choose new targets for the copy.",
+  "triggeredEffects": [
+  {
+    "trigger": "enteredZone",
+    "zone": "play",
+    "effecfts": [
+      {
+        "effect": "copySpell",
+        "targetBasedOn": "nextSpell",
+        "restrictions": [
+		"cost"
+		],
+        "restrictionMax": 1 
+      }
+    ]  
+  }
+  ]
+}

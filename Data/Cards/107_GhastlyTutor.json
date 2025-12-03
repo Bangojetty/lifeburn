@@ -1,0 +1,32 @@
+{
+  "id": 107,
+  "name": "Ghastly Tutor",
+  "cost": 0,
+  "type": "summon",
+  "attack": 1,
+  "defense": 1,
+  "tribe": "shadow",
+  "rarity": "common",
+  "description": "When Ghastly Tutor attacks, you may sacrifice it and tutor a ghost to your graveyard.",
+  "triggeredEffects": [
+    {
+      "trigger": "attack",
+      "self": true, 
+      "effects": [
+        {
+          "effect": "sacrifice",
+          "optional": true,
+		  "optionMessage": "Sacrifice Ghastly Tutor and tutor a ghost to your graveyard?",
+          "additionalEffects": [
+            {
+              "effect": "tutor",
+              "cardType": "summon",
+              "tribe": "shadow",
+              "destination": "graveyard"
+            }
+          ]
+        }
+      ] 
+    }
+  ]
+}

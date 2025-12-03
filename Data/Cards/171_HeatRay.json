@@ -1,0 +1,35 @@
+{
+  "id": 171,
+  "name": "Heat Ray",
+  "cost": 2,
+  "type": "spell",
+  "tribe": "goblin",
+  "rarity": "common",
+  "description": "Deal 2 damage to any target. If you control a goblin, deal 3 instead",
+  "stackEffects": [
+    {
+	  "conditions": [
+		  {
+			  "condition": "control",
+			  "tribe": "goblin",
+			  "maxAmount": 0
+		  }
+	  ],
+      "effect": "dealDamage",
+      "targetType": "any",
+      "amount": 2
+    },
+	{
+	  "conditions": [
+		  {
+			  "condition": "control",
+			  "tribe": "goblin",
+			  "minAmount": 1
+		  }
+	  ],
+      "effect": "dealDamage",
+      "targetType": "any",
+      "amount": 3
+    }
+  ]
+}

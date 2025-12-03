@@ -1,0 +1,72 @@
+{
+  "id": 214,
+  "name": "Lost Sanctuary",
+  "cost": 3,
+  "type": "spell",
+  "tribe": "treefolk",
+  "rarity": "common",
+  "description": "Choose one: \n {c0}-Create a 1/1 Plant token. \n {c0}-Create and Herb token. \n Each player chooses one: \n {c1}-Draw a card. \n {c1}-Create an Herb token.",
+  "stackEffects": [
+    {
+      "effect": "choose",
+	  "choiceIndex": 0,
+      "choices": [
+        [
+          {
+            "effect": "createToken",
+            "tokenType": "plant",
+            "attack": 1,
+            "defense": 1,
+            "amount": 1
+          }
+        ],
+        [
+          {
+            "effect": "createToken",
+            "tokenType": "herb",
+            "amount": 1 
+          }
+        ]
+      ]
+    },
+    {
+      "effect": "choose",
+	  "choiceIndex": 1,
+      "choices": [
+        [
+          {
+            "effect": "draw",
+            "amount": 1
+          }
+        ],
+        [
+          {
+            "effect": "createToken",
+            "tokenType": "herb",
+            "amount": 1 
+          }
+        ]
+      ]
+    },
+    {
+      "effect": "choose",
+	  "choiceIndex": 1,
+      "isOpponent": true,
+      "choices": [        [
+          {
+            "effect": "draw",
+            "amount": 1  
+          }
+        ],
+        [
+          {
+            "effect": "createToken",
+            "tokenType": "herb",
+            "amount": 1  
+          }
+        ]
+
+      ]
+    }
+  ]
+}

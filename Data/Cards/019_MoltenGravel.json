@@ -1,0 +1,42 @@
+{
+  "id": 19,
+  "name": "Molten Gravel",
+  "cost": 1,
+  "type": "summon",
+  "attack": 0,
+  "defense": 0,
+  "keywords": ["blitz"],
+  "tribe": "golem",
+  "rarity": "common",
+  "description": "Molten Gravel gets +1/+1 for each stone you control. If you have 10 or more stones, Molten Gravel has trample.",
+  "passiveEffects": [
+    {
+      "passive": "changeStats",
+	  "statModifiers": [
+		{
+		  "statType": "attack",
+		  "operatorType": "add",
+		  "amountBasedOn": "stonesControlled"
+		},
+		{
+		  "statType": "defense",
+		  "operatorType": "add",
+		  "amountBasedOn": "stonesControlled"
+		}
+	  ],
+	  "self": true
+    },
+    {
+      "conditions": [
+        {
+          "condition": "control",
+          "tokenType": "stone",
+          "minAmount": 8
+        }
+      ],
+      "passive": "grantKeyword",
+      "keyword": "trample",
+	  "self": true
+    }
+  ]
+}

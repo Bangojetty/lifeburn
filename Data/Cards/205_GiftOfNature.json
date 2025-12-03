@@ -1,0 +1,27 @@
+{
+  "id": 205,
+  "name": "Gift of Nature",
+  "cost": 0,
+  "type": "spell",
+  "tribe": "treefolk",
+  "rarity": "common",
+  "description": "Exile target card from a graveyard. Gain 2 LPs. Each player draws 1.",
+  "stackEffects": [
+    {
+      "effect": "sendToZone",
+      "targetZone": "graveyard",
+      "amount": 1,
+      "destination": "exile"
+    },
+    {
+      "effect": "gainLife",
+      "amount": 2
+    },
+    {
+      "effect": "draw",
+      "targetType": "player", 
+      "all": true,
+      "amount": 1   
+    }
+  ]
+}

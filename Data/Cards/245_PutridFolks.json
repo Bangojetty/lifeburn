@@ -1,0 +1,20 @@
+{
+  "id": 245,
+  "name": "Putrid Folks",
+  "cost": 0,
+  "type": "summon",
+  "attack": 0,
+  "defense": 2,
+  "tribe": "merfolk",
+  "rarity": "common",
+  "description": "This summon can only be played in response to an opponents attack. When Putrid Folks enters play, exile target summon until your next draw phase",
+  "castRestrictions": ["onOpponentAttack"],
+  "triggeredEffects": [
+	  {
+		"effect": "sendToZone",
+		"targetType": "summon",
+		"destination": "play",
+		"duration": "drawPhase"
+	  }
+   ]
+}

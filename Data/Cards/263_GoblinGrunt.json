@@ -1,0 +1,11 @@
+{
+  "id": 263,
+  "name": "Goblin Grunt",
+  "cost": 0,
+  "type": "summon",
+  "attack": 2,
+  "defense": 2,
+  "keywords": ["blitz"],
+  "tribe": "goblin",
+  "rarity": "common"
+}

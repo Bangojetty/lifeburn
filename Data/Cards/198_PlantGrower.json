@@ -1,0 +1,42 @@
+{
+  "id": 198,
+  "name": "Plant Grower",
+  "cost": 0,
+  "type": "summon",
+  "attack": 0,
+  "defense": 1,
+  "tribe": "treefolk",
+  "rarity": "common",
+  "description": "When summons you control attack, Create that many 0/1 Plant tokens. Sacrifice Plant Grower after combat.",
+  "triggeredEffects": [
+    {
+      "trigger": "attack",
+      "cardType": "summon",
+      "restrictions": [
+	  "youControl"
+	  ],
+      "effects": [
+        {  
+          "effect": "createToken",
+          "tokenType": "plant",
+          "attack": 0,
+          "defense": 1
+        }
+      ]
+    },
+    {
+      "trigger": "phase",
+      "phase": "secondMain",
+      "effects": [
+        {
+          "conditions": [
+            {
+              "condition": "attacked"
+            }
+          ],
+          "effect": "sacrifice"
+        }
+      ]   
+    }
+  ]
+}

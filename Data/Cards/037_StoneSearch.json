@@ -1,0 +1,30 @@
+{
+  "id": 37,
+  "name": "Stone Search",
+  "cost": 4,
+  "type": "spell",
+  "tribe": "golem",
+  "rarity": "common",
+  "description": "As an additional cost to cast this card, sacrifice 4 stones. Tutor a golem summon into play. Create a stone.",
+  "additionalCosts": [
+  {
+    "costType": "sacrifice",
+    "tokenType": "stone",
+    "amount": 4
+  }
+  ],
+  "stackEffects": [
+  {
+    "effect": "tutor",
+    "cardType": "summon",
+    "tribe": "golem",
+    "zone": "deck",
+    "destination": "play"
+  },
+  {
+    "effect": "createToken",
+    "tokenType": "stone",
+    "amount": 1
+  }
+  ]
+}

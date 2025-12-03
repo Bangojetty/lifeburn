@@ -1,0 +1,21 @@
+{
+  "id": 255,
+  "name": "Rewind",
+  "cost": 0,
+  "type": "spell",
+  "tribe": "merfolk",
+  "rarity": "uncommon",
+  "description": "Rewind can only be played in response to another spell, and only during your opponents turn. Counter all spells on the stack. Your opponent restarts their turn.",
+  "castRestrictions": ["inResponse", "opponentsTurn"], 
+  "stackEffects": [
+    {
+      "effect": "counter",
+      "all": true 
+    },
+    {
+      "effect": "goToPhase",
+      "phase": "draw",
+      "isOpponent": true
+    }
+  ] 
+}

@@ -1,0 +1,26 @@
+{
+  "id": 190,
+  "name": "Sprout Plant",
+  "cost": 0,
+  "type": "summon",
+  "attack": 2,
+  "defense": 1,
+  "tribe": "treefolk",
+  "rarity": "common",
+  "description": "When Sprout Plant enters play, create a 0/1 plant token.",
+  "triggeredEffects": [
+    {
+      "trigger": "enteredZone",
+      "zone": "play",
+      "effects": [
+        {
+          "effect": "createToken",
+          "tokenType": "plant",
+          "attack": 0,
+          "defense": 1,
+          "amount": 1
+        }
+      ] 
+    }
+  ]
+}

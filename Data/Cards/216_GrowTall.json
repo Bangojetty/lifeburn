@@ -1,0 +1,65 @@
+{
+  "id": 216,
+  "name": "Grow Tall",
+  "cost": 3,
+  "type": "spell",
+  "tribe": "treefolk",
+  "rarity": "common",
+  "description": "Target summon gets +2/+2 this turn. If it's treefolk, it gets +3/+3 instead.",
+  "stackEffects": [
+    {
+      "conditions": [
+        {
+          "condition": "isTribe",
+          "tribe": "treefolk"
+        }
+      ], 
+      "effect": "grantPassive",
+      "targetType": "summon",
+	  "passives": [
+		  {
+			"passive": "changeStats",
+			"statModifiers": [
+				{
+					"statType": "attack",
+					"operatorType": "add",
+					"amount": 3
+				},
+				{
+					"statType": "defense",
+					"operatorType": "add",
+					"amount": 3
+				}
+			]
+		}
+	  ]
+    },
+    {
+      "conditions": [
+        {
+          "condition": "isNotTribe",
+          "tribe": "treefolk"
+        }
+      ], 
+		"effect": "grantPassive",
+		"targetType": "summon",
+		"passives": [
+			{
+				"passive": "changeStats",
+				"statModifiers": [
+					{
+						"statType": "attack",
+						"operatorType": "add",
+						"amount": 3
+					},
+					{
+						"statType": "defense",
+						"operatorType": "add",
+						"amount": 3
+					}
+				]
+			}
+		]
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "id": 127,
+  "name": "Shadow Lord",
+  "cost": 3,
+  "type": "summon",
+  "attack": 5,
+  "defense": 5,
+  "tribe": "shadow",
+  "rarity": "common",
+  "description": "While Shadow Lord is in your graveyard, all ghosts get +1/+0 and Haunt.",
+  "passiveEffects": [
+	  {
+		"conditions": [
+		  {
+			"condition": "inZone",
+			"zone": "graveyard"
+		  }
+		],
+		"passive": "changeStats",
+		"tribe": "shadow",
+		"statModfiers": [
+			{
+				"statType": "attack",
+				"operatorType": "add",
+				"amount": 1
+			}
+		]
+	  },
+	  {
+		  "conditions": [
+		  {
+			"condition": "inZone",
+			"zone": "graveyard"
+		  }
+		],
+		  "passive": "grantKeyword",
+		  "tribe": "shadow",
+		  "keyword": "haunt"
+	  }
+    ]
+}

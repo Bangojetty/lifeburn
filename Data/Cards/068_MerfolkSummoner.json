@@ -1,0 +1,26 @@
+{
+  "id": 68,
+  "name": "Merfolk Summoner",
+  "cost": 1,
+  "type": "summon",
+  "attack": 0,
+  "defense": 1,
+  "tribe": "merfolk",
+  "rarity": "common",
+  "description": "When Merfolk Summoner enters play, put a merfolk from your hand or graveyard into play.",
+  "triggeredEffects": [
+  {
+    "trigger": "enteredZone",
+    "zone": "play",
+    "effects": [
+      {
+        "effect": "sendToZone",
+        "cardType": "summon",
+        "tribe": "merfolk",
+        "targetZones": ["hand", "graveyard"],
+        "destination": "play" 
+      }
+    ]
+  }
+  ]
+}

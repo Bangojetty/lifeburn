@@ -1,0 +1,22 @@
+{
+  "id": 138,
+  "name": "Chain of Bolts",
+  "cost": 0,
+  "type": "spell",
+  "tribe": "goblin",
+  "rarity": "common",
+  "description": "Deal 3 to target summon. Target opponent deals 2 to any target.",
+  "stackEffects": [
+    {
+      "effect": "dealDamage",
+      "targetType": "summon",
+      "amount": 3 
+    },
+    {
+      "effect": "dealDamage",
+      "targetType": "any",
+      "isOpponent": true,
+      "amount": 2 
+    }
+  ]
+}

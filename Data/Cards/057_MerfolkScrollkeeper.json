@@ -1,0 +1,40 @@
+{
+  "id": 57,
+  "name": "Merfolk Scrollkeeper",
+  "cost": 0,
+  "type": "summon",
+  "attack": 0,
+  "defense": 1,
+  "tribe": "merfolk",
+  "rarity": "common",
+  "description": "When Merfolk Scrollkeeper enters play, you have no hand size for the rest of the game. At the beginning opponents draw phase, if you have exactly 5 cards in hand. Draw a card.",
+  "triggeredEffects": [
+  {
+    "trigger": "enteredZone",
+    "zone": "play",
+    "effects": [
+      {
+        "effect": "modifyHandSize",
+        "amount": 40 
+      }
+    ]
+  },
+  {
+    "trigger": "phase",
+    "phase": "draw",
+    "isOpponent": true,
+    "effects": [
+      {
+        "conditions": [
+          {
+            "condition": "handSize",
+            "amount": 5
+          }
+        ],
+        "effect": "draw",
+        "amount": 1
+      }
+    ]
+  }
+  ] 
+}

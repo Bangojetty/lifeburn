@@ -1,0 +1,22 @@
+{
+  "id": 113,
+  "name": "Shade of Return",
+  "cost": 0,
+  "type": "summon",
+  "attack": 1,
+  "defense": 1,
+  "tribe": "shadow",
+  "rarity": "common",
+  "description": "When you tribute Shade Of Return, put it into your hand instead of your graveyard.",
+  "triggeredEffect": [
+  {
+    "trigger": "tribute",
+    "effects": [
+      {
+        "effect": "sendToZone",
+        "destination": "hand"
+      }
+    ]
+  }
+  ]
+}

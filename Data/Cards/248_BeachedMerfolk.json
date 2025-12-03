@@ -1,0 +1,11 @@
+{
+  "id": 248,
+  "name": "Beached merfolk",
+  "cost": 0,
+  "type": "summon",
+  "attack": 2,
+  "defense": 2,
+  "keywords": ["dive"],
+  "tribe": "merfolk",
+  "rarity": "common"
+}

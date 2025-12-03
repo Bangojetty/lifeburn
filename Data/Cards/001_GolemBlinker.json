@@ -1,0 +1,38 @@
+{
+  "id": 1,
+  "name": "Golem Blinker",
+  "cost": 0,
+  "type": "summon",
+  "attack": 2,
+  "defense": 1,
+  "tribe": "golem",
+  "rarity": "common",
+  "description": "When a golem you control dies, you may cast this card from hand. When Golem Blinker enters play, create a stone.",
+  "triggeredEffects": [
+    {
+      "trigger": "enteredZone",
+      "zone": "play",
+      "effects": [
+        {
+          "effect": "createToken",
+          "tokenType": "stone",
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "trigger": "death",
+      "tribe": "golem",
+	  "triggerZone": "hand",
+	  "self": false,
+      "optional": true,
+	  "optionMessage": "Cast Golem Blinker without paying its cost?",
+      "effects": [
+        {
+          "effect": "castCard",
+		  "self": true
+        }
+      ]
+    }
+  ]
+}

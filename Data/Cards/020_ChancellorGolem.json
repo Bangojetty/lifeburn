@@ -1,0 +1,29 @@
+{
+  "id": 20,
+  "name": "Chancellor Golem",
+  "cost": 1,
+  "type": "summon",
+  "attack": 3,
+  "defense": 4,
+  "tribe": "golem",
+  "rarity": "common",
+  "description": "You may reveal Chancellor Golem from your opening hand to create two stones.",
+  "triggeredEffects": [
+    {
+      "trigger": "openingHand",
+      "optional": true,
+	  "optionMessage": "Reveal Chanceller Golem to create 2 stones?",
+      "effects": [
+		{
+		  "effect": "reveal",
+		  "self": true
+		},
+        {
+          "effect": "createToken",
+          "tokenType": "stone",
+          "amount": 2
+        }
+      ]
+    }
+  ]
+}

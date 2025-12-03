@@ -1,0 +1,27 @@
+{
+  "id": 122,
+  "name": "Lost, But Never Gone",
+  "cost": 1,
+  "type": "spell",
+  "tribe": "shadow",
+  "rarity": "common",
+  "description": "Lose half your LPs, rounded down. Mill 15. Create a 1/1 ghost summon token with Haunt",
+  "stackEffects": [
+	  {
+		"effect": "loseLife",
+		"amountBasedOn": "lifeTotal",
+		"amountModifier": "/2down"
+	  },
+	  {
+		"effect": "mill",
+		"amount": 15 
+	  },
+	  {
+		  "effect": "createToken",
+		  "tokenType": "ghost",
+		  "attack": 1,
+		  "defense": 1,
+		  "keyword": "haunt"
+	  }
+  ] 
+}

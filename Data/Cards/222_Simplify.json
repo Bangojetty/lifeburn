@@ -1,0 +1,37 @@
+{
+  "id": 222,
+  "name": "Simplify",
+  "cost": 4,
+  "type": "spell",
+  "tribe": "treefolk",
+  "rarity": "common",
+  "description": "Destroy a summon with a keyword, then draw a card, or create an Herb token.",
+  "stackEffects": [
+    {
+      "effect": "destroy",
+      "targetType": "summon",
+      "restrictions": [
+	  "hasKeyword"
+	  ]
+    },
+    {
+      "effect": "choose",
+	  "choiceIndex": 0,
+      "choices": [
+        [
+          {
+            "effect": "draw",
+            "amount": 1
+          }
+        ],
+        [
+          {
+            "effect": "createToken",
+            "tokenType": "herb",
+            "amount": 1 
+          }
+        ]
+      ] 
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "id": 54,
+  "name": "Curious Merfolk",
+  "cost": 0,
+  "type": "summon",
+  "attack": 1,
+  "defense": 2,
+  "keywords": ["dive"],
+  "tribe": "merfolk",
+  "rarity": "common",
+  "description": "Whenever Curious Merfolk deals damage to a player, draw a card.",
+  "triggeredEffects": [
+  {
+    "trigger": "dealDamageToPlayer",
+    "self": true,
+    "effects": [
+      {
+        "effect": "draw",
+        "amount": 1
+      }
+    ]
+  }
+  ]
+}

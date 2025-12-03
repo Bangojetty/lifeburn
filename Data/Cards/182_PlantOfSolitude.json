@@ -1,0 +1,56 @@
+{
+  "id": 182,
+  "name": "Plant of Solitude",
+  "cost": 0,
+  "type": "summon",
+  "attack": 0,
+  "defense": 2,
+  "tribe": "treefolk",
+  "rarity": "common",
+  "description": "this card cannont be tributed. When you tribute summon, sacrifice Plant of Solitude. Whenever an opponent plays a summon, they choose one: \n {c0}-You create a 1/1 plant token. \n {c0}-You gain 2 LPs.",
+  "passiveEffects": [
+    {
+      "effect": "cantTribute"
+    }
+  ],
+  "triggeredEffects": [
+    {
+      "trigger": "tribute",
+      "all": true,
+      "effects": [
+        {
+          "effect": "sacrifice"
+        }
+      ]
+    },
+    {
+      "trigger": "enteredZone",
+      "zone": "play",
+      "cardType": "summon",
+      "effects": [
+        {
+          "effect": "choose",
+          "isOpponent": true,
+		  "choiceIndex": 0,
+          "choices": [
+            [
+              {
+                "effect": "createToken",
+                "tokenType": "plant",
+                "attack": 1,
+                "defense": 1,
+                "amount": 1
+              }
+            ],
+            [
+              {
+                "effect": "gainLife",
+                "amount": 2  
+              }
+            ]
+          ] 
+        }
+      ] 
+    }
+  ]  
+}

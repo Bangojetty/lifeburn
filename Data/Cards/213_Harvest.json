@@ -1,0 +1,34 @@
+{
+  "id": 213,
+  "name": "Harvest",
+  "cost": 2,
+  "type": "spell",
+  "tribe": "treefolk",
+  "rarity": "common",
+  "description": "Choose one: \n {c0}-Create 2 herbs. \n {c0}-Create a 1/2 plant token with Sprout 1.",
+  "stackEffects": [
+    {
+      "effect": "choose",
+      "choiceIndex": 0,
+      "choices": [
+        [
+          {
+            "effect": "createToken",
+            "tokenType": "herb",
+            "amount": 2
+          }
+        ],
+        [
+          {
+            "effect": "createToken",
+            "tokenType": "plant",
+            "attack": 1,
+            "defense": 2,
+            "keyword": "sprout",
+            "amount": 1   
+          }
+        ]
+      ]
+    }
+  ]
+}

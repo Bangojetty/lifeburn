@@ -1,0 +1,27 @@
+{
+  "id": 55,
+  "name": "Merfolk Keeper",
+  "cost": 0,
+  "type": "summon",
+  "attack": 1,
+  "defense": 1,
+  "keywords": ["dive"],
+  "tribe": "merfolk",
+  "rarity": "common",
+  "description": "Whenever you draw a card, if it wasn't your first draw this turn, put a +1/+1 counter on Merfolk Keeper.",
+  "triggeredEffects": [
+  {
+    "trigger": "draw",
+    "player": "player", 
+    "restrictions": [
+	"notFirst" 
+	],
+    "effects": [
+      {
+        "effect": "addCounter",
+		"counterType": "oneOne"
+      }
+    ]
+  }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "id": 150,
+  "name": "Fury Goblin",
+  "cost": 0,
+  "type": "summon",
+  "attack": 3,
+  "defense": 3,
+  "keywords": ["blitz"],
+  "tribe": "goblin",
+  "rarity": "common",
+  "description": "When Fury Goblin attacks, if an opponent has less LPs than you, they gain 1 LP.",
+  "triggeredEffects": [
+    {
+      "conditions": [
+		{
+		  "condition": "youHaveMoreLife",
+		}
+	  ],
+      "trigger": "attack",
+      "self": true,
+      "effects": [
+        {
+          "effect": "gainLife",
+          "isOpponent": true
+        }
+      ]
+    }
+  ]
+}

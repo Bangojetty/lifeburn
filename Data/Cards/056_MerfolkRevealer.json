@@ -1,0 +1,47 @@
+{
+  "id": 56,
+  "name": "Merfolk Revealer",
+  "cost": 0,
+  "type": "summon",
+  "attack": 1,
+  "defense": 1,
+  "tribe": "merfolk",
+  "rarity": "common",
+  "description": "When Merfolk Revealer enters play, sacrifice it unless you reveal a merfolk from hand. If you do, create two 1/1 merfolk tokens.",
+  "triggeredEffects": [
+    {
+      "trigger": "enteredZone",
+      "zone": "play",
+      "effects": [
+        {
+          "effect": "choose",
+		  "choiceIndex": 0,
+          "choices": [
+            [
+              {
+                "effect": "sacrifice"
+              }
+            ],
+            [
+              {
+                "effect": "reveal",
+                "cardType": "summon",
+                "tribe": "merfolk",
+                "manditoryTarget": true,
+                "additionalEffects": [
+                  {
+                    "effect": "createToken",
+                    "tokenType": "merfolk",
+                    "attack": 1,
+                    "defense": 1,
+                    "amount": 2  
+                  }       
+                ] 
+              }
+            ]
+          ]
+        }
+      ] 
+    }
+  ]
+}

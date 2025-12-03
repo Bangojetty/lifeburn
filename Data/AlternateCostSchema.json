@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "AlternateCost",
+  "type": "object",
+  "properties": {
+	"conditions": {
+		"type": "array",
+		"items": {
+			"$ref": "ConditionSchema.json"
+		}  
+	},
+    "costType": {
+      "$ref": "DefinitionSchema.json#/costType" 
+    },
+    "cardType": {
+		"$ref": "DefinitionSchema.json#/cardType" 
+    },
+    "tribe": {
+		"$ref": "DefinitionSchema.json#/tribe" 
+    },
+    "tokenType": {
+      "$ref": "DefinitionSchema.json#/tokenType"
+    },
+    "amount": {"type": "integer" }
+  }
+}

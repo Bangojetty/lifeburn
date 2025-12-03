@@ -1,0 +1,29 @@
+{
+  "id": 164,
+  "name": "Goblin Rally",
+  "cost": 1,
+  "type": "summon",
+  "attack": 3,
+  "defense": 3,
+  "keywords": ["blitz"], 
+  "tribe": "goblin",
+  "rarity": "common",
+  "description": "When Goblin Rally attacks, create an attacking 1/1 goblin token with Blitz.",
+  "triggeredEffects": [
+    {
+      "trigger": "attack",
+      "self": true, 
+      "effects": [  
+        {
+          "effect": "createToken",
+          "tokenType": "goblin",
+          "attack": 1,
+          "defense": 1,
+          "keyword": "blitz",
+          "amount": 1,
+          "tokenAttacking": true
+        }
+      ] 
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "id": 3,
+  "name": "Golem Trampler",
+  "cost": 0,
+  "keywords": ["trample"],
+  "type": "summon",
+  "attack": 4,
+  "defense": 1,
+  "tribe": "golem",
+  "rarity": "common",
+  "description": "Sacrifice 2 stones: Golem Trampler can't take damage this turn.",
+  "activatedEffects": [
+	  {
+		  "costType": "sacrifice",
+		  "tokenType": "stone",
+		  "amount": 2,
+		  "effects": [
+		  {
+			  "effect": "grantPassive",
+			  "self": true,
+			  "passives": [
+				{
+				  "passive": "cantTakeDamage",
+				  "thisTurn": true
+				}
+			  ]
+		  }
+		]
+	  }
+	]
+}
+

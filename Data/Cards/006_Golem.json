@@ -1,0 +1,24 @@
+{
+  "id": 6,
+  "name": "Golem",
+  "cost": 0,
+  "type": "summon",
+  "attack": 2,
+  "defense": 2,
+  "tribe": "golem",
+  "rarity": "common",
+  "description": "When Golem enters play, create a stone.",
+  "triggeredEffects": [
+    {
+      "trigger": "enteredZone",
+      "zone": "play",
+      "effects": [
+        {
+          "effect": "createToken",
+          "tokenType": "stone",
+          "amount": 1
+        }
+      ]
+    }
+  ]
+}

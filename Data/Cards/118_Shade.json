@@ -1,0 +1,31 @@
+{
+  "id": 118,
+  "name": "Shade",
+  "cost": 1,
+  "type": "summon",
+  "attack": 2,
+  "defense": 2,
+  "tribe": "shadow",
+  "rarity": "common",
+  "description": "When Shade enters play, create a 2/2 ghost. Mill half your deck rounded down.",
+  "triggeredEffects": [
+  {
+    "trigger": "enteredZone",
+    "zone": "play",
+    "effects": [
+      {
+        "effect": "createToken",
+        "tokenType": "ghost",
+        "attack": 2,
+        "defnse": 2,
+        "amount": 1 
+      },
+      {
+        "effect": "mill",
+        "amountBasedOn": "deckSize",
+        "amountModifier": "/2down" 
+      }
+    ]
+  }
+  ]
+}

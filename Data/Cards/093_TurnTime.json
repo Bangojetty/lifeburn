@@ -1,0 +1,48 @@
+{
+  "id": 93,
+  "name": "Turn Time",
+  "cost": 10,
+  "type": "spell",
+  "tribe": "merfolk",
+  "rarity": "common",
+  "description": "take an extra turn. At each opponents next draw phase, they can {c0}take an extra turn or {c0}gain 10 life, then you gain 10 life.",
+  "stackEffects": [
+    {
+      "effect": "extraTurn"
+    }
+  ],
+  "triggeredEffects": [
+    {
+      "trigger": "phase",
+      "phase": "draw",
+      "phaseOfPlayer": "opponent",
+      "effects": [
+        {   
+          "effect": "choose",
+          "amount": 1,
+		  "choiceIndex": 0,
+          "choices": [
+            [
+              {
+                "effect": "extraTurn",
+                "isOpponent": true
+              }
+            ],
+            [
+              {
+                "effect": "gainLife",
+                "amount": 10,
+                "isOpponent": true
+              }
+            ]
+          ],
+          "isOpponent": true
+        },
+        {
+          "effect": "gainLife",
+          "amount": 10
+        }
+      ]
+    }
+  ]
+}

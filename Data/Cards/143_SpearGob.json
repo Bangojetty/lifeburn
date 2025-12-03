@@ -1,0 +1,25 @@
+{
+  "id": 143,
+  "name": "Spear Gob",
+  "cost": 0,
+  "type": "summon",
+  "attack": 1,
+  "defense": 1,
+  "keywords": ["blitz"],
+  "tribe": "goblin",
+  "rarity": "common",
+  "description": "When spear gob enters play, deal 1 damage to any target.",
+  "triggeredEffects": [
+    {
+      "trigger": "enteredZone",
+      "zone": "play",
+      "effects": [
+        {
+          "effect": "dealDamage",
+          "targetType": "any",
+          "amount": 1 
+        }
+      ]
+    }
+  ]
+}

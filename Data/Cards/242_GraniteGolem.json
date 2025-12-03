@@ -1,0 +1,11 @@
+{
+  "id": 242,
+  "name": "Granite Golem",
+  "cost": 0,
+  "type": "summon",
+  "attack": 2,
+  "defense": 2,
+  "keywords": ["trample"],
+  "tribe": "golem",
+  "rarity": "common"
+}

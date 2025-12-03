@@ -1,0 +1,24 @@
+{
+  "id": 26,
+  "name": "Foundry Golem",
+  "cost": 4,
+  "type": "summon",
+  "attack": 4,
+  "defense": 4,
+  "tribe": "golem",
+  "rarity": "common",
+  "description": "Foundry Golem cost 0 if you control at least 4 stones.",
+  "passiveEffects": [
+	  {
+		"conditions": [
+		  {
+			"condition": "control",
+			"minAmount": 4,
+			"tokenType": "stone"
+		  }
+		],
+		"passive": "modifyCost",
+		"cost": 0
+	  }
+  ]
+}

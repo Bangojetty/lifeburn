@@ -1,0 +1,35 @@
+{
+  "id": 53,
+  "name": "Merfolk Rusher",
+  "cost": 0,
+  "type": "summon",
+  "attack": 4,
+  "defense": 3,
+  "tribe": "merfolk",
+  "rarity": "common",
+  "description": "When Merfolk Rusher enters play, sacrifice it unless you return a merfolk you control to your hand.",
+  "triggeredAbilities": [
+  {
+    "trigger": "enteredZone",
+    "zone": "play",
+    "effects": [
+      {
+        "effect": "choose",
+		"choiceIndex": 0,
+        "choices": [
+          {
+            "effect": "sacrifice"
+          },
+          {
+            "effect": "sendToZone",
+            "targetType": "summon",
+            "tribe": "merfolk",
+            "owner": "player", 
+            "destination": "hand"
+          }
+        ]
+      }
+    ]
+  }
+  ]
+}

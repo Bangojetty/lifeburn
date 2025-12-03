@@ -1,0 +1,39 @@
+{
+  "id": 47,
+  "name": "River Siren",
+  "cost": 0,
+  "type": "summon",
+  "attack": 1,
+  "defense": 1,
+  "keywords": ["dive"],
+  "tribe": "merfolk",
+  "rarity": "common",
+  "description": "When River Siren enters play, each player draws a card. If River Siren were to die to spell damage, return it to hand instead.",
+  "triggeredEffects": [
+  {
+    "trigger": "enteredZone",
+    "zone": "play",
+    "effects": [
+      {
+        "effect": "draw",
+        "amount": 1
+      },
+      {
+        "effect": "draw",
+        "isOpponent": true, 
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "trigger": "deathBySpell",
+    "self": true, 
+    "effects": [
+      {
+        "effect": "sendToZone",
+        "destination": "hand" 
+      }
+    ] 
+  }
+  ]
+}

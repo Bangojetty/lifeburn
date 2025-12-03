@@ -1,0 +1,22 @@
+{
+  "id": 279,
+  "name": "Ground Control",
+  "cost": 0,
+  "type": "spell",
+  "keywords": ["exhaust"],
+  "tribe": "treefolk",
+  "rarity": "common",
+  "description": "Create 3 herbs. Target Opponent gains 3 LPs",
+  "stackEffects": [ 
+    { 
+      "effect": "createToken",
+      "tokenType": "herb",
+      "amount": 3
+    },
+    {
+      "effect": "gainLife",
+      "targetType": "opponent",
+      "amount": 5
+    }
+  ] 
+}

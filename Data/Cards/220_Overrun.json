@@ -1,0 +1,42 @@
+{
+  "id": 220,
+  "name": "Overrun",
+  "cost": 4,
+  "type": "spell",
+  "tribe": "treefolk",
+  "rarity": "common",
+  "description": "All treefolk get a +1/+1 counter and may attack this turn. Choose one: \n {c0}-Draw a card. \n {c0}-Create and herb token.",
+  "stackEffects": [
+    {
+      "effect": "addCounter",
+      "tribe": "treefolk",
+	  "counterType": "oneOne",
+      "all": true
+    },
+    {
+      "effect": "canAttack",
+      "tribe": "treefolk",
+      "all": true,
+      "thisTurn": true
+    },
+    {
+      "effect": "choose",
+	  "choiceIndex": 0,
+      "choices": [
+        [
+          {
+            "effect": "draw",
+            "amount": 1
+          }
+        ],
+        [
+          {
+            "effect": "createToken",
+            "tokenType": "herb",
+            "amount": 1  
+          }
+        ]
+      ]  
+    }
+  ] 
+}

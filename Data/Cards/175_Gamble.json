@@ -1,0 +1,20 @@
+{
+  "id": 175,
+  "name": "Gamble",
+  "cost": 3,
+  "type": "spell",
+  "tribe": "goblin",
+  "rarity": "common",
+  "description": "Draw 3. Opponents draws 2.",
+  "stackEffects": [  
+    {
+      "effect": "draw",
+      "amount": 3
+    },
+    {
+      "effect": "draw",
+      "isOpponent": true,
+      "amount": 2
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "id": 81,
+  "name": "Opt",
+  "cost": 2,
+  "type": "spell",
+  "tribe": "merfolk",
+  "rarity": "common",
+  "description": "Look at the top 3 cards of your deck. Put them back in any order. You may shuffle your deck. Draw a card.",
+  "stackEffects": [
+    {
+      "effect": "lookAtDeck",
+      "amount": 3,
+      "deckDestinations": [
+        {
+          "deckDestination": "top",
+          "ordering": "any" 
+        }
+      ]
+    },
+    {
+      "effect": "shuffleDeck",
+      "optional": true 
+    },
+    {
+      "effect": "draw",
+      "amount": 1 
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "id": 25,
+  "name": "Brass Golem",
+  "cost": 2,
+  "type": "summon",
+  "attack": 1,
+  "defense": 1,
+  "tribe": "golem",
+  "rarity": "common",
+  "description": "When Brass Golem enters play, create a golem with attack and defense equal to the number of stones you control.",
+  "triggeredEffects": [
+    {
+      "trigger": "enteredZone",
+      "zone": "play",
+      "effects": [
+        {
+          "effect": "createToken",
+          "tokenType": "golem",
+          "attackBasedOn": "stonesControlled",
+          "defenseBasedOn": "stonesControlled",
+		  "description": "create a golem with attack and defense equal to the number of stones you control."
+       }
+      ]
+    }
+  ]
+}

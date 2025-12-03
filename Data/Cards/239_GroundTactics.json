@@ -1,0 +1,16 @@
+{
+  "id": 239,
+  "name": "Ground Tactics",
+  "cost": 5,
+  "type": "spell",
+  "tribe": "golem",
+  "rarity": "common",
+  "description": "Target opponent attacks with all summons able to this turn. You decide how attackers and damage are assigned.",
+  "stackEffects": [
+  {
+    "effect": "forceAttack",
+    "targetType": "player",
+    "youChooseDamage": true    
+  }
+  ]
+}

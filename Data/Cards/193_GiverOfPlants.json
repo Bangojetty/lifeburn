@@ -1,0 +1,16 @@
+{
+  "id": 193,
+  "name": "Giver of Plants",
+  "cost": 0,
+  "type": "summon",
+  "attack": 1,
+  "defense": 1,
+  "tribe": "treefolk",
+  "rarity": "common",
+  "description": "Sprout also triggers on death.",
+  "passiveEffects": [
+    {
+      "passive": "sproutTriggersOnDeath"
+    }
+  ]
+}

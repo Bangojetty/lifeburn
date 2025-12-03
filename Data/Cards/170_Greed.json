@@ -1,0 +1,39 @@
+{
+  "id": 170,
+  "name": "Greed",
+  "cost": 2,
+  "type": "spell",
+  "tribe": "goblin",
+  "rarity": "common",
+  "description": "Draws 2, then discard 2. If you control a goblin, discard 1 instead.",
+  "stackEffects": [
+    {
+      "effect": "draw",
+      "amount": 2
+    },
+    {
+      "conditions": [  
+        {
+          "condition": "control",
+          "cardType": "summon",
+          "tribe": "goblin",
+          "maxAmount": 0
+        }
+      ],
+      "effect": "discard",
+      "amount": 2 
+    },
+    {
+      "conditions": [
+        {
+          "condition": "control",
+          "cardType": "summon",
+          "tribe": "goblin",
+          "minAmount": 1
+        }
+      ],
+      "effect": "discard",
+      "amount": 1 
+    }
+  ] 
+}

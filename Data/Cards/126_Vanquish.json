@@ -1,0 +1,23 @@
+{
+  "id": 126,
+  "name": "Vanquish",
+  "cost": 3,
+  "type": "spell",
+  "tribe": "shadow",
+  "rarity": "common",
+  "description": "Destroy target summon with 3 or less attack. Mill 1.",
+  "stackEffects": [
+  {
+    "effect": "destroy",
+    "cardType": "summon",
+    "restrictions": [
+	"attack"
+	],
+    "restrictionMax": 3
+  },
+  {
+    "effect": "mill",
+    "amount": 1
+  }
+  ]
+}

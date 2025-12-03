@@ -1,0 +1,17 @@
+{
+  "id": 177,
+  "name": "Heat Wave",
+  "cost": 5,
+  "type": "spell",
+  "tribe": "goblin",
+  "rarity": "common",
+  "description": "Deal 2 damage to all summons.",
+  "stackEffects": [
+    {
+      "effect": "dealDamage",
+      "targetType": "summon",
+      "all": true,
+      "amount": 2
+    }
+  ]
+}

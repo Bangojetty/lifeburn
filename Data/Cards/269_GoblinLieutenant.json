@@ -1,0 +1,31 @@
+{
+  "id": 269,
+  "name": "Goblin Lieutenant",
+  "cost": 0,
+  "type": "summon",
+  "attack": 1,
+  "defense": 1,
+  "keywords": ["blitz"],
+  "tribe": "goblin",
+  "rarity": "common",
+  "description": "When Goblin Lieutenant attacks, create an attacking 3/1 goblin until end of turn.",
+  "triggeredEffects": [  
+    {
+      "trigger": "attack",
+      "self": true,
+      "effects": [
+        {
+          "effect": "createToken",
+          "tokenType": "goblin",
+          "attack": 3,
+          "defense": 1,
+          "amount": 1,
+          "attacking": true,
+          "tokenPassive": {
+				"passive": "thisTurn"
+		    }
+        }
+      ] 
+    }
+  ]
+}

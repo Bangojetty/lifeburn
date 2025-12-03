@@ -1,0 +1,25 @@
+{
+  "id": 244,
+  "name": "Shattering Smash",
+  "cost": 0,
+  "type": "spell",
+  "tribe": "golem",
+  "rarity": "common",
+  "description": "Target summon you control and target summon you don't control each take damage equal to twice the amount stones you control.",
+  "stackEffects": [
+  {
+    "effect": "dealDamage",
+    "targetType": "summon",
+    "isOpponent": false,
+    "amountBasedOn": "stonesInPlay",
+    "amountModifier": "x2"
+  },
+  {
+    "effect": "dealDamage",
+    "targetType": "summon",
+    "isOpponent": true,
+    "amountBasedOn": "stonesInPlay",
+    "amountModifier": "x2"
+  }
+  ] 
+}

@@ -1,0 +1,23 @@
+{
+  "id": 215,
+  "name": "Planter Box",
+  "cost": 3,
+  "type": "spell",
+  "tribe": "treefolk",
+  "rarity": "common",
+  "description": "For the rest of the turn, you can only summon Treefolk. Create three 0/1 plant tokens until the end of turn.",
+  "stackEffects": [
+    {
+      "effect": "createToken",
+      "tokenType": "plant",
+      "attack": 0,
+      "defense": 1,
+      "amount": 3,
+      "thisTurn": true,
+      "tokenPassive": {
+        "passive": "tributeRestriction",
+		"tribe": "treefolk"
+      }
+    }
+  ]
+}

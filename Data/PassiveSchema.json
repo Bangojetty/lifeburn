@@ -1,0 +1,49 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Passive",
+  "type": "object",
+  "properties": {
+    "conditions": {
+      "type": "array",
+      "items": {
+        "$ref": "ConditionSchema.json"
+      }
+    },
+    "passive": {
+      "type": "string",
+      "enum": ["changeStats","grantKeyword", "modifyCost","cantTakeDamage","cantDealDamage", "topCardRevealed", "additionalSummonTopCard", "cantBeTargeted",
+       "immuneToKeyword", "defenseUsedForAttack", "sacrifice", "onlyTributeToTreefolk", "onlyTributeToGoblins", "cantAttack", "disableEnterPlayEffects", "grantActive", 
+       "canCastFrom", "sproutTriggersOnDeath", "modifyKeywordAmount", "cantBeAttacked", "cantSpecialSummon", "tokenCanTribute", "createTokenModifier", "disableKeyword"]
+    }, 
+    "cost": {"type": "integer" },
+    "amount": {"type": "integer" },
+    "all": {"type": "boolean"}, 
+    "amountModifier": {
+		"type": "string"
+    },
+    "keyword": {
+      "$ref": "DefinitionSchema.json#/keyword"
+    },
+    "targetBasedOn": {
+			"type": "string",
+			"enum": ["attachedTo"]  
+    },
+    "zone": {
+			"$ref": "DefinitionsSchema.json#/zone"
+    },
+    "attackBasedOn": {
+      "type": "string",
+      "enum": ["stonesControlled", "summonsInGraveyard","goblinsInPlay", "treefolkControlled", "subtractLife"]
+    },
+    "defenseBasedOn": {
+			"type": "string",
+			"enum": ["stonesControlled", "summonsInGraveyard", "goblinsInPlay", "treefolkControlled", "subtractLife"]  
+    },
+    "tokenType": {
+      "$ref": "DefinitionSchema.json#/tokenType"
+    },
+    "tribe": {
+      "$ref": "DefinitionSchema.json#/tribe"
+    }
+  }
+}

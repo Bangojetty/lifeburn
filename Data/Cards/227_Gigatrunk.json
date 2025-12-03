@@ -1,0 +1,19 @@
+{
+  "id": 227,
+  "name": "Gigatrunk",
+  "cost": 4,
+  "type": "summon",
+  "attack": 10,
+  "defense": 10,
+  "tribe": "treefolk",
+  "rarity": "common",
+  "description": "Treefolk count as 2 tributes to Gigatrunk.",
+  "alternateCosts": [
+    {
+      "altCostType": "tributeMultiplier",
+      "cardType": "summon",
+      "tribe": "treefolk",
+      "amount": 2
+    }
+  ]
+}

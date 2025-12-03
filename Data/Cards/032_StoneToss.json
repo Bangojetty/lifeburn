@@ -1,0 +1,33 @@
+{
+  "id": 32,
+  "name": "Stone Toss",
+  "cost": 5,
+  "type": "spell",
+  "tribe": "golem",
+  "rarity": "common",
+  "description": "as an additional cost to cast Stone Toss, acrifice X stones and lose X life. Deal two times X to any target. Create 2 stones",
+  "additionalCosts": [
+	  {
+		  "costType": "sacrifice",
+		  "tokenType": "stone",
+		  "amountBasedOn": "x"
+	  },
+	  {
+		  "costType": "life",
+		  "amountBasedOn": "x"
+	  }
+  ],
+  "stackEffects": [
+  {
+    "effect": "dealDamage",
+	"targetType": "any",
+    "amountBasedOn": "x",
+	"amountModifier": "x2"
+  },
+  {
+    "effect": "createToken",
+    "tokenType": "stone",
+    "amount": 2
+  }
+  ]
+}

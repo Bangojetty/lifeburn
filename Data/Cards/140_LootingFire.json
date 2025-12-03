@@ -1,0 +1,31 @@
+{
+  "id": 140,
+  "name": "Looting Fire",
+  "cost": 0,
+  "type": "spell",
+  "tribe": "goblin",
+  "rarity": "common",
+  "description": "Draw 1 then discard 1. If you control a goblin. Deal 1 damage to any target.",
+  "stackEffects": [
+    {
+      "effect": "draw",
+      "amount": 1
+    },
+    {
+      "effect": "discard",
+      "amount": 1  
+    },
+    {
+      "conditions": [
+        {
+          "condition": "control",
+          "cardType": "summon",
+          "tribe": "goblin"
+        }
+      ],
+      "effect": "dealDamage",
+      "targetType": "any",
+      "amount": 1  
+    }
+  ]
+}

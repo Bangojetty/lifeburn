@@ -1,0 +1,34 @@
+{
+  "id": 249,
+  "name": "Legionaires",
+  "cost": 9,
+  "type": "summon",
+  "attack": 3,
+  "defense": 3,
+  "keywords": ["dive"],
+  "tribe": "merfolk",
+  "rarity": "common",
+  "description": "Merfolk count as 3 tribute to Legionaires. When Legionaires enters play, create two 3/3 merfolk tokens.",
+  "alternateCosts": [
+  {
+    "altCostType": "tributeMultiplier",
+    "tribe": "merfolk",
+    "amount": 3
+  }
+  ],
+  "triggeredEffects": [
+  {
+    "trigger": "enteredZone",
+    "zone": "play",
+    "effects": [
+      {
+        "effect": "createToken",
+        "tokenType": "merfolk",
+        "attack": 3,
+        "defense": 3,
+        "amount": 2
+      }
+    ]
+  }
+  ]
+}

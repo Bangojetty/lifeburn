@@ -1,0 +1,30 @@
+{
+  "id": 82,
+  "name": "Brainstorm",
+  "cost": 3,
+  "type": "spell",
+  "tribe": "merfolk",
+  "rarity": "common",
+  "description": "Draw 3 cards, then shuffle 2 cards from your hand into your deck.",
+  "stackEffects": [
+  {
+    "effect": "draw",
+    "amount": 3
+  },
+  {
+    "effect": "sendToZone",
+    "targetZone": "hand",
+    "destination": "deck",
+    "deckDestinations": [
+      {
+        "deckDestination": "top",
+        "ordering": "random",
+        "amount": 2
+      }
+    ]  
+  },
+  {
+    "effect": "shuffleDeck"
+  }
+  ] 
+}

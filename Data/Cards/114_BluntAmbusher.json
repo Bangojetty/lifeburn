@@ -1,0 +1,28 @@
+{
+  "id": 114,
+  "name": "Blunt Ambusher",
+  "cost": 0,
+  "type": "summon",
+  "attack": 10,
+  "defense": 10,
+  "tribe": "shadow",
+  "rarity": "common",
+  "description": "Blunt Ambusher gets -1/-1 for each LP you have.",
+  "passiveEffects": [
+		{
+			"passive": "changeStats",
+			"statModfiiers": [
+				{
+					"statType": "attack",
+					"operatorType": "add",
+					"amountBasedOn": "subtractLife"
+				},
+				{
+					"statType": "defense",
+					"operatorType": "add",
+					"amountBasedOn": "subtractLife"
+				}
+			],
+		}
+	]
+}

@@ -1,0 +1,34 @@
+{
+  "id": 141,
+  "name": "Gob Launch",
+  "cost": 0,
+  "type": "spell",
+  "tribe": "goblin",
+  "rarity": "common",
+  "description": "As an additional cost to cast Gob Launch, sacrifice a goblin. Destroy target summon. If the target summon has 4 or more attack, you lose 4 LPs.",
+  "additionalCosts": [
+    {
+      "costType": "sacrifice",
+      "cardType": "summon",
+      "tribe": "goblin"
+    }
+  ],
+  "stackEffects": [
+    {
+      "effect": "destroy",
+      "targetType": "summon",
+      "additionalEffects": [
+        {
+          "conditions": [
+            {
+              "condition": "targetAttack",
+              "amountMin": 4
+            }
+          ],
+          "effect": "loseLife",
+          "amount": 4
+        }
+      ]
+    }
+  ]
+}

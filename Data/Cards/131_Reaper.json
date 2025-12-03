@@ -1,0 +1,17 @@
+{
+  "id": 131,
+  "name": "Reaper",
+  "cost": 4,
+  "type": "spell",
+  "tribe": "shadow",
+  "rarity": "common",
+  "description": "Target opponent reveals all summons from hand. You choose one for them to discard.",
+  "stackEffects": [  
+  {
+    "effect": "discardOpponent",
+    "revealType": "summon", 
+    "taretType": "summon",
+    "amount": 1
+  }
+  ]
+}

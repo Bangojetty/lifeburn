@@ -1,0 +1,31 @@
+{
+  "id": 195,
+  "name": "Planter",
+  "cost": 0,
+  "type": "summon",
+  "attack": 1,
+  "defense": 1,
+  "keywords": ["sprout"],
+  "tribe": "treefolk",
+  "rarity": "common",
+  "description": "When a non-token Treefolk enters play, create a 0/2 plant token.",
+  "triggeredEffect": [
+    {
+      "trigger": "enteredZone",
+      "zone": "play",
+      "tribe": "treefolk",
+      "restrictions": [
+	    "nonToken"
+	    ],
+      "effects": [
+        {
+          "effect": "createToken",
+          "tokenType": "plant",
+          "attack": 0,
+          "defense": 2,
+          "amount": 1
+        }
+      ] 
+    }
+  ] 
+}

@@ -1,0 +1,22 @@
+{
+  "id": 251,
+  "name": "Merfolk Elite",
+  "cost": 2,
+  "type": "summon",
+  "attack": 3,
+  "defense": 3,
+  "keywords": ["dive"],
+  "tribe": "merfolk",
+  "rarity": "common",
+  "description": "While either player controls a 1/1 summon, Merfolk Elite cannot be attacked.",
+  "passiveEffects": [
+    {
+      "conditions": [
+        {
+          "condition": "oneOneInPlay"
+        }
+      ],
+      "passive": "cantBeAttacked"
+    }
+  ]
+}

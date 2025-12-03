@@ -1,0 +1,23 @@
+{
+  "id": 176,
+  "name": "Run Amok",
+  "cost": 5,
+  "type": "spell",
+  "tribe": "goblin",
+  "rarity": "common",
+  "description": "Create two 1/1 goblin tokens with Blitz. You can't tribute summon this turn.",
+  "stackEffects": [
+    {
+      "effect": "createToken",
+      "tokenType": "goblin",
+      "attack": 1,
+      "defense": 1,
+      "keyword": "blitz", 
+      "amount": 2
+    },
+    {
+      "effect": "cantTribute",
+      "thisTurn": true
+    }
+  ]
+}

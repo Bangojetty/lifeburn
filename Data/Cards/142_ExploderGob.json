@@ -1,0 +1,25 @@
+{
+  "id": 142,
+  "name": "Exploder Gob",
+  "cost": 0,
+  "type": "summon",
+  "attack": 2,
+  "defense": 1,
+  "keywords": ["blitz"],
+  "tribe": "goblin",
+  "rarity": "common",
+  "description": "When Exploder Gob dies, each opponents takes 2 damage.",
+  "triggeredEffects": [
+    {
+      "trigger": "death",
+      "self": true,
+      "effects": [
+        {
+          "effect": "dealDamage",
+          "targetType": "opponent",
+          "amount": 2  
+        }
+      ]
+    }
+  ] 
+}

@@ -1,0 +1,18 @@
+{
+  "id": 101,
+  "name": "Witness Shade",
+  "cost": 0,
+  "type": "summon",
+  "attack": 1,
+  "defense": 1,
+  "tribe": "shadow",
+  "rarity": "common",
+  "description": "When Witness Shade enters play, each player mills 2.",
+  "triggeredEffects": [
+  {
+    "effect": "mill",
+    "all": true,
+    "amount": 2
+  }
+  ] 
+}

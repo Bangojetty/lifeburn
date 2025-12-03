@@ -1,0 +1,19 @@
+{
+  "id": 253,
+  "name": "Sky Scryer Merfolk",
+  "cost": 1,
+  "type": "summon",
+  "attack": 1,
+  "defense": 2,
+  "tribe": "merfolk",
+  "rarity": "common",
+  "description": "Play with the top card of your deck revealed. You may summon that card. If you do, you get an additional summon this turn.",
+  "passiveEffects": [
+  {
+    "passive": "topCardRevealed" 
+  },
+  {
+    "passive": "additionalSummonTopCard"
+  }
+  ]
+}

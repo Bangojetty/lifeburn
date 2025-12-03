@@ -1,0 +1,20 @@
+{
+  "id": 125,
+  "name": "Fisher",
+  "cost": 3,
+  "type": "spell",
+  "tribe": "shadow",
+  "rarity": "common",
+  "description": "Target opponent sacrifices their weakest summon. Mill 2.",
+  "stackEffects": [
+  {
+    "effect": "sacrifice",
+    "isOpponent": true,
+    "targetBasedOn": "weakest"
+  },
+  {
+    "effect": "mill",
+    "amount": 2 
+  }
+  ] 
+}

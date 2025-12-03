@@ -1,0 +1,21 @@
+{
+  "id": 137,
+  "name": "Crawl Back",
+  "cost": 3,
+  "type": "spell",
+  "tribe": "shadow",
+  "rarity": "common",
+  "description": "Return target ghost with power 3 or less from your graveyard to play.",
+  "stackEffects": [
+    {
+      "effect": "sendToZone",
+      "targetType": "summon",
+      "tribe": "shadow",
+	  "destination": "play",
+      "restrictions": [
+	  "cost"
+	  ],
+      "restrictionMax": 3   
+    }
+  ]
+}

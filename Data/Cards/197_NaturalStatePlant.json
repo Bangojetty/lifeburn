@@ -1,0 +1,73 @@
+{
+  "id": 197,
+  "name": "Natural state Plant",
+  "cost": 0,
+  "type": "summon",
+  "attack": 1,
+  "defense": 1,
+  "tribe": "treefolk",
+  "rarity": "common",
+  "description": "Sacrifice from play or Exile Natural state Plant from graveyard, and choose one: \n {c0}-Exile 2 cards from a graveyard. \n {c0}-Return another Treefolk from your graveyard to hand.",
+  "activatedEffects": [
+    {
+      "costType": "sacrifice",
+      "effects": [
+        {
+          "effect": "choose",
+		  "choiceIndex": 0,
+          "choices": [
+            [
+              {
+                "effect": "sendToZone",
+                "targetZone": "graveyard",
+                "destination": "exile",
+                "amount": 2
+              }
+            ],
+            [
+              {
+                "effect": "sendToZone",
+                "targetZone": "graveyard",
+                "destination": "hand",
+                "amount": 1
+              }
+            ]
+          ] 
+        }
+      ] 
+    },
+    {
+      "conditions": [
+        {
+          "condition": "inZone",
+          "zone": "graveyard"
+        }
+      ],
+      "costType": "exile",
+      "effects": [
+        {
+          "effect": "choose",
+		  "choiceIndex": 0,
+          "choices": [
+            [
+              {
+                "effect": "sendToZone",
+                "targetZone": "graveyard",
+                "destination": "exile",
+                "amount": 2
+              }
+            ],
+            [
+              {
+                "effect": "sendToZone",
+                "targetZone": "graveyard",
+                "destination": "hand",
+                "amount": 1
+              }
+            ]
+          ] 
+        }
+      ] 
+    }
+  ]
+}

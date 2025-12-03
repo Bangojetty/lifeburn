@@ -1,0 +1,11 @@
+{
+  "id": 261,
+  "name": "Restless Ghost",
+  "cost": 0,
+  "type": "summon",
+  "attack": 2,
+  "defense": 2,
+  "keywords": ["spectral"],
+  "tribe": "shadow",
+  "rarity": "common",
+}

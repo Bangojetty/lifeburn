@@ -1,0 +1,33 @@
+{
+  "id": 13,
+  "name": "Reconfigure Golem",
+  "cost": 0,
+  "type": "summon",
+  "attack": 0,
+  "defense": 1,
+  "tribe": "golem",
+  "rarity": "common",
+  "description": "When Reconfigure Golem enters a graveyard, you may sacrifice a stone to return it to play.",
+  "triggeredEffects": [
+    {
+      "trigger": "enteredZone",
+      "zone": "graveyard",
+	  "triggerZone": "graveyard",
+	  "optional": true,
+	  "optionMessage": "sacrifice a stone and return Reconfigure Golem to play?",
+	  "additionalCosts": [
+	    	{
+				"costType": "sacrifice",
+				"tokenType": "stone",
+				"amount": 1
+			}
+	    ],
+      "effects": [
+        {
+		  "effect": "sendToZone",
+		  "destination": "play"
+        }
+      ]
+    }
+  ]
+}

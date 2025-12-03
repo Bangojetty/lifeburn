@@ -1,0 +1,36 @@
+{
+  "id": 96,
+  "name": "Dusk Wraith",
+  "cost": 0,
+  "type": "summon",
+  "attack": 1,
+  "defense": 1,
+  "tribe": "shadow",
+  "rarity": "common",
+  "description": "When Dusk Wraith is milled, destroy target summon. If you can't, gain 3 LPs.",
+  "triggeredEffects": [
+  {
+    "trigger": "mill",
+    "self": true,
+    "effects": [
+      {
+        "effect": "choose",
+		"choiceIndex": 0,
+        "choices": [
+          [          {
+              "effect": "destroy",
+              "targetType": "summon"
+            }
+          ],
+          [
+            {
+              "effect": "gainLife",
+              "amount": 3
+            }
+          ]
+        ]
+      }
+    ]
+  }
+  ] 
+}

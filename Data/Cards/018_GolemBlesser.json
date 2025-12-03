@@ -1,0 +1,50 @@
+{
+  "id": 18,
+  "name": "Golem Blesser",
+  "cost": 1,
+  "type": "summon",
+  "attack": 2,
+  "defense": 2,
+  "tribe": "golem",
+  "rarity": "common",
+  "description": "When a stone enters play, other golems you control get +1/+1 this turn.",
+  "triggeredEffects": [
+    {
+      "trigger": "enteredZone",
+      "zone": "token", 
+      "tokenType": "stone",
+	  "self": false,
+      "effects": [
+        {
+          "effect": "grantPassive",
+          "cardType": "summon",
+          "tribe": "golem",
+		  "other": true,
+		  "description": "Other golems you control get +1/+1 this turn",
+		  "restrictions": [
+		  "youControl"
+		  ],
+		  "passives": [
+		    {
+				"passive": "changeStats",
+				"statModfiiers": [
+					{
+						"statType": "attack",
+						"operatorType": "add",
+						"amount": 1
+					},
+					{
+						"statType": "defense",
+						"operatorType": "add",
+						"amount": 1
+					}
+				],
+				"self": true,
+				"thisTurn": true
+		    }
+		  ]
+        }
+      ]
+    }
+  ]
+}

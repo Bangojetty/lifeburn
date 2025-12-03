@@ -1,0 +1,28 @@
+{
+  "id": 105,
+  "name": "Selfless Shadow",
+  "cost": 0,
+  "type": "summon",
+  "attack": 1,
+  "defense": 1,
+  "tribe": "shadow",
+  "rarity": "common",
+  "description": "When Selfless Shadow is tributed to a ghost, create a 1/1 ghost token with Haunt.",
+  "triggeredEffects": [
+  {
+    "trigger": "tribute",
+    "self": true,  
+    "tribe": "shadow",
+    "effects": [
+      {  
+        "effect": "createToken",
+        "tokenType": "ghost",
+        "attack": 1,
+        "defense": 1,
+        "keywords": ["haunt"],
+        "amount": 1 
+      }
+    ]
+  }
+  ]
+}

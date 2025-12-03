@@ -1,0 +1,30 @@
+{
+  "id": 116,
+  "name": "Relenting Shade",
+  "cost": 1,
+  "type": "summon",
+  "attack": 2,
+  "defense": 2,
+  "keywords": ["haunt"],
+  "tribe": "shadow",
+  "rarity": "common",
+  "description": "Whenever an opponent discards, return Relenting Shade from your graveyard to play.",
+  "triggeredEffects": [  
+  {
+    "trigger": "discard",
+    "isOpponent": true,
+    "effects": [
+      {
+        "conditions": [
+          {
+            "condition": "inZone",
+            "zone": "graveyard" 
+          }
+        ],
+        "effect": "sendToZone",
+        "destination": "play"
+      }
+    ] 
+  }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "id": 73,
+  "name": "Merfolk Master",
+  "cost": 2,
+  "type": "summon",
+  "attack": 3,
+  "defense": 3,
+  "keywords": ["dive"],
+  "tribe": "merfolk",
+  "rarity": "common",
+  "description": "Other merfolk have +1/+1 and dive.",
+  "passiveEffects": [
+	  {
+		"passive": "grantKeyword",
+		"keyword": "dive",
+		"tribe": "merfolk" 
+	  },
+	  {
+		"passive": "changeStats",
+		"statModfiiers": [
+			{
+				"statType": "attack",
+				"operatorType": "add",
+				"amount": 1
+			},
+			{
+				"statType": "defense",
+				"operatorType": "add",
+				"amount": 1
+			}
+		],
+		"tribe": "merfolk"
+	  }
+    ] 
+} 

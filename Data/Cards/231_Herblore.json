@@ -1,0 +1,20 @@
+{
+  "id": 231,
+  "name": "Herblore",
+  "cost": 2,
+  "type": "spell",
+  "tribe": "treefolk",
+  "rarity": "common",
+  "description": "Create an Herb token. Sacrificing herbs always gains you 2 LPs this turn.",
+  "stackEffects": [
+    {
+      "effect": "createToken",
+      "tokenType": "herb",
+      "amount": 1
+    },
+    {
+      "effect": "bypassHerbLifeReduction",
+      "thisTurn": true
+    }
+  ]
+}

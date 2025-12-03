@@ -1,0 +1,24 @@
+{
+  "id": 16,
+  "name": "Excavator Golem",
+  "cost": 0,
+  "type": "summon",
+  "attack": 0,
+  "defense": 1,
+  "tribe": "golem",
+  "rarity": "common",
+  "description": "When Excavator Golem enters play, create 2 stones.",
+  "triggeredEffects": [
+    {
+      "trigger": "enteredZone",
+	  "zone": "play",
+      "effects": [
+        {
+          "effect": "createToken",
+          "tokenType": "stone",
+          "amount": 2
+        }
+      ]
+    }
+  ]
+}

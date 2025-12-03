@@ -1,0 +1,43 @@
+{
+  "id": 124,
+  "name": "Dark Shade",
+  "cost": 2,
+  "type": "summon",
+  "attack": 4,
+  "defense": 4,
+  "tribe": "shadow",
+  "rarity": "common",
+  "description": "Whenever an opponent discards, create that many 2/2 ghost tokens with Haunt. \n Discard 1: Target opponent discards 1 (once per turn).",
+  "triggeredEffects": [
+  {
+    "trigger": "discard",
+    "isOpponent": true,
+    "effects": [
+      {
+        "effect": "createToken",
+        "tokenType": "ghost",
+        "attack": 2,
+        "defense": 2,
+        "keywords": [
+          "haunt"
+        ],
+        "amount": 1 
+      }
+    ]
+  }
+  ],
+  "activatedEffects": [
+	  {
+		  "costType": "discard",
+		  "amount": 1,
+		  "oncePerTurn": true,
+		  "effects": [
+			  {
+				  "effect": "discard",
+				  "targetType": "opponent",
+				  "amount": 1
+			  }
+			]
+	  }
+	]
+}

@@ -1,0 +1,30 @@
+{
+  "id": 108,
+  "name": "Shade Crawler",
+  "cost": 0,
+  "type": "summon",
+  "attack": 2,
+  "defense": 1,
+  "keywords": ["spectral"],
+  "tribe": "shadow",
+  "rarity": "common",
+  "description": "Whenever a ghost dies, if Shade Crawler is in your graveyard, return that summon to play.",
+  "triggeredEffects": [
+  {
+    "trigger": "death",
+    "tribe": "shadow",
+    "effects": [
+      {
+        "conditions": [
+          {
+            "condition": "inZone",
+            "zones": ["graveyard"]
+          }
+        ],
+        "effect": "sendToZone",
+        "destination": "play"
+      }
+    ]
+    }
+   ]
+}

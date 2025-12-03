@@ -1,0 +1,27 @@
+{
+  "id": 74,
+  "name": "Consider",
+  "cost": 2,
+  "type": "spell",
+  "tribe": "merfolk",
+  "rarity": "common",
+  "description": "Draw 2 cards, then put 2 cards from your hand on the bottom of your library in any order.",
+  "stackEffects": [
+    {
+      "effect": "draw",
+      "amount": 2
+    },
+    {
+      "effect": "sendToZone",
+      "targetZone": "hand",
+      "destination": "deck",
+      "deckDestinations": [
+        {
+          "deckDestination": "bottom",
+          "ordering": "any",
+          "amount": 2  
+        }
+      ]
+    }
+  ]
+}

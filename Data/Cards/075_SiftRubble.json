@@ -1,0 +1,29 @@
+{
+  "id": 75,
+  "name": "Sift Rubble",
+  "cost": 2,
+  "type": "spell",
+  "tribe": "merfolk",
+  "rarity": "common",
+  "description": "Look at the top 2 cards of your deck, put any amount in the graveyard or back on top in any order. Draw a card.",
+  "stackEffects": [
+    {
+      "effect": "lookAtDeck",
+      "deckDestinations": [
+		  {
+			"deckDestination": "top",
+			"amountIsPlayerChosen": true,
+			"ordering": "any"
+		  },
+		  {
+			"deckDestination": "graveyard",
+			"amountIsPlayerChosen": true
+		  }
+	  ]
+    },
+    {
+      "effect": "draw",
+      "amount": 1
+    }
+  ] 
+}

@@ -1,0 +1,28 @@
+{
+  "id": 59,
+  "name": "Merfolk Gang",
+  "cost": 0,
+  "type": "summon",
+  "attack": 1,
+  "defense": 1,
+  "tribe": "merfolk",
+  "rarity": "common",
+  "description": "When Merfolk Gang enters play, you may cast a merfolk summon with tribute 1 or less from hand without paying its cost.",
+  "triggeredEffects": [
+  {
+    "trigger": "enteredZone",
+    "zone": "play",
+    "effects": [
+      {
+        "effect": "castCard",
+        "cardType": "summon",
+        "tribe": "merfolk",
+        "restrictions": [
+		"cost"
+		],
+        "restrictionMax": 1
+      }
+    ]
+  }
+  ]
+}

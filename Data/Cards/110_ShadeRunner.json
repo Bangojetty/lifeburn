@@ -1,0 +1,23 @@
+{
+  "id": 110,
+  "name": "Shade Runner",
+  "cost": 0,
+  "type": "summon",
+  "attack": 3,
+  "defense": 1,
+  "tribe": "shadow",
+  "rarity": "common",
+  "description": "When Shade Runner enters play, discard any amount.",
+  "triggeredEffects": [
+  {
+    "trigger": "enteredZone",
+    "zone": "play",
+    "effects": [
+      {
+        "effect": "discard",
+        "amountBasedOn": "playerChoice"
+      }
+    ]
+  }
+  ] 
+}

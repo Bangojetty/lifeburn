@@ -1,0 +1,30 @@
+{
+  "id": 280,
+  "name": "Blooming Marsh",
+  "cost": 1,
+  "type": "summon",
+  "attack": 0,
+  "defense": 3,
+  "tribe": "treefolk",
+  "rarity": "common",
+  "description": "At the beginning of your end phase, if you didn't attack this turn, create 2 herbs",
+  "triggeredEffects": [
+    {
+      "trigger": "phase",
+      "phase": "end",
+      "phaseOfPlayer": "player",
+      "effects": [
+        {
+          "conditions": [
+            {
+              "condition": "didntAttacK"
+            }
+          ],
+          "effect": "createToken",
+          "tokenType": "herb",
+          "amount": 2
+        }
+      ]  
+    }
+  ] 
+}

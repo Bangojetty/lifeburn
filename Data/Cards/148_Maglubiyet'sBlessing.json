@@ -1,0 +1,22 @@
+{
+  "id": 148,
+  "name": "Maglubiyet's blessing",
+  "cost": 0,
+  "type": "spell",
+  "keywords": [
+    "scorch"
+  ],
+  "tribe": "goblin",
+  "rarity": "rare",
+  "description": "Tutor a goblin summon to your hand and reveal it.",
+  "stackEffects": [
+    {
+      "effect": "tutor",
+      "cardType": "summon",
+      "tribe": "goblin",
+      "zone": "deck",
+      "destination": "hand",
+      "reveal": true
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "id": 78,
+  "name": "Draw Counter",
+  "cost": 3,
+  "type": "spell",
+  "tribe": "merfolk",
+  "rarity": "common",
+  "description": "{c0}Draw a card. If you control a merfolk, you may {c0}counter target spell instead.",
+  "stackEffects": [
+	  {
+		"conditions": [
+		  {
+			"condition": "control",
+			"cardType": "summon",
+			"tribe": "merfolk",
+			"minAmount": 1
+		  }
+		],
+		"effect": "choose",
+		"choiceIndex": 0,
+		"choices": [
+		  [
+			{
+			  "effect": "draw",
+			  "amount": 1
+			}
+		  ],
+		  [
+			{
+			  "effect": "counter"
+			}
+		  ]
+		]
+	  },
+	  {
+		"conditions": [
+		  {
+			"condition": "control",
+			"cardType": "summon",
+			"tribe": "merfolk",
+			"maxAmount": 0
+		  }
+		],
+		"effect": "draw",
+		"amount": 1
+	  }
+  ]
+}

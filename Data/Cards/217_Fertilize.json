@@ -1,0 +1,38 @@
+{
+  "id": 217,
+  "name": "Fertilize",
+  "cost": 3,
+  "type": "spell",
+  "tribe": "treefolk",
+  "rarity": "common",
+  "description": "Tokens you control have Sprout 1. The next Treefolk you cast this turn has sprout 2. Discard Fertilize: Put a +1/+1 counter on target treefolk.",
+  "stackEffects": [
+    {
+      "effect": "grantKeyword",
+      "cardType": "summon",
+      "tribe": "treefolk",
+      "keyword": "sprout",
+      "thisTurn": true,
+      "futureProof": true 
+    },
+    {
+      "effect": "grantKeyword",
+      "targetBasedOn": "nextSummon",
+      "tribe": "treefolk",
+      "keyword": "sprout",
+      "keywordAmount": 2
+    }
+  ],
+  "activatedEffects": [
+    {
+      "costType": "discard",
+      "effects": [
+        {
+          "effect": "addCounter",
+          "attack": 1,
+          "defense": 1
+        }
+      ]
+    }
+  ]
+}

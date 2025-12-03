@@ -1,0 +1,48 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Trigger",
+  "type": "object",
+  "properties": {
+    "trigger": {
+      "type": "string",
+      "enum": ["death", "enteredZone", "leftZone","openingHand", "phase", "attackedSummon", "deathBySpell", "dealDamageToPlayer", "draw", "mill", 
+      "tribute", "attack", "discard", "survivedCombat", "cast"]
+    },
+    "self": {
+      "type": "boolean"
+    },
+    "phase": {
+			"$ref": "DefinitionSchema.json#/phase" 
+    },
+    "phaseOfPlayer": {
+      "type": "string",
+      "enum": ["player", "opponent"]  
+    },
+    "optional": {"type": "boolean"},
+    "zone": {
+      "$ref": "DefinitionSchema.json#/zone"
+    },
+	"optionMessage": {"type": "string"},
+    "tribe": {
+      "$ref": "DefinitionSchema.json#/tribe"
+    },
+	"additionalCosts": {
+		"type": "array",
+		"items": {
+			"$ref": "AdditionalCostSchema.json"
+		}
+	},
+    "effects": {
+      "type": "array",
+      "items": {
+        "$ref": "EffectSchema.json"
+      }
+    },
+	"restriction": {
+		"$ref": "DefinitionSchema.json#/restriction"
+	},
+	"isOpponent": {
+		"type": "boolean"
+	}
+  }
+}

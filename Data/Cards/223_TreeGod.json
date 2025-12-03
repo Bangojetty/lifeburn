@@ -1,0 +1,91 @@
+{
+  "id": 223,
+  "name": "Tree God",
+  "cost": 9,
+  "type": "summon",
+  "attack": 1,
+  "defense": 9,
+  "tribe": "treefolk",
+  "rarity": "rare",
+  "description": "Treefolk count as 3 tributes summon Tree God. When Tree God enters play, choose one: \n {c0}-Draw 1. \n {c0}-Exile all graveyards. \n {c0}-Create a 2/2 Treefolk token. \n At the beginning of your end phase, if an opponent controls more summons, create an herb. Whenever you create an herb, exile Tree God and return it to play.",
+  "alternateCosts": [
+    {
+      "costType": "tributeMultiplier",
+      "cardType": "summon",
+      "tribe": "treefolk",
+      "amount": 3
+    }
+  ],
+  "triggeredEffects": [
+    {
+      "trigger": "enteredZone",
+      "zone": "play",
+      "effects": [
+        {
+          "effect": "choose",
+		  "choiceIndex": 0,
+          "choices": [
+            [
+              {
+                "effect": "draw",
+                "amount": 1
+              }
+            ],
+            [
+              {
+                "effect": "sendToZone",
+                "zone": "graveyard",
+				"destination": "exile",
+                "all": true
+              } 
+            ],
+            [
+              {
+                "effect": "createToken",
+                "tokenType": "plant",
+                "attack": 2,
+                "defense": 2,
+                "amount": 1
+              }
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "trigger": "phase",
+      "phase": "end",
+      "phaseOfPlayer": "player",
+      "effects": [
+        {
+          "conditions": [
+            {
+              "condition": "opponentHasMore",
+              "cardType": "summon"
+            }
+          ],
+          "effect": "createToken",
+          "tokenType": "herb",
+          "amount": 1
+        }
+      ]
+    }
+  ],
+  "activatedEffects": [
+    {
+      "conditions": [
+        {
+          "condition": "enteredZoneThisTurn",
+          "zone": "play", 
+          "tokenType": "herb"
+        }
+      ],
+      "oncePerTurn": true, 
+      "effects": [ 
+        { 
+          "effect": "exileAndReturn"
+        } 
+      ]
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+# Rider
+.idea/
+*.sln.iml
+
+# .NET build
+bin/
+obj/
+TestResults/
+*.log
+*.user
+*.suo
+*.cache
+*.pdb
+
+# OS junk
+.DS_Store
+Thumbs.db

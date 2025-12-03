@@ -1,0 +1,19 @@
+{
+  "id": 236,
+  "name": "Dream Big",
+  "cost": 0,
+  "type": "spell",
+  "tribe": "merfolk",
+  "rarity": "common",
+  "description": "Draw 3 cards. You are spellburnt for the rest of the game.",
+  "stackEffects": [
+    {
+      "effect": "draw",
+      "amount": 3
+    },
+    {
+      "effect": "applySpellburn",
+      "duration": "restOfGame"
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "id": 229,
+  "name": "Master Tree",
+  "cost": 4,
+  "type": "summon",
+  "attack": 20,
+  "defense": 5,
+  "keywords": ["sprout"],
+  "keywordAmounts": [2],
+  "tribe": "treefolk",
+  "rarity": "common",
+  "description": "Master Tree can't attack. Treefolk count as 2 tributes to summon Master Tree.",
+  "alternateCosts": [
+    {
+      "altCostType": "tribueMultiplier",
+      "cardType": "summon",
+      "tribe": "treefolk",
+      "amount": 2
+    }
+  ],
+  "passiveEffects": [
+    {
+      "effect": "cantAttack"
+    }
+  ]
+}

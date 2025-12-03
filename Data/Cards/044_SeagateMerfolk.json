@@ -1,0 +1,37 @@
+{
+  "id": 44,
+  "name": "Seagate Merfolk",
+  "cost": 0,
+  "type": "summon",
+  "attack": 1,
+  "defense": 1,
+  "tribe": "merfolk",
+  "rarity": "common",
+  "description": "When Seagate Merfolk enters play, look at the top card of your library. If it's a merfolk summon, reveal it, put it into your hand, and repeat this process.",
+  "triggeredEffects": [
+  {
+    "trigger": "enteredZone",
+    "zone": "play",
+    "effects": [
+      {
+        "effect": "lookAtDeck",
+        "amount": 1
+      },
+      {
+        "conditions": [
+          {
+            "condition": "topCardIsMerfolk"
+          }
+        ],
+        "effect": "draw",
+        "amount": 1,
+        "additionalEffects": [
+          {
+            "effect": "repeatAllEffects"
+          }
+        ]
+      }
+    ] 
+  }
+  ] 
+}

@@ -1,0 +1,25 @@
+{
+  "id": 64,
+  "name": "Merfolk Shifter",
+  "cost": 1,
+  "type": "summon",
+  "attack": 3,
+  "defense": 2,
+  "keywords": ["dive"],
+  "tribe": "merfolk",
+  "rarity": "common",
+  "description": "When Merfolk Shifter enters play, return target summon to its owner's hand.",
+  "triggeredEffects": [
+	  {
+		"trigger": "enteredZone",
+		"zone": "play",
+		"effects": [
+		  {
+			"effect": "sendToZone",
+			"targetType": "summon",
+			"destination": "hand"
+		  }
+		]  
+	  }
+    ] 
+}

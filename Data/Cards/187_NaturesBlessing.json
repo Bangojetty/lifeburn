@@ -1,0 +1,22 @@
+{
+  "id": 187,
+  "name": "Nature's Blessing",
+  "cost": 0,
+  "type": "spell",
+  "keywords": [
+    "scorch"
+  ],
+  "tribe": "treefolk",
+  "rarity": "rare",
+  "description": " Tutor a Treefolk from your deck, reveal it, and put it into your hand.",
+  "stackEffects": [
+    {
+      "effect": "tutor",
+      "cardType": "summon",
+      "tribe": "treefolk",
+      "zone": "deck",
+      "destination": "hand",
+      "reveal": true
+    }
+  ]
+}

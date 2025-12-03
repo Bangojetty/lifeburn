@@ -1,0 +1,38 @@
+{
+  "id": 109,
+  "name": "Ghost Receiver",
+  "cost": 0,
+  "type": "summon",
+  "attack": 1,
+  "defense": 2,
+  "tribe": "shadow",
+  "rarity": "common",
+  "description": "When Ghost Receiver attacks, you may put a ghost from your graveyard on top of your deck. Mill up to 3 cards.",
+  "triggeredEffects": [
+  {
+    "trigger": "attack",
+    "self": true, 
+    "effects": [
+      {
+        "effect": "sendToZone",
+        "optional": true,
+		"optionMessage": "Put a ghost from you graveyard on top of your deck?",
+        "targetZone": "graveyard",
+        "cardType": "summon",
+        "tribe": "shadow",
+        "destination": "deck",
+        "deckDestinations": [
+			{
+				"deckDestination": "top"
+			}
+		]
+      },
+      {
+        "effect": "mill",
+        "amountBasedOn": "playerChoice",
+        "upTo": 3
+      }
+    ]
+  }
+  ]
+}

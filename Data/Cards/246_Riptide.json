@@ -1,0 +1,17 @@
+{
+  "id": 246,
+  "name": "Riptide",
+  "cost": 2,
+  "type": "spell",
+  "keywords": ["exhaust"],
+  "tribe": "merfolk",
+  "rarity": "common",
+  "description": "Destroy all tokens.",
+  "stackEffects": [
+  {
+    "effect": "destroy",
+    "cardType": "token",
+    "all": true
+  }
+  ]
+}

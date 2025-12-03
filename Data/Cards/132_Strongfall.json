@@ -1,0 +1,20 @@
+{
+  "id": 132,
+  "name": "Strongfall",
+  "cost": 4,
+  "type": "spell",
+  "tribe": "shadow",
+  "rarity": "common",
+  "description": "Target opponent sacrifices their strongest summon. Mill 1.",
+  "stackEffects": [
+  {
+    "effect": "sacrifice",
+    "isOpponent": true,
+    "targetBasedOn": "strongest" 
+  },
+  {
+    "effect": "mill",
+    "amount": 1
+  }
+  ]
+}

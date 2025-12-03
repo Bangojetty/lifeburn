@@ -1,0 +1,39 @@
+{
+  "id": 271,
+  "name": "Goblin Tactician",
+  "cost": 0,
+  "type": "summon",
+  "attack": 1,
+  "defense": 1,
+  "tribe": "goblin",
+  "rarity": "common",
+  "description": "When Goblin Tactician enters play, you may put a +1/+1 counter on target goblin. \n Sacrifice Goblin Tactician: deal its power to any target.",
+  "triggeredEffects": [
+    {
+      "trigger": "enteredZone",
+      "zone": "play",
+	  "optional": true,
+      "effects": [
+        {
+          "effect": "addCounter",
+          "counterType": "oneOne"
+        }
+      ],
+      "counterType": "oneOne",
+      "targetType": "summon",
+      "tribe": "goblin"  
+    }
+  ],
+  "activatedEffects": [
+    {
+      "costType": "sacrifice",
+      "effects": [
+        {
+          "effect": "dealDamage",
+          "targetType": "any", 
+          "amountBasedOn": "attack"
+        }
+      ]
+    }
+  ] 
+}

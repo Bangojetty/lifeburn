@@ -1,0 +1,28 @@
+{
+  "id": 43,
+  "name": "Merfolk Balancer",
+  "cost": 0,
+  "type": "summon",
+  "attack": 2,
+  "defense": 1,
+  "tribe": "merfolk",
+  "rarity": "common",
+  "description": "When Merfolk Balancer enters play, draw cards equal to the number of excess summons target opponent has over you and lose that many LPs.",
+  "triggeredEffects": [
+  {
+    "trigger": "enteredZone",
+    "zone": "play",
+	"description": "Draw cards equal to the number of excess non-token summons target opponent has over you and lose that many LPs.",
+    "effects": [
+      {
+        "effect": "draw",
+        "amountBasedOn": "opponentExcessSummons"
+      },
+	  {
+		"effect": "loseLife",
+		"amountBasedOn": "opponentExcessSummons"
+      }
+    ]
+  }
+  ]
+}

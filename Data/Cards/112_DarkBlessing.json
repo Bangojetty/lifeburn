@@ -1,0 +1,20 @@
+{
+  "id": 112,
+  "name": "Dark Blessing",
+  "cost": 0,
+  "type": "spell",
+  "keywords": ["scorch"],
+  "tribe": "shadow",
+  "rarity": "rare",
+  "description": "Tutor a ghost to hand and reveal it.",
+  "stackEffects": [
+    {
+      "effect": "tutor",
+      "cardType": "summon",
+      "tribe": "shadow",
+      "zone": "deck",
+      "destination": "hand",
+      "reveal": true
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+ {
+  "id": 77,
+  "name": "Back Snap",
+  "cost": 3,
+  "type": "spell",
+  "tribe": "merfolk",
+  "rarity": "common",
+  "description": "You may exile a card from hand to cast this card without paying its cost. Return target non-token summon an opponent controls to its owner's hand.",
+  "alternateCosts": [
+  {
+    "altCostType": "exileFromHand",
+    "amount": 1
+  }
+  ],
+  "stackEffects": [
+  {
+    "effect": "sendToZone",
+    "targetType": "summon",
+    "isOpponent": true,
+    "restrictions": [
+	"nonToken"
+	],
+    "destination": "hand"
+  }
+  ]
+}

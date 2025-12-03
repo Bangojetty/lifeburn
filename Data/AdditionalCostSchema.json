@@ -1,0 +1,14 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "AdditionalCost",
+  "type": "object",
+  "properties": {
+    "costType": {
+      "type": "string",
+      "enum": ["sacrifice", "reveal"]
+    },
+    "tokenType": {
+      "$ref": "DefinitionSchema.json#/tokenType"
+    },
+    "amount": {"type": "integer" },
+}

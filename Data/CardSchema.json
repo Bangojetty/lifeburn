@@ -1,0 +1,90 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"title": "Card",
+	"type": "object",
+	"properties": {
+		"id": {
+			"type": "integer"
+		},
+		"name": {
+			"type": "string"
+		},
+		"cost": {
+			"type": "integer"
+		},
+		"type": {
+			"$ref": "DefinitionSchema.json#/cardType"
+		},
+		"attack": {
+			"type": "integer"
+		},
+		"defense": {
+			"type": "integer"
+		},
+		"keywords": {
+			"type": "array",
+			"items": {
+				"$ref": "DefinitionSchema.json#/keyword"
+			}
+		},
+		"tribe": {
+			"$ref": "DefinitionSchema.json#/tribe"
+		},
+		"rarity": {
+			"type": "string",
+			"enum": [ "common", "uncommon", "rare" ]
+		},
+		"description": {
+			"type": "string"
+		},
+		"stackEffects": {
+			"type": "array",
+			"items": {
+				"$ref": "EffectSchema.json"
+			}
+		},
+		"triggeredEffects": {
+			"type": "array",
+			"items": {
+				"$ref": "TriggerSchema.json"
+			}
+		},
+		"passiveEffects": {
+			"type": "array",
+			"items": {
+				"$ref": "PassiveSchema.json"
+			}
+		},
+		"activatedEffects": {
+			"type": "array",
+			"items": {
+				"$ref": "ActiveSchema.json"
+			}
+		},
+		"costModifiers": {
+			"type": "array",
+			"items": {
+				"$ref": "CostModifierSchema.json"
+			}
+		},
+		"additionalCosts": {
+			"type": "array",
+			"items": {
+				"$ref": "AdditionalCostSchema.json"
+			}
+		},
+		"alternateCosts": {
+			"type": "array",
+			"items": {
+				"$ref": "AlternateCostSchema.json"
+			}
+		},
+		"castRestrictions": {
+			"type": "array",
+			"items": {
+				"type": "string",
+				"enum": ["onOpponentAttack", "inResponse", "opponentsTurn", "controlGoblin"]
+			}
+		}
+	}
+}

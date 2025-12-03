@@ -1,0 +1,23 @@
+{
+  "id": 11,
+  "name": "Transparent Golem",
+  "cost": 0,
+  "type": "summon",
+  "attack": 1,
+  "defense": 1,
+  "tribe": "golem",
+  "rarity": "common",
+  "description": "If you control at least 2 stones, Transparent Golem doesn't count as your summon for turn.",
+  "passiveEffects": [
+    {
+	  "conditions": [
+		{
+		  "condition": "control",
+		  "tokenType": "stone",
+		  "minAmount": 2
+		}
+	  ],
+	  "passive": "bypassSummonLimit"
+    }
+  ]
+}

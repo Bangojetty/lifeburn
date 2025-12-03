@@ -1,0 +1,26 @@
+{
+  "id": 67,
+  "name": "Merfolk Scoper",
+  "cost": 1,
+  "type": "summon",
+  "attack": 2,
+  "defense": 1,
+  "keywords": ["dive"],
+  "tribe": "merfolk",
+  "rarity": "common",
+  "description": "When Merfolk Scoper enters play, target opponent reveals their hand. You choose a non-summon card from their hand to exile until Merfolk Scoper leaves play.",
+  "triggeredEffects": [
+  {
+    "trigger": "enteredZone",
+    "zone": "play",
+    "effects": [
+      {
+        "effect": "detain",
+        "restrictions": [
+		"nonSummon"
+		]
+      }
+    ]
+  }
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "id": 163,
+  "name": "Goblin Master",
+  "cost": 1,
+  "type": "summon",
+  "attack": 1,
+  "defense": 1,
+  "tribe": "goblin",
+  "rarity": "common",
+  "description": "When Goblin Master enters play, draw 1. Goblin Master gets +1/+1 for each other goblin in play.",
+  "triggeredEffects": [
+    {
+      "trigger": "enteredZone",
+      "zone": "play",
+      "effects": [  
+        {
+          "effect": "draw",
+          "amount": 1
+        }
+      ] 
+    }
+  ],
+  "passiveEffects": [
+    {  
+      "passive": "changeStats",
+	  "statModifiers": [
+		  {
+			  "statType": "attack",
+			  "operatorType": "add",
+			  "amountBasedOn": "goblinsInPlay",
+			  "other": true
+		  },
+		  {
+			  "statType": "defense",
+			  "operatorType": "add",
+			  "amountBasedOn": "goblinsInPlay",
+			  "other": true
+		  }
+	  ],
+	  "self": true
+    }
+  ]
+}

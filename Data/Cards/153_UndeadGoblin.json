@@ -1,0 +1,26 @@
+{
+  "id": 153,
+  "name": "Undead Gob",
+  "cost": 0,
+  "type": "summon",
+  "attack": 1,
+  "defense": 2,
+  "keywords": ["blitz", "haunt"],
+  "tribe": "goblin",
+  "rarity": "common",
+  "description": "Undead Gob is immune to Dive, Trample, and Haunt.",
+  "passiveEffects": [
+    {
+      "passive": "immuneToKeyword",
+      "keyword": "dive"
+    },
+    {
+      "passive": "immuneToKeyword",
+      "keyword": "trample"
+    },
+    {
+      "passive": "immuneToKeyword",
+      "keyword": "haunt"
+    }
+  ]
+}

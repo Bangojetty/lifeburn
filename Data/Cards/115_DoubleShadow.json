@@ -1,0 +1,26 @@
+{
+  "id": 115,
+  "name": "Double Shadow",
+  "cost": 1,
+  "type": "summon",
+  "attack": 2,
+  "defense": 2,
+  "tribe": "shadow",
+  "rarity": "common",
+  "description": "When Double Shadow enters play, create a 3/3 ghost token.",
+  "triggeredEffects": [
+  {
+    "trigger": "enteredZone",
+    "zone": "play",
+    "effects": [
+      {
+        "effect": "createToken",
+        "tokenType": "ghost",
+        "attack": 3,
+        "defense": 3,
+        "amount": 1  
+      }
+    ]
+  }
+  ] 
+}

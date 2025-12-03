@@ -1,0 +1,20 @@
+{
+  "id": 70,
+  "name": "Dream",
+  "cost": 2,
+  "type": "spell",
+  "tribe": "merfolk",
+  "rarity": "common",
+  "description": "Draw 2 cards, then discard a card at random.",
+  "stackEffects": [
+  {
+    "effect": "draw",
+    "amount": 2
+  },
+  {
+    "effect": "discard",
+    "amount": 1, 
+    "random": true
+  }
+  ]
+}

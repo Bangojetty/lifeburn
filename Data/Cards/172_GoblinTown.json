@@ -1,0 +1,28 @@
+{
+  "id": 172,
+  "name": "Goblin Town",
+  "cost": 2,
+  "type": "summon",
+  "attack": 1,
+  "defense": 1,
+  "tribe": "goblin",
+  "rarity": "common",
+  "description": "At the beginning of your draw step, create 1/1 goblin tokens equal to half the amount of goblins you control rounded down.",
+  "triggeredEffects": [
+    {  
+      "trigger": "phase",
+      "phase": "draw",
+	  "isPlayerTurn": true,
+      "effects": [  
+        {
+          "effect": "createToken",
+          "tokenType": "goblin",
+          "attack": 1,
+          "defense": 1,
+          "amountBasedOn": "goblinsControlled",
+          "amountModifier": "/2down"
+        }
+      ]
+    }
+  ]
+}

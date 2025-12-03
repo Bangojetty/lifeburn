@@ -1,0 +1,24 @@
+{
+  "id": 224,
+  "name": "Green-Sun",
+  "cost": 9,
+  "type": "spell",
+  "tribe": "treefolk",
+  "rarity": "uncommon",
+  "description": "As an additional cost to cast Green-Sun, sacrifice a treefolk summon. Tutor a treefolk into play.",
+  "additionalCosts": [
+    {
+      "costType": "sacrifice",
+      "cardType": "summon",
+      "tribe": "treefolk"
+    }
+  ],
+  "stackEffects": [
+    {
+      "effect": "tutor",
+      "cardType": "summon",
+      "tribe": "treefolk",
+      "destination": "play"
+    }
+  ]
+}

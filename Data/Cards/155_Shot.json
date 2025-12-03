@@ -1,0 +1,33 @@
+{
+  "id": 155,
+  "name": "Shot",
+  "cost": 0,
+  "type": "spell",
+  "tribe": "goblin",
+  "rarity": "common",
+  "description": "Deal 1 damage to any target. If you control a Goblin, deal 2 damage instead.",
+  "stackEffects": [
+    {
+      "conditions": [
+        {
+          "condition": "control",
+          "conditionMax": 0
+        }
+      ],
+      "effect": "dealDamage",
+      "targetType": "any",
+      "amount": 1  
+    },
+    {
+      "conditions": [
+        {
+          "condiiton": "control",
+          "conditionMin": 1
+        }
+      ],
+      "effect": "dealDamage",
+      "targetType": "any", 
+      "amount": 2 
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "id": 203,
+  "name": "Glowing Spore",
+  "cost": 0,
+  "type": "spell",
+  "tribe": "treefolk",
+  "rarity": "common",
+  "description": "Destroy target non-Treefolk permanent. It's controller gains 4 LPs.",
+  "stackEffects": [
+    {
+      "effect": "destroy",
+      "targetType": "permanent",
+      "restrictions": [
+	  "nonTreefolk"
+	  ],
+      "additionalEffects": [
+        {
+          "effect": "gainLife",
+          "targetBasedOn": "rootController",
+          "amount": 4
+        }
+      ]
+    }
+  ]
+}

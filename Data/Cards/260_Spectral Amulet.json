@@ -1,0 +1,22 @@
+{
+  "id": 260,
+  "name": "Spectral Amulet",
+  "cost": 3,
+  "type": "object",
+  "tribe": "shadow",
+  "rarity": "common",
+  "description": "Whenever a summon enters play, mill 1.",
+  "triggerdEffects": [
+	  {
+		  "trigger": "enteredZone",
+		  "cardType": "summon",
+		  "zone": "play",
+		  "effects": [
+			  {
+				  "effect": "mill",
+				  "amount": 1
+			  }
+		  ]
+	  }
+  ]
+}

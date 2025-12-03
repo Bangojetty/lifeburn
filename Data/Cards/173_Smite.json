@@ -1,0 +1,37 @@
+{
+  "id": 173,
+  "name": "Smite",
+  "cost": 3,
+  "type": "spell",
+  "tribe": "goblin",
+  "rarity": "common",
+  "description": "Deal 3 damage to any target. If you control a Goblin in play, deal 4 instead.",
+  "stackEffects": [
+    {
+      "conditions": [
+        {
+          "condition": "control",
+          "cardType": "summon",
+          "tribe": "goblin",
+          "maxAmount": 0 
+        }
+      ],
+      "effect": "dealDamage",
+      "targetType": "any",
+      "amount": 3  
+    },
+    {
+      "conditions": [
+        {  
+          "condition": "control",
+          "cardType": "summon",
+          "tribe": "goblin",
+          "minAmount": 1 
+        }
+      ],
+      "effect": "dealDamage",
+      "targetType": "any",
+      "amount": 4  
+    }
+  ]
+}

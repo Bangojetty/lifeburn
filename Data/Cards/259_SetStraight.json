@@ -1,0 +1,14 @@
+{
+  "id": 259,
+  "name": "Set Straight",
+  "cost": 0,
+  "type": "spell",
+  "tribe": "shadow",
+  "rarity": "common",
+  "description": "Target opponent reveals their hand. You may have them discard any number of non-summons. Lose half your LPs for each card discarded. This LP loss is consecutive.",
+  "stackEffects": [
+    {
+      "effect": "cardSetStraight"
+    }
+  ] 
+}

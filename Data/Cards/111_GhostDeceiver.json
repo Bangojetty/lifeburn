@@ -1,0 +1,25 @@
+{
+  "id": 111,
+  "name": "Ghost Deceiver",
+  "cost": 0,
+  "type": "summon",
+  "attack": 0,
+  "defense": 1,
+  "tribe": "shadow",
+  "rarity": "common",
+  "description": "Whenever a ghost enters a graveyard, you may change the source of where it came from.",
+  "triggeredEffects": [
+  {
+    "trigger": "enteredZone",
+	"zone": "graveyard",
+    "cardType": "summon",
+    "tribe": "shadow",
+    "effects": [
+      {
+        "effect": "changeSource",
+        "targetBasedOn": "rootAffected" 
+      }
+    ]  
+  }
+  ]
+}

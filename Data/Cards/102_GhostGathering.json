@@ -1,0 +1,26 @@
+{
+  "id": 102,
+  "name": "Ghost Gathering",
+  "cost": 1,
+  "type": "spell",
+  "tribe": "shadow",
+  "rarity": "common",
+  "description": "Lose half your LPs rounded down. Mill 5. You may summon any amount of ghosts from your hand or graveyard without paying their costs. Any summons put into the graveyard this turn are exiled instead.",
+  "stackEffects": [
+    {
+      "effect": "loseLife",
+      "amountBasedOn": "lifeTotal",
+      "amountModifier": "/2down"
+    },
+    {
+      "effect": "mill",
+      "amount": 5
+    },
+    {
+      "effect": "castCard",
+      "tribe": "shadow",
+      "targetZones": ["hand", "graveyard"],
+      "amountBasedOn": "playerChoice"
+    }
+  ]
+}

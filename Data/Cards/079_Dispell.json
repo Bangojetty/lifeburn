@@ -1,0 +1,25 @@
+{
+  "id": 79,
+  "name": "Dispell",
+  "cost": 3,
+  "type": "spell",
+  "tribe": "merfolk",
+  "rarity": "common",
+  "description": "Counter target non-summon spell. Its owner gains LPs equal to its cost - 2.",
+  "stackEffects": [
+  {
+    "effect": "counter",
+    "restrictions": [
+	"nonSummon"
+	],
+    "additionalEffects": [
+      {
+        "effect": "gainLife",
+        "playerBasedOn": "ownerOfTarget",
+        "amountBasedOn": "targetCost",
+        "amountModifier": "-2"
+      }
+    ]
+  }
+  ]
+}

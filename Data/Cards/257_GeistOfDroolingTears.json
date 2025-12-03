@@ -1,0 +1,37 @@
+{
+  "id": 257,
+  "name": "Geist Of Drooling Tears",
+  "cost": 1,
+  "type": "summon",
+  "attack": 1,
+  "defense": 1,
+  "keywords": ["haunt"],
+  "keywordAmounts": [2],
+  "tribe": "shadow",
+  "rarity": "common",
+  "description": "Whenever you discard or mill Geist Of Drooling Tears, target player takes 2 damage.",
+  "triggeredEffects": [
+    {
+      "trigger": "discard",
+      "self": true,
+      "effects": [
+        {
+          "effect": "dealDamage",
+          "targetType": "player",
+          "amount": 2
+        }
+      ]
+    },
+    {
+      "trigger": "mill",
+      "self": true,
+      "effects": [
+        {
+          "effect": "dealDamage",
+          "targetType": "player",
+          "amount": 2
+        }
+      ]
+    }
+  ]
+}

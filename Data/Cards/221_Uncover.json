@@ -1,0 +1,21 @@
+{
+  "id": 221,
+  "name": "Uncover",
+  "cost": 5,
+  "type": "spell",
+  "tribe": "treefolk",
+  "rarity": "common",
+  "description": "Tribute a treefolk with tribute cost 0 into play.",
+  "stackEffects": [
+    {
+      "effect": "tutor",
+      "destination": "play", 
+      "cardType": "summon",
+      "tribe": "treefolk", 
+      "restrictions": [
+	  "cost"
+	  ],
+      "restrictionMax": 0
+    }
+  ]
+}

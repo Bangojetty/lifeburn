@@ -1,0 +1,40 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"title": "Condition",
+	"type": "object",
+	"properties": {
+		"condition": {
+			"type": "string",
+			"enum": [ "control", "topCardIsMerfolk", "firstSpell", "inZone", "targetType", "spellburnt", "isTribe", "isNotTribe", "OneOneInPlay", "didntAttack", 
+			"handSize", "targetAttack", "triggerWasSpellburnt", "triggerNotSpellburnt", "youHaveMoreLife", "firstSummon", "opponentHasMore", "targetIs", 
+			"EnteredZoneThisTurn", "attacked" ]
+		},
+		"self": { "type": "boolean" },
+		"minAmount": {
+			"type": "integer"
+		},
+		"maxAmount": {
+			"type": "integer"
+		},
+		"isOpponent": {"type": "boolean"},
+		"zones": {
+			"type": "array",
+			"items": {
+				"$ref": "DefinitionSchema.json#/zone"
+			}
+		},
+		"amounts": {
+			"type": "array",
+			"items": {
+				"type": "integer"
+			}
+		},
+		"tribe": {
+			"$ref": "DefinitionSchema.json#/tribe"
+		},
+		"tokenType": {
+			"type": "string",
+			"enum": [ "stone", "herb", "golem", "merfolk", "goblin", "plant", "ghost" ]
+		}
+	}
+}

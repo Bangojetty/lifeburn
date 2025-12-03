@@ -1,0 +1,24 @@
+{
+  "id": 237,
+  "name": "Avalanche Golem",
+  "cost": 0,
+  "type": "summon",
+  "attack": 0,
+  "defense": 2,
+  "tribe": "golem",
+  "rarity": "common",
+  "description": "Sacrifice any number of stones. Deal that much damage to all other summons.",
+  "activatedEffects": [
+  {
+    "costType": "stones",
+    "effects": [
+      {
+        "effect": "dealDamage",
+        "cardType": "summon",
+        "amount": 1,
+		"other": true
+      }
+    ]
+  }
+  ]
+}

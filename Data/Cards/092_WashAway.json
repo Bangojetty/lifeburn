@@ -1,0 +1,17 @@
+{
+  "id": 92,
+  "name": "Wash Away",
+  "cost": 8,
+  "type": "spell",
+  "tribe": "merfolk",
+  "rarity": "common",
+  "description": "Return all summons to their owners hand.",
+  "stackEffects": [
+  {
+    "effect": "sendToZone",
+    "cardType": "summon",
+    "zone": "play",
+    "destination": "hand"   
+  }
+  ]
+}

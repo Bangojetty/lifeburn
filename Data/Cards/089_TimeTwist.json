@@ -1,0 +1,35 @@
+{
+  "id": 89,
+  "name": "Time Twist",
+  "cost": 5,
+  "type": "spell",
+  "tribe": "merfolk",
+  "rarity": "rare",
+  "description": "Each player shuffles their hand into their deck and draws 5 cards. If this spell is spellburnt, you gain an additional summon this turn.",
+  "stackEffects": [
+    {
+      "effect": "sendToZone",
+      "targetZone": "hand",
+      "destination": "deck", 
+      "all": true
+    },
+    {
+      "effect": "shuffleDeck" 
+    },
+    {
+      "effect": "draw",
+      "amount": 5,
+      "all": true
+    },
+    {
+      "conditions": [
+        {
+          "condition": "spellburnt"
+        }
+      ],
+      "effect": "modifySummonLimit",
+      "amount": 1,
+      "thisTurn": true
+    }
+  ]
+}

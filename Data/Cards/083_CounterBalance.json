@@ -1,0 +1,38 @@
+{
+  "id": 83,
+  "name": "Counter Balance",
+  "cost": 3,
+  "type": "spell",
+  "tribe": "merfolk",
+  "rarity": "common",
+  "description": "Counter target spell. If that spell was a non-summon, its controller gains LPs equal to its cost or draws a card.",
+  "stackEffects": [
+  {
+    "effect": "counter",
+    "additionalEffects": [
+      {
+        "condition": "targetNotSummon",
+        "effects": [
+          {
+            "effect": "choose",
+            "playerBasedOn": "ownerOfTarget",
+		    "choiceIndex": 0,
+            "choices": [
+              {
+                "effect": "gainLife",
+                "playerBasedOn": "ownerOfTarget", 
+                "amountBasedOn": "targetCost"
+              },
+              {
+                "effect": "draw",
+                "playerBasedOn": "ownerOfTarget",
+                "amount": 1  
+              }
+            ] 
+          }
+        ] 
+      }
+    ] 
+  }
+  ] 
+}

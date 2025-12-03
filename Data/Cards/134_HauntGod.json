@@ -1,0 +1,40 @@
+{
+  "id": 134,
+  "name": "Haunt God",
+  "cost": 6,
+  "type": "summon",
+  "attack": 8,
+  "defense": 8,
+  "keywords": ["haunt"],
+  "keywordAmounts": [2],
+  "tribe": "shadow",
+  "rarity": "common",
+  "description": "You may tribute 3 ghosts to cast Haunt God from your graveyard. When Haunt God enters play, create a 1/1 ghost token.",
+  "alternateCosts": [
+  {
+    "conditions": [
+      {
+        "condition": "inZone",
+        "zone": "graveyard"
+      }
+    ],
+    "altCostType": "tribute",
+    "tribe": "shadow",
+    "amount": 3
+  }
+  ],
+  "triggeredEffects": [
+  {
+    "trigger": "enteredZone",
+    "zone": "play",
+    "effects": [
+      {
+        "effect": "createToken",
+        "tokenType": "ghost",
+        "attack": 1,
+        "defense": 1 
+      }
+    ]
+  }
+  ]
+}

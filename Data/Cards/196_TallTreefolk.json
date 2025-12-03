@@ -1,0 +1,24 @@
+{
+  "id": 196,
+  "name": "Tall Treefolk",
+  "cost": 0,
+  "type": "summon",
+  "attack": 0,
+  "defense": 3,
+  "keywords": ["sprout"],
+  "tribe": "treefolk",
+  "rarity": "common",
+  "description": "When Tall Treefolk enters play, if you have an Herb token in play, Sprout 3 instead.",
+  "passiveEffects": [
+    {
+      "condition": [
+        {
+          "condition": "control",
+          "tokenType": "herb"
+        }
+      ],
+      "passive": "modifyKeywordAmount",
+      "amount": 2
+    }
+  ]
+}

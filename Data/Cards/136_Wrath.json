@@ -1,0 +1,16 @@
+{
+  "id": 136,
+  "name": "Wrath",
+  "cost": 11,
+  "type": "spell",
+  "tribe": "shadow",
+  "rarity": "common",
+  "description": "Destroy all summons.",
+  "stackEffects": [
+  {
+    "effect": "destroy",
+    "cardType": "summon",
+    "all": true
+  }
+  ]
+}

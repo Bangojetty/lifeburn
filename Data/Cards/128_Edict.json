@@ -1,0 +1,23 @@
+{
+  "id": 128,
+  "name": "Edict",
+  "cost": 2,
+  "type": "spell",
+  "tribe": "shadow",
+  "rarity": "common",
+  "description": "Each player sacrifices a summon. Draw a card.",
+  "stackEffects": [
+  {
+    "effect": "sacrifice",
+    "amount": 1
+  },
+  {
+    "effect": "sacrifice",
+    "isOpponent": true
+  },
+  {
+    "effect": "draw",
+    "amount": 1 
+  }
+  ]
+}

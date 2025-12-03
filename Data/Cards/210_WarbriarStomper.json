@@ -1,0 +1,37 @@
+{
+  "id": 210,
+  "name": "Warbriar Stomper",
+  "cost": 1,
+  "type": "summon",
+  "attack": 1,
+  "defense": 1,
+  "tribe": "treefolk",
+  "rarity": "common",
+  "description": "You may sacrifice 2 herbs to tribute summon Warbriar Stomper. Warbriar Stomper gets +2/+2 for each treefolk you control.",
+  "alternateCosts": [
+    {
+      "altCostType": "sacrifice",
+      "tokenType": "herb",
+      "amount": 2
+    }
+  ],
+  "passiveEffects": [
+    {
+      "passive": "changeStats",
+	  "statModifiers": [
+		  {
+			"statType": "attack",
+			"operatorType": "add",
+			"amountBasedOn": "treefolkControlled",
+			"amountMultiplier": 2
+		  },
+		  {
+			"statType": "defense",
+			"operatorType": "add",
+			"amountBasedOn": "treefolkControlled",
+			"amountMultiplier": 2
+		  }
+	    ]
+    }
+  ] 
+}

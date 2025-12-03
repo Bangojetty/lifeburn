@@ -1,0 +1,34 @@
+{
+  "id": 218,
+  "name": "Plant of Trees",
+  "cost": 3,
+  "type": "summon",
+  "attack": 2,
+  "defense": 4,
+  "tribe": "treefolk",
+  "rarity": "common",
+  "description": " When Plant of Trees enters play, Create three 1/1 plant tokens, then create two 0/1 plant tokens with Sprout 1.",
+  "triggeredEffects": [
+    {
+      "trigger": "enteredZone",
+      "zone": "play",
+      "effects": [
+        {
+          "effect": "createToken",
+          "tokenType": "plant",
+          "attack": 1,
+          "defense": 1,
+          "amount": 3
+        },
+        {
+          "effect": "createToken",
+          "tokenType": "plant",
+          "attack": 0,
+          "defense": 1,
+          "keyword": "sprout",
+          "amount": 2 
+        }
+      ]
+    }
+  ] 
+}

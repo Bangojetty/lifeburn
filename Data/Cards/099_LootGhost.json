@@ -1,0 +1,26 @@
+{
+  "id": 99,
+  "name": "Loot Ghost",
+  "cost": 0,
+  "type": "summon",
+  "attack": 1,
+  "defense": 1,
+  "tribe": "shadow",
+  "rarity": "common",
+  "description": "You may reveal Loot Ghost from your opening hand to draw 1, then discard 2.",
+  "triggeredEffects": [
+  {
+    "trigger": "openingHand",
+    "effects": [
+      {
+        "effect": "draw",
+        "amount": 1
+      },
+      {
+        "effect": "discard",
+        "amount": 2
+      }
+    ]
+  }
+  ]
+}

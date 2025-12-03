@@ -1,0 +1,33 @@
+{
+  "id": 8,
+  "name": "Golem Founder",
+  "cost": 0,
+  "type": "summon",
+  "attack": 1,
+  "defense": 1,
+  "tribe": "golem",
+  "rarity": "common",
+  "description": "When Golem Founder enters play, reveal all golems from hand and create that many stones plus one.",
+  "triggeredEffects": [
+    {
+      "trigger": "enteredZone",
+      "zone": "play",
+      "effects": [
+		{
+		  "effect": "reveal",
+		  "cardType": "summon",
+		  "description": "reveal all golems from hand and create that many stones plus one",
+		  "tribe": "golem",
+		  "additionalEffects": [
+			{
+			  "effect": "createToken",
+			  "tokenType": "stone",
+			  "amountBasedOn": "rootAffected",
+			  "amountModifier": "+1"
+			}
+		  ]
+		}
+      ]
+    }
+  ]
+}

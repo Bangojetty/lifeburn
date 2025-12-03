@@ -1,0 +1,27 @@
+{
+  "id": 10,
+  "name": "Iron Golems",
+  "cost": 0,
+  "type": "summon",
+  "attack": 1,
+  "defense": 1,
+  "tribe": "golem",
+  "rarity": "common",
+  "description": "When Iron Golems enters play, create a 1/1 golem for each stone you control.",
+  "triggeredEffects": [
+    {
+      "trigger": "enteredZone",
+      "zone": "play",
+	  "description": "Create a 1/1 golem for each stone you control.",
+      "effects": [
+        {
+          "effect": "createToken",
+          "tokenType": "golem",
+          "attack": 1,
+          "defense": 1,
+          "amountBasedOn": "stonesControlled"
+		}
+    ]
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "id": 66,
+  "name": "Eadro, Merfolk God",
+  "cost": 1,
+  "type": "summon",
+  "attack": 3,
+  "defense": 2,
+  "keywords": ["dive"],
+  "tribe": "merfolk",
+  "rarity": "rare",
+  "description": "Discard or sacrifice a merfolk: Target merfolk cant take or deal damage this turn. When Eadro, Merfolk God dies, create 1/1 merfolk tokens equal to the number of merfolk summons in your graveyard.",
+  "activatedEffects": [
+  {
+    "costType": "discardOrSacrificeMerfolk",
+    "effects": [
+      {
+        "effect": "grantPassive",
+        "targetType": "summon",
+        "tribe": "merfolk",
+        "thisTurn": true,
+        "passives": [
+          {
+            "passive": "cantTakeDamage"
+          },
+          {
+            "passive": "cantDealDamage"
+          }
+        ]
+      }
+    ]
+  }
+  ],
+  "triggeredEffects": [
+  {
+    "trigger": "death",
+    "effects": [
+      {
+        "effect": "createToken",
+        "tokenType": "merfolk",
+        "attack": 1,
+        "defense": 1,
+        "amountBasedOn": "merfolkInGraveyard"
+      }
+    ]
+  }
+  ]
+}

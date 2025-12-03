@@ -1,0 +1,47 @@
+{
+  "id": 123,
+  "name": "Ghostly Looter",
+  "cost": 2,
+  "type": "summon",
+  "attack": 2,
+  "defense": 2,
+  "tribe": "shadow",
+  "rarity": "common",
+  "description": "You may summon Ghostly Looter from your graveyard. When Ghostly Looter enters play, you may discard a card to create a 0/1 ghost token and draw 1.",
+  "activatedEffects": [
+	  {
+		"conditions": [
+			{
+				"condition": "inZone",
+				"zone": "graveyard"
+			}
+		],
+		"effect": "castCard"
+	  }
+  ],
+  "triggeredEffects": [
+  {
+    "trigger": "enteredZone",
+    "zone": "play",
+    "optional": true,
+	"optionMessage": "Discard a card to create a 0/1 ghost and draw 1?",
+    "effects": [
+      {
+        "effect": "discard",
+        "amount": 1
+      },
+      {
+        "effect": "createToken",
+        "tokenType": "ghost",
+        "attack": 0,
+        "defense": 1,
+        "amount": 1 
+      },
+      {
+        "effect": "draw",
+        "amount": 1
+      }
+    ]
+  }
+  ]  
+}

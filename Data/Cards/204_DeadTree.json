@@ -1,0 +1,26 @@
+{
+  "id": 204,
+  "name": "Dead Tree",
+  "cost": 0,
+  "type": "summon",
+  "attack": 1,
+  "defense": 2,
+  "keywords": ["sprout"],
+  "tribe": "treefolk",
+  "rarity": "common",
+  "description": "When Dead Tree enters play, exile all cards in all graveyards.",
+  "triggeredEffects": [
+    {
+      "trigger": "enteredZone",
+      "zone": "play",
+      "effects": [
+        {
+          "effect": "sendToZone",
+          "targetZone": "graveyard",
+          "destination": "exile",
+          "all": true
+        }
+      ] 
+    }
+  ]
+}

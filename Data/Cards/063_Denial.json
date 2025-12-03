@@ -1,0 +1,38 @@
+{
+  "id": 63,
+  "name": "Denial",
+  "cost": 0,
+  "type": "spell",
+  "tribe": "merfolk",
+  "rarity": "common",
+  "description": "Choose one: \n {c0}-Counter target summon spell. It's owner draws a card. \n {c0}-Counter target non-summon spell. You lose LPs equal to its cost.",
+  "choose": [
+  [
+    {
+      "effect": "counter",
+      "targetType": "summon",
+      "additionalEffects": [
+        {
+          "effect": "draw",
+          "playerBasedOn": "ownerOfTarget"
+        }
+      ]
+    }
+  ],
+  [
+    {
+      "effect": "counter",
+      "targetType": "spell",
+      "restrictions": [
+	  "nonSummon"
+	  ],
+      "additionalEffects": [
+        {
+          "effect": "loseLife",
+          "amountBasedOn": "targetCost"
+        }
+      ]
+    }
+    ]
+  ]
+}

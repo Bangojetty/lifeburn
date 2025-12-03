@@ -1,0 +1,18 @@
+{
+  "id": 219,
+  "name": "Sprout Up",
+  "cost": 3,
+  "type": "spell",
+  "tribe": "treefolk",
+  "rarity": "common",
+  "description": "Create two 1/1 plant tokens.",
+  "stackEffects": [
+    {
+      "effect": "createToken",
+      "tokenType": "plant",
+      "attack": 1,
+      "defense": 1,
+      "amount": 2
+    }
+  ] 
+}

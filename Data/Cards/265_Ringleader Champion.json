@@ -1,0 +1,50 @@
+{
+  "id": 265,
+  "name": "Ringleader Champion",
+  "cost": 1,
+  "type": "summon",
+  "attack": 1,
+  "defense": 1,
+  "tribe": "goblin",
+  "rarity": "common",
+  "description": "When Ringleader Champion enters play, choose one: \n {c0}-Create a 1/1 goblin \n {c0}-Draw a card \n {c0}-Grant Ringleader Champion the passive: +1/+1 for each goblin in play",
+  "triggeredEffects": [  
+    {
+      "effect": "choose",
+	  "choiceIndex": 0,
+      "choices": [
+        {
+          "effect": "createToken",
+          "tokenType": "goblin",
+          "attack": 1,
+          "defense": 1,
+          "amount": 1
+        },
+        {
+          "effect": "draw",
+          "amount": 1
+        },
+        {
+          "effect": "grantPassive",
+          "passives": [
+            {
+              "passive": "changeStats",
+			  "statModifiers": [
+				{
+				  "statType": "attack",
+				  "operatorType": "add",
+				  "amountBasedOn": "goblinsInPlay"
+				},
+				{
+				  "statType": "defense",
+				  "operatorType": "add",
+				  "amountBasedOn": "goblinsInPlay"
+				}
+			  ]
+            }
+          ]  
+        }
+      ]
+    }
+  ]
+}

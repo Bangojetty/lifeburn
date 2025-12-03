@@ -1,0 +1,17 @@
+{
+  "id": 238,
+  "name": "Cast a Mold",
+  "cost": 2,
+  "type": "spell",
+  "tribe": "golem",
+  "rarity": "common",
+  "description": "create stones equal to the number of summons that died this turn. Create a stone.",
+  "stackEffects": [
+  {
+    "effect": "createToken",
+    "tokenType": "stone",
+    "amountBasedOn": "summonsThatDiedThisTurn",
+    "amountModifier": "+1"
+  }
+  ] 
+}

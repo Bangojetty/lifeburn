@@ -1,0 +1,23 @@
+{
+  "id": 180,
+  "name": "Wildfire",
+  "cost": 0,
+  "type": "spell",
+  "tribe": "goblin",
+  "rarity": "common",
+  "description": "Destroy all summons. X is 3 times the number of summons you don't control.",
+  "costModifiers": [
+    {
+      "modifier": "x",
+      "xBasedOn": "summonsOpponentControls",
+      "additionalModifier": "*3"
+    }
+  ],
+  "stackEffects": [
+    {
+      "effect": "destroy",
+      "targetType": "summon",
+      "all": true
+    }
+  ]
+}

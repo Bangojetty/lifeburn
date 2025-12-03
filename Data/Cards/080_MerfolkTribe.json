@@ -1,0 +1,27 @@
+{
+  "id": 80,
+  "name": "Merfolk Tribe",
+  "cost": 3,
+  "type": "summon",
+  "attack": 3,
+  "defense": 3,
+  "tribe": "merfolk",
+  "rarity": "common",
+  "description": "When Merfolk Tribe enters play, create two 2/1 merfolk tokens with dive.",
+  "triggeredEffects": [
+    {
+		"trigger": "enteredZone",
+		"zone": "play",
+		"effects": [
+		{
+			"effect": "createToken",
+			"tokenType": "merfolk",
+			"attack": 2,
+			"defense": 1,
+			"keyword": "dive",
+			"amount": 2
+		}
+	  ]	
+	}
+  ]
+}

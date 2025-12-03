@@ -1,0 +1,45 @@
+{
+  "id": 174,
+  "name": "Explosive Vegetation",
+  "cost": 8,
+  "type": "summon",
+  "attack": 4,
+  "defense": 4,
+  "tribe": "treefolk",
+  "rarity": "common",
+  "description": "Treefolk count as 4 tributes to Explosive Vegetation. Herbs count as 2. When Explosive Vegetation enters play, create four 1/1 plant tokens that are also herbs.",
+  "alternateCosts": [
+    {
+      "altCostType": "tributeMultiplier",
+      "cardType": "summon",
+      "tribe": "treefolk",
+      "amount": 4
+    },
+    {
+      "costType": "tributeMultiplier",
+      "tokenType": "herb",
+      "amount": 2
+    }
+  ],
+  "triggeredEffects": [  
+    {
+      "trigger": "enteredZone",
+      "zone": "play",
+      "effects": [
+        {
+          "effect": "createToken",
+          "tokenType": "plant",
+          "attack": 1,
+          "defense": 1,
+          "amount": 4,
+          "additionalEffects": [
+            {
+              "effect": "modifyType",
+              "typeModifier": "herb"
+            }
+          ] 
+        }
+      ]
+    }
+  ]
+}

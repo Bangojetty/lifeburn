@@ -1,0 +1,16 @@
+{
+  "id": 91,
+  "name": "Refresh",
+  "cost": 5,
+  "type": "spell",
+  "tribe": "merfolk",
+  "rarity": "common",
+  "description": "You may play an additional summon this turn.",
+  "stackEffects": [
+  {
+    "effect": "modifySummonLimit",
+    "amount": 1,
+    "thisTurn": true
+  }
+  ]
+}

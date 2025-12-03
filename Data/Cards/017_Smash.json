@@ -1,0 +1,56 @@
+{
+  "id": 17,
+  "name": "Smash",
+  "cost": 0,
+  "type": "spell",
+  "tribe": "golem",
+  "rarity": "common",
+  "description": "Target golem gets +X/+0 and trample this turn. At your next end phase, create a stone.",
+  "costModifiers": [
+    {
+      "modifier": "x"
+    }
+  ],
+  "stackEffects": [
+    {
+      "effect": "grantPassive",
+      "targetType": "summon",
+      "tribe": "golem",
+	  "passives": [
+		  {
+			  "passive": "changeStats",
+			  "statModifiers": [
+				{
+				  "statType": "attack",
+				  "operatorType": "add",
+				  "xAmount": true	
+				}
+			  ],
+			  "self": true
+		  },
+		  {
+			  "passive": "grantKeyword",
+			  "keyword": "trample",
+			  "self": true,
+			  "thisTurn": true
+		  }
+	  ]
+	},
+	{
+	  "effect": "eventTriggers",
+	  "triggeredEffects": [
+	  {
+		"trigger": "phase",
+		"phase": "end",
+		"effects": [
+			{
+				"effect": "createToken",
+				"tokenType": "stone"
+			}
+		]
+	  }
+     ]
+    }
+  ],
+  
+}

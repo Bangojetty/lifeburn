@@ -1,0 +1,14 @@
+{
+  "id": 234,
+  "name": "Ritual Of Darkness",
+  "cost": 11,
+  "type": "spell",
+  "tribe": "shadow",
+  "rarity": "rare",
+  "description": "Starting with you, each player may put a summon into play. Repeat until no player puts a summon into play.",
+  "stackEffects": [
+    {
+      "effect": "cardRitualOfDarkness"
+    }
+  ]
+}

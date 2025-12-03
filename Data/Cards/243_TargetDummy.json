@@ -1,0 +1,11 @@
+{
+  "id": 243,
+  "name": "Target Dummy",
+  "cost": 0,
+  "type": "summon",
+  "attack": 0,
+  "defense": 1,
+  "keywords": ["taunt"],
+  "tribe": "golem",
+  "rarity": "common"
+}

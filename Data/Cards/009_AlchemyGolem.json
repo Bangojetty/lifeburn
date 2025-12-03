@@ -1,0 +1,28 @@
+{
+  "id": 9,
+  "name": "Alchemy Golem",
+  "cost": 0,
+  "type": "summon",
+  "attack": 0,
+  "defense": 1,
+  "tribe": "golem",
+  "rarity": "common",
+  "description": "When Alchemy Golem enters play, create 3 stones and lose 2 LPs.",
+  "triggeredEffects": [
+    {
+      "trigger": "enteredZone",
+      "zone": "play",
+      "effects": [
+        {
+          "effect": "createToken",
+          "tokenType": "stone",
+          "amount": 3
+        },
+        {
+          "effect": "loseLife",
+          "amount": 2
+        }
+      ]
+    }
+  ]
+}

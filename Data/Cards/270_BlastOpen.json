@@ -1,0 +1,18 @@
+{
+  "id": 270,
+  "name": "Blast Open",
+  "cost": 2,
+  "type": "spell",
+  "tribe": "goblin",
+  "rarity": "common",
+  "description": "Destroy target summon with defense greater than attack",
+  "stackEffects": [
+    {
+      "effect": "destroy",
+      "targetType": "summon",
+      "restrictions": [
+	  "defenseGreaterThanAttack"
+	  ]	  
+    }
+  ] 
+}

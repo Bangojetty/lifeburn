@@ -1,0 +1,35 @@
+{
+  "id": 29,
+  "name": "Quarry",
+  "cost": 3,
+  "type": "object",
+  "tribe": "golem",
+  "rarity": "common",
+  "description": "At the beginning of your draw phase, create a stone. \n Sacrifice any number of stones: Draw that many cards, then sacrifice Quarry.",
+  "triggeredEffects": [
+	{
+	  "trigger": "phase",
+	  "phase": "draw",
+	  "effect": "createToken",
+	  "tokenType": "stone",
+	  "amount": 1
+	}
+  ],
+  "activatedEffects": [
+  {
+    "costType": "sacrifice",
+	"tokenType": "stone",
+    "playerChosenAmount": true,
+    "effects": [
+      {
+        "effect": "draw",
+        "amountBasedOn": "activatedCost"
+      },
+      {
+        "effect": "sacrifice",
+		"self": true
+      }
+    ]
+  }
+  ]
+}

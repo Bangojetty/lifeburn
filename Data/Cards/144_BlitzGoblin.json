@@ -1,0 +1,23 @@
+{
+  "id": 144,
+  "name": "Blitz Goblin",
+  "cost": 0,
+  "type": "summon",
+  "attack": 5,
+  "defense": 1,
+  "keywords": ["blitz"],
+  "tribe": "goblin",
+  "rarity": "common",
+  "description": "If Blitz Goblin survives combat, return it to hand.",
+  "triggeredEffects": [
+    {
+      "trigger": "survivedCombat",
+      "effects": [
+        {
+          "effect": "sendToZone",
+          "destination": "hand"
+        }
+      ]
+    }
+  ]
+}

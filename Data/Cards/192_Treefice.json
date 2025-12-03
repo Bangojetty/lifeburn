@@ -1,0 +1,27 @@
+{
+  "id": 192,
+  "name": "Treefice",
+  "cost": 0,
+  "type": "summon",
+  "attack": 1,
+  "defense": 1,
+  "tribe": "treefolk",
+  "rarity": "common",
+  "description": "Sacrifice Treefice, Exile target player's graveyard, and gain 2 LPs.",
+  "activatedEffects": [
+    {
+      "costType": "sacrifice",
+      "effects": [
+        {
+          "effect": "sendToZone",
+          "zone": "graveyard",
+		  "destination": "exile"
+        },
+        {
+          "effect": "gainLife",
+          "amount": 2
+        }
+      ]
+    }
+  ]
+}

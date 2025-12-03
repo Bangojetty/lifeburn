@@ -1,0 +1,21 @@
+{
+  "id": 254,
+  "name": "Typhoon",
+  "cost": 0,
+  "type": "spell",
+  "keywords": ["exhaust"],
+  "tribe": "merfolk",
+  "rarity": "common",
+  "description": "Return all permanents to their owner's hands. End your turn.",
+  "stackEffects": [
+  {
+    "effect": "sendToZone",
+    "zone": "play", 
+    "destination": "hand",
+    "all": true
+  },
+  {
+    "effect": "endTurn" 
+  }
+  ]
+}

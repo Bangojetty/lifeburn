@@ -1,0 +1,22 @@
+{
+  "id": 135,
+  "name": "Exchange Souls",
+  "cost": 6,
+  "type": "spell",
+  "tribe": "shadow",
+  "rarity": "common",
+  "description": "Mill 1. Return a summon from your graveyard to play.",
+  "stackEffects": [
+  {
+    "effect": "mill",
+    "amount": 1
+  },
+  {
+    "effect": "sendToZone",
+    "zone": "graveyard",
+    "cardType": "summon",
+    "destination": "play",
+    "amount": 1
+  }
+  ] 
+}

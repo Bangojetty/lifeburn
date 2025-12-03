@@ -1,0 +1,29 @@
+{
+  "id": 212,
+  "name": "Entangle",
+  "cost": 2,
+  "type": "object",
+  "tribe": "treefolk",
+  "rarity": "common",
+  "description": "Target summon cant attack or block as long as Entangle is in play. If you control no Treefolk, sacrifice Entangle.",
+  "stackEffects": [
+    {
+      "effect": "cantAttackOrBlock",
+      "targeType": "summon",
+      "duration": "untilThisLeaves"
+    }
+  ],
+  "passiveEffects": [
+    {
+      "conditions": [
+        {
+          "condition": "control",
+          "cardType": "summon",
+          "tribe": "treefolk",
+          "conditionMax": 0
+        }
+      ],
+      "effect": "sacrifice"
+    }
+  ]
+}

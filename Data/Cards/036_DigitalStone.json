@@ -1,0 +1,19 @@
+{
+  "id": 36,
+  "name": "Digital Stone",
+  "cost": 6,
+  "type": "spell",
+  "tribe": "golem",
+  "rarity": "common",
+  "description": "Create 8 stones this turn.",
+  "stackEffects": [
+    {
+		"effect": "createToken",
+		"tokenType": "stone",
+		"amount": 8,
+		"tokenPassive": {
+			"passive": "thisTurn"
+		}
+    }
+  ] 
+ }

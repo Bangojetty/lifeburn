@@ -1,0 +1,20 @@
+{
+  "id": 225,
+  "name": "Grow",
+  "cost": 7,
+  "type": "spell",
+  "tribe": "treefolk",
+  "rarity": "common",
+  "description": "Cast a treefolk summon from your hand or graveyard without paying it's cost. Create an herb.",
+  "stackEffects": [
+    {
+      "effect": "castCard",
+      "targetZones": ["hand","graveyard"]
+    },
+    {
+      "effect": "createToken",
+      "tokenType": "herb",
+      "amount": 1
+    } 
+  ]
+}

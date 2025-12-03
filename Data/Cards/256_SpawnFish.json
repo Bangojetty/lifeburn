@@ -1,0 +1,32 @@
+{
+  "id": 256,
+  "name": "Spawn Fish",
+  "cost": 3,
+  "type": "spell",
+  "tribe": "merfolk",
+  "rarity": "common",
+  "description": "Create a 1/1 merfolk token with dive. If this is the first spell you've cast this game, create 3 instead.",
+  "stackEffects": [
+	  {
+		"effect": "createToken",
+		"tokenType": "merfolk",
+		"attack": 1,
+		"defense": 1,
+		"keyword": "dive",
+		"amount": 1 
+	  },
+	  {
+		"conditions": [
+		  {
+			"condition": "firstSpell"
+		  }
+		],
+		"effect": "createToken",
+		"tokenType": "merfolk",
+		"attack": 1,
+		"defense": 1,
+		"keyword": "dive",
+		"amount": 2 
+	  }
+    ]
+}

@@ -1,0 +1,25 @@
+{
+  "id": 181,
+  "name": "Channel",
+  "cost": 0,
+  "type": "spell",
+  "tribe": "goblin",
+  "rarity": "common",
+  "description": "Deal X damage to target player. Channel cannot reduce players below 1 LP",
+  "costModifiers": [
+    {
+      "modifier": "x", 
+      "additionalModifier": "+10"
+    }
+  ],
+  "stackEffects": [
+    {
+      "effect": "dealDamage",
+      "targetType": "player",
+      "amountBasedOn": "x",
+      "restrictions": [
+	  "cantReduceBelowOne" 
+	  ]
+    }
+  ]
+}

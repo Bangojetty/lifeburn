@@ -1,0 +1,25 @@
+{
+  "id": 264,
+  "name": "Cavalcade Pyromancer",
+  "cost": 0,
+  "type": "summon",
+  "attack": 1,
+  "defense": 1,
+  "keywords": ["blitz"],
+  "tribe": "goblin",
+  "rarity": "common",
+  "description": "Whenever a player casts a summon spell, they take 1 damage.",
+  "triggeredEffects": [
+    {
+      "trigger": "cast",
+      "player": "any",
+      "effects": [
+        {
+          "effect": "dealDamage",
+          "targetBasedOn": "rootController",
+          "amount": 1
+        }
+      ]  
+    }
+  ]
+}

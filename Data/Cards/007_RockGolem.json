@@ -1,0 +1,37 @@
+{
+  "id": 7,
+  "name": "Rock Golem",
+  "cost": 0,
+  "type": "summon",
+  "attack": 1,
+  "defense": 1,
+  "tribe": "golem",
+  "rarity": "common",
+  "description": "When Rock Golem enters play. If you control no stones, create 4 stones. Create a stone.",
+  "triggeredEffects": [
+    {
+      "trigger": "enteredZone",
+      "zone": "play",
+      "effects": [
+        {
+          "conditions": [
+            {
+              "condition": "control",
+              "tokenType": "stone",
+              "maxAmount": 0 
+            }
+          ],
+          "effect": "createToken",
+          "tokenType": "stone",
+          "amount": 4,
+		  "description": "If you control no stones, create 4 stones."
+        },
+        {
+          "effect": "createToken",
+          "tokenType": "stone",
+          "amount": 1
+        }
+      ]
+    }
+  ]
+}

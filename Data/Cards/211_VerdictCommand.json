@@ -1,0 +1,46 @@
+{
+  "id": 211,
+  "name": "Verdict Command",
+  "cost": 2,
+  "type": "spell",
+  "tribe": "treefolk",
+  "rarity": "common",
+  "description": "Choose two: \n {c0}-Gain 1 LP. \n {c0}-Destroy target token. \n {c0}-Remove all haunt counters in play. \n {c0}-Exile 2 cards from a graveyard.",
+  "stackEffects": [
+    {
+      "effect": "choose",
+      "amount": 2,
+	  "choiceIndex": 0,
+      "choices": [
+        [
+          {
+            "effect": "gainLife",
+            "amount": 1
+          }
+        ],
+        [
+          {
+            "effect": "destroy",
+            "targetType": "token"
+          }
+        ],
+        [
+          {
+            "effect": "removeCounter",
+            "counterType": "haunt", 
+            "all": true
+          }
+        ],
+        [
+          {
+            "effect": "sendToZone",
+            "targetZone": "graveyard", 
+            "destination": "exile",
+            "amount": 2,
+            "sameZone": true 
+          }
+        ]
+      ]
+    }
+  ]
+}
