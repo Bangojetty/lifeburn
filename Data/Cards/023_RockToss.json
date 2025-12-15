@@ -18,9 +18,9 @@
           "tokenType": "stone",
           "minAmount": 1
         }
-      ],
+      ]
     },
-	{
+    {
 		"conditions": [
 		  {
 			"condition": "control",

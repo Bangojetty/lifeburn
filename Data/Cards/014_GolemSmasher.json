@@ -19,7 +19,7 @@
 		  "amountBasedOn": "stonesControlled"
 		}
 	  ],
-	  "self": true
+	  "scope": "selfOnly"
     }
   ],
   "activatedEffects": [
@@ -31,7 +31,7 @@
 		  "effects": [
 			  {
 				  "effect": "grantPassive",
-				  "self": true,
+				  "scope": "selfOnly",
 				  "passives": [
 				    {
 					  "passive": "cantTakeDamage",

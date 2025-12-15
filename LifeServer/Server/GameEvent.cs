@@ -31,6 +31,12 @@ public class GameEvent {
     public bool universalBool { get; set; }
     public int universalInt { get; set; }
 
+    // tribute values (maps UID to tribute value for tribute multipliers)
+    public Dictionary<int, int>? tributeValues { get; set; }
+
+    // valid choice indices (for choose effects with filtering)
+    public List<int>? validChoiceIndices { get; set; }
+
     
     // Basic Constructor
     public GameEvent(EventType eventType, bool isOpponent = false) {
@@ -59,7 +65,14 @@ public class GameEvent {
         gEvent.cardSelectionDatas = cardSelectionDatas.ToList();
         return gEvent;
     }
-    
+
+    // Peek - simple look at cards without selection/movement
+    public static GameEvent CreatePeekEvent(List<CardDisplayData> cardsToLookAt, bool isOpponent = false) {
+        GameEvent gEvent = new GameEvent(EventType.Peek, isOpponent);
+        gEvent.cards = cardsToLookAt.ToList();
+        return gEvent;
+    }
+
     // Combat
     public static GameEvent CreateCombatEvent(int attackerUid, int defenderUid, int amount, bool isOpponent = false) {
         GameEvent gEvent = new GameEvent(EventType.Combat, isOpponent);
@@ -100,10 +113,11 @@ public class GameEvent {
     }
 
     // Tribute
-    public static GameEvent CreateTributeRequirementEvent(CardDisplayData focusCard, List<int> possibleTributeUids) {
+    public static GameEvent CreateTributeRequirementEvent(CardDisplayData focusCard, List<int> possibleTributeUids, Dictionary<int, int> tributeValues) {
         GameEvent gEvent = new GameEvent(EventType.TributeRequirement);
         gEvent.focusCard = focusCard;
         gEvent.focusUidList = possibleTributeUids;
+        gEvent.tributeValues = tributeValues;
         return gEvent;
     }
     
@@ -154,11 +168,12 @@ public class GameEvent {
     }
     
     // Cost
-    public static GameEvent CreateCostEvent(CostType costType, int amount, List<int>? selectableUids = null, List<string>? eventMessages = null) {
+    public static GameEvent CreateCostEvent(CostType costType, int amount, List<int>? selectableUids = null, List<string>? eventMessages = null, bool variableAmount = false) {
         GameEvent gEvent = new GameEvent(EventType.Cost);
         gEvent.isOpponent = false;
         gEvent.costType = costType;
         gEvent.amount = amount;
+        gEvent.universalBool = variableAmount; // true = select 0 to amount, false = select exactly amount
         if (selectableUids != null) {
             gEvent.focusUidList = selectableUids.ToList();
         }
@@ -169,9 +184,10 @@ public class GameEvent {
     }
     
     // Amount Selection
-    public static GameEvent CreateAmountSelectionEvent(bool isX) {
+    public static GameEvent CreateAmountSelectionEvent(bool isX, int? maxAmount = null) {
         GameEvent gEvent = new GameEvent(EventType.AmountSelection);
         gEvent.universalBool = isX;
+        if (maxAmount != null) gEvent.amount = maxAmount.Value;
         return gEvent;
     }
     
@@ -211,6 +227,8 @@ public class GameEvent {
         costType = playerEvent.costType;
         universalBool = playerEvent.universalBool;
         universalInt = playerEvent.universalInt;
+        if(playerEvent.tributeValues != null) tributeValues = new Dictionary<int, int>(playerEvent.tributeValues);
+        if(playerEvent.validChoiceIndices != null) validChoiceIndices = playerEvent.validChoiceIndices.ToList();
 
     }
 

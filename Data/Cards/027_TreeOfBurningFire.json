@@ -12,12 +12,14 @@
     {
       "passive": "grantActive",
       "tokenType": "herb",
+      "scope": "othersOnly",
       "actives": [
         {
           "costType": "sacrifice",
-          "effects": [  
+          "scope": "selfOnly",
+          "effects": [
             {
-              "effect": "dealdamage",
+              "effect": "dealDamage",
               "targetType": "any",
               "amount": 1
             }

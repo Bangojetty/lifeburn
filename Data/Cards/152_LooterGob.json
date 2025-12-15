@@ -11,7 +11,7 @@
   "triggeredEffects": [  
     {
       "trigger": "cast",
-	  "self": true,
+	  "scope": "selfOnly",
       "optional": true,
 	  "optionMessage": "Reveal a Goblin to draw 1?",
 	  "effects": [

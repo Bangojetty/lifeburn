@@ -1,3 +1,6 @@
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+
 namespace Server.CardProperties;
 
 public class ActivatedEffect {
@@ -7,7 +10,8 @@ public class ActivatedEffect {
     public TokenType? tokenType;
     public Tribe? tribe;
     public string? description;
-    public bool self;
+    [JsonConverter(typeof(StringEnumConverter))]
+    public Scope scope = Scope.All;
     public bool oncePerTurn;
     public int amount;
     public bool playerChosenAmount;
@@ -16,6 +20,7 @@ public class ActivatedEffect {
     
     // non-json
     public Card sourceCard;
+    public Card grantedBy;  // The card that granted this activated effect (for cleanup)
 
 
 
@@ -24,13 +29,17 @@ public class ActivatedEffect {
         Qualifier costQualifier = new Qualifier(this, player);
         switch (costType) {
             case CostType.Sacrifice:
-                playerAmount += gameMatch.GetAllCardsControlled(player).Count(c => gameMatch.QualifyCard(c, costQualifier)); 
+                playerAmount += gameMatch.GetAllCardsControlled(player).Count(c => gameMatch.QualifyCard(c, costQualifier));
                 break;
             case CostType.Discard:
                 playerAmount += player.allCardsPlayer.Count(c => gameMatch.QualifyCard(c, costQualifier));
                 break;
-            default:
-                Console.WriteLine("Unknown CostType (CostIsAvailable)");
+            case CostType.DiscardOrSacrificeMerfolk:
+                // Check if player has merfolk in hand (for discard) OR in play (for sacrifice)
+                // Note: Can sacrifice the source card itself (e.g., Eadro can sacrifice itself)
+                int merfolkInHand = player.hand.Count(c => c.tribe == Tribe.Merfolk);
+                int merfolkInPlay = gameMatch.GetAllCardsControlled(player).Count(c => c.tribe == Tribe.Merfolk);
+                playerAmount = merfolkInHand + merfolkInPlay;
                 break;
         }
         if (playerChosenAmount && playerAmount > 0) return true;
@@ -45,5 +54,24 @@ public class ActivatedEffect {
             e.amount = amount;
             e.amountBasedOn = null;
         }
+    }
+
+    public ActivatedEffect Clone() {
+        return new ActivatedEffect {
+            conditions = conditions?.ToList(),
+            costType = costType,
+            cardType = cardType,
+            tokenType = tokenType,
+            tribe = tribe,
+            description = description,
+            scope = scope,
+            oncePerTurn = oncePerTurn,
+            amount = amount,
+            playerChosenAmount = playerChosenAmount,
+            restrictions = restrictions?.ToList(),
+            effects = effects.Select(e => e.Clone()).ToList(),  // Deep copy effects
+            sourceCard = sourceCard,
+            grantedBy = grantedBy
+        };
     }
 }

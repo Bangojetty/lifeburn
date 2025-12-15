@@ -9,25 +9,25 @@
   "tribe": "goblin",
   "rarity": "common",
   "description": "You may reaveal Goblin Portal from your opening hand to create a 1/1 goblin token with Blitz. Whenever you tribute a summon with Blitz, create a 1/1 goblin token with Blitz",
-  "triggeredEffects": [  
+  "triggeredEffects": [
     {
       "trigger": "openingHand",
       "optional": true,
-	  "optionMessage": "Reveal Goblin Portal from your hand to create a 1/1 Goblin token with Blitz?",
-	  "additionalCosts": [
-			{
-				"costType": "reveal"
-			}
-		],
+      "optionMessage": "Reveal Goblin Portal from your hand to create a 1/1 Goblin token with Blitz?",
       "effects": [
-		{
-		  "effect": "createToken",
-		  "tokenType": "goblin",
-		  "attack": 1,
-		  "defense": 1,
-		  "keyword": "blitz",
-		  "amount": 1 
-		}
+        {
+          "effect": "reveal",
+          "scope": "selfOnly",
+          "isCost": true
+        },
+        {
+          "effect": "createToken",
+          "tokenType": "goblin",
+          "attack": 1,
+          "defense": 1,
+          "keyword": "blitz",
+          "amount": 1
+        }
       ]
     },
     {
@@ -39,9 +39,9 @@
           "tokenType": "goblin",
           "attack": 1,
           "defense": 1,
-          "keyword": "blitz",
+          "keyword": "blitz"
         }
-      ]  
+      ]
     }
   ]
 }

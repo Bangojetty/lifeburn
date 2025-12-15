@@ -13,15 +13,11 @@
     },
     {
       "effect": "sendToZone",
-      "targetZone": "hand",
+      "targetType": "cardInHand",
+      "maxTargets": 2,
       "destination": "deck",
-      "deckDestinations": [
-        {
-          "deckDestination": "bottom",
-          "ordering": "any",
-          "amount": 2  
-        }
-      ]
+      "deckDestination": "bottom",
+      "resolveTarget": true
     }
   ]
 }

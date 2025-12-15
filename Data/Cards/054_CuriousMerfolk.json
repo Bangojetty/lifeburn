@@ -12,7 +12,7 @@
   "triggeredEffects": [
   {
     "trigger": "dealDamageToPlayer",
-    "self": true,
+    "scope": "selfOnly",
     "effects": [
       {
         "effect": "draw",

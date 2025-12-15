@@ -10,17 +10,19 @@
   "rarity": "common",
   "description": "When Merfolk Scoper enters play, target opponent reveals their hand. You choose a non-summon card from their hand to exile until Merfolk Scoper leaves play.",
   "triggeredEffects": [
-  {
-    "trigger": "enteredZone",
-    "zone": "play",
-    "effects": [
-      {
-        "effect": "detain",
-        "restrictions": [
-		"nonSummon"
-		]
-      }
-    ]
-  }
+    {
+      "trigger": "enteredZone",
+      "zone": "play",
+      "scope": "selfOnly",
+      "description": "Detain a non-summon card from opponent's hand.",
+      "effects": [
+        {
+          "effect": "detain",
+          "targetType": "opponentHand",
+          "restrictions": ["nonSummon"],
+          "resolveTarget": true
+        }
+      ]
+    }
   ]
 }

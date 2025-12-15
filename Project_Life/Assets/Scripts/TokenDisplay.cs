@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using InGame;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class TokenDisplay : MonoBehaviour {
+public class TokenDisplay : MonoBehaviour, IPointerClickHandler {
     private GameData gameData;
     private GameManager gameManager;
 
@@ -18,6 +19,9 @@ public class TokenDisplay : MonoBehaviour {
 
     public DynamicReferencer dynamicReferencer;
     public GameObject selectableTargetObj;
+    public GameObject playableHighlight;
+
+    public bool isActivatable;
 
 
     public void Awake() {
@@ -33,6 +37,7 @@ public class TokenDisplay : MonoBehaviour {
 
     private void AddToUidMap(int uid) {
         if (!gameManager.UidToObj.ContainsKey(uid)) {
+            Debug.Log($"[UID] Token: Adding token uid={uid} to UidToObj");
             gameManager.UidToObj.Add(uid, gameObject);
         }
         tokenUids.Add(uid);
@@ -49,7 +54,30 @@ public class TokenDisplay : MonoBehaviour {
     public void RemoveToken(int uid) {
         tokenAmount--;
         tokenUids.Remove(uid);
+        dynamicReferencer.tokenUids.Remove(uid);
         tokenAmountText.text = tokenAmount.ToString();
         gameManager.UidToObj.Remove(uid);
+    }
+
+    public void EnableActivatable() {
+        isActivatable = true;
+        if (playableHighlight != null) {
+            playableHighlight.SetActive(true);
+        }
+    }
+
+    public void DisableActivatable() {
+        isActivatable = false;
+        if (playableHighlight != null) {
+            playableHighlight.SetActive(false);
+        }
+    }
+
+    public void OnPointerClick(PointerEventData eventData) {
+        if (eventData.button == PointerEventData.InputButton.Left) {
+            if (!isActivatable || tokenUids.Count == 0) return;
+            // Use the first token UID for activation
+            gameManager.DisplayTokenActivationVerification(this, tokenUids[0]);
+        }
     }
 }

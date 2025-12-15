@@ -11,7 +11,7 @@
   "passiveEffects": [
     {
       "passive": "disableKeyword",
-      "all": true
+      "scope": "all"
     }
   ],
   "triggeredEffects": [
@@ -24,15 +24,16 @@
 		  "choiceIndex": 0,
           "choices": [
             [
-              { 
-                "effect": "sacrifice"
+              {
+                "effect": "sacrifice",
+                "scope": "selfOnly"
               }
             ],
             [
               {
                 "effect": "reveal",
-                "tribe": "treefolk",
-                "manditoryTarget": true
+                "targetType": "cardInHand",
+                "tribe": "treefolk"
               }
             ]
           ]  

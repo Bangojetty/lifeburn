@@ -23,11 +23,16 @@ public class Inspectable : MonoBehaviour, IPointerClickHandler {
                     gameManager.cardGroupTitleText.text = "Graveyard";
                     gameManager.DisplayCardGroup(contentsContainer);
                     break;
+                case InspectableType.Exile:
+                    gameManager.cardGroupTitleText.text = "Exile";
+                    gameManager.DisplayCardGroup(contentsContainer);
+                    break;
             }
         }
     }
 }
 
 public enum InspectableType {
-    Graveyard
+    Graveyard,
+    Exile
 }

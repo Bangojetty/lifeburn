@@ -19,15 +19,16 @@
           "choices": [
             [
               {
-                "effect": "sacrifice"
+                "effect": "sacrifice",
+                "scope": "selfOnly"
               }
             ],
             [
               {
                 "effect": "reveal",
+                "targetType": "cardInHand",
                 "cardType": "summon",
                 "tribe": "merfolk",
-                "manditoryTarget": true,
                 "additionalEffects": [
                   {
                     "effect": "createToken",

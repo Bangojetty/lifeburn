@@ -1,5 +1,3 @@
-using System;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -10,9 +8,13 @@ namespace InGame {
         public Image selectableImg;
         public GameManager gameManager;
         public CardDisplay cardDisplay;
-        
-        
+
         public void OnPointerClick(PointerEventData eventData) {
+            // Don't handle clicks in ordering mode (arrow buttons handle reordering)
+            if (gameManager.cardSelectionManager.isOrderingMode) {
+                return;
+            }
+
             ToggleSelected();
             gameManager.cardSelectionManager.CheckSelectionLimit();
         }
@@ -24,7 +26,6 @@ namespace InGame {
             } else {
                 selectedImgObj.SetActive(false);
                 gameManager.cardSelectionManager.selectedSelectables.Remove(this);
-
             }
         }
 
@@ -41,6 +42,5 @@ namespace InGame {
             color.a = 0;
             selectableImg.color = color;
         }
-
     }
 }

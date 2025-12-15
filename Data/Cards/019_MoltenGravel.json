@@ -24,19 +24,19 @@
 		  "amountBasedOn": "stonesControlled"
 		}
 	  ],
-	  "self": true
+	  "scope": "selfOnly"
     },
     {
       "conditions": [
         {
           "condition": "control",
           "tokenType": "stone",
-          "minAmount": 8
+          "minAmount": 10
         }
       ],
       "passive": "grantKeyword",
       "keyword": "trample",
-	  "self": true
+	  "scope": "selfOnly"
     }
   ]
 }

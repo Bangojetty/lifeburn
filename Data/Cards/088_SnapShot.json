@@ -7,11 +7,12 @@
   "rarity": "common",
   "description": "Return target summon and all summons with the same name to their owners hand.",
   "stackEffects": [
-  {
-    "effect": "sendToZone",
-    "targetType": "summon",
-    "destination": "hand",
-    "allOfSameName": true 
-  }
+    {
+      "effect": "sendToZone",
+      "targetType": "summon",
+      "destination": "hand",
+      "allOfSameName": true,
+      "ownersControl": true
+    }
   ]
 }

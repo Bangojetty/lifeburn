@@ -9,18 +9,19 @@
   "tribe": "shadow",
   "rarity": "common",
   "description": "When Haunter Shade is milled, create two 0/1 ghost tokens.",
-  "triggeredEffect": [
-  {
-    "trigger": "milled",
-    "effects": [
-      {
-        "effect": "createTokens",
-        "tokenType": "ghost",
-        "attack": 0,
-        "defense": 1,
-        "amount": 2    
-      }
-    ]
-  }
-  ] 
+  "triggeredEffects": [
+    {
+      "trigger": "mill",
+      "scope": "selfOnly",
+      "effects": [
+        {
+          "effect": "createToken",
+          "tokenType": "ghost",
+          "attack": 0,
+          "defense": 1,
+          "amount": 2
+        }
+      ]
+    }
+  ]
 }

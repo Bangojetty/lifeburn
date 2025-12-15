@@ -27,7 +27,8 @@
 		  ],
 		  [
 			{
-			  "effect": "counter"
+			  "effect": "counter",
+			  "targetType": "spell"
 			}
 		  ]
 		]

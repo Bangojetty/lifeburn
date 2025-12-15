@@ -43,6 +43,11 @@ namespace InGame {
                 if (cardDisplay.transform.parent.TryGetComponent(out CardSlot cardSlot)) {
                     cardSlot.isSelectable = false;
                 }
+            } else if (tokenDisplay != null) {
+                tokenDisplay.DisableActivatable();
+                highlightSelectable.SetActive(false);
+                highlightSelected.SetActive(false);
+                selectableTargetObj.SetActive(false);
             } else {
                 highlightSelectable.SetActive(false);
                 highlightSelected.SetActive(false);

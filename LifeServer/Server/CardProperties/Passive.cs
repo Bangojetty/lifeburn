@@ -24,5 +24,7 @@ public enum Passive {
     CantSpecialSummon,
     TokenCanTribute,
     CreateTokenModifier,
-    ThisTurn
+    ThisTurn,
+    GrantKeywordToNextSpell,  // Player passive: grants keyword to next spell cast
+    SummonsToGraveyardExileInstead  // Player passive: summons go to exile instead of graveyard this turn
 }

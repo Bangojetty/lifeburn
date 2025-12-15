@@ -28,11 +28,11 @@
           "conditions": [
             {
               "condition": "attacked",
-              "self": true
+              "scope": "selfOnly"
             }
           ],
           "effect": "sacrifice",
-          "self": true  
+          "scope": "selfOnly"  
         }
       ] 
     }

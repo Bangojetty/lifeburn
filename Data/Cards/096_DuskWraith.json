@@ -9,28 +9,22 @@
   "rarity": "common",
   "description": "When Dusk Wraith is milled, destroy target summon. If you can't, gain 3 LPs.",
   "triggeredEffects": [
-  {
-    "trigger": "mill",
-    "self": true,
-    "effects": [
-      {
-        "effect": "choose",
-		"choiceIndex": 0,
-        "choices": [
-          [          {
-              "effect": "destroy",
-              "targetType": "summon"
-            }
-          ],
-          [
-            {
-              "effect": "gainLife",
-              "amount": 3
-            }
-          ]
-        ]
-      }
-    ]
-  }
-  ] 
+    {
+      "trigger": "mill",
+      "scope": "selfOnly",
+      "description": "Destroy target summon. If you can't, gain 3 LPs.",
+      "effects": [
+        {
+          "effect": "destroy",
+          "targetType": "summon",
+          "conditions": [{ "condition": "summonsInPlay" }]
+        },
+        {
+          "effect": "gainLife",
+          "amount": 3,
+          "conditions": [{ "condition": "noSummonsInPlay" }]
+        }
+      ]
+    }
+  ]
 }

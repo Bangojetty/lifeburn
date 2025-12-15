@@ -29,7 +29,10 @@ namespace InGame {
         public CostType costType { get; set; }
         public bool universalBool { get; set; }
         public int universalInt { get; set; }
-        
+
+        // tribute values (maps UID to tribute value for tribute multipliers)
+        public Dictionary<int, int>? tributeValues { get; set; }
+
         public GameEvent(EventType eventType,  bool isOpponent, TargetSelection targetSelection, CardDisplayData? focusCard = null) {
             this.eventType = eventType;
             this.focusCard = focusCard;

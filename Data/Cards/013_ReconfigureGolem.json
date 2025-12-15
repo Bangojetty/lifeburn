@@ -12,20 +12,18 @@
     {
       "trigger": "enteredZone",
       "zone": "graveyard",
-	  "triggerZone": "graveyard",
-	  "optional": true,
-	  "optionMessage": "sacrifice a stone and return Reconfigure Golem to play?",
-	  "additionalCosts": [
-	    	{
-				"costType": "sacrifice",
-				"tokenType": "stone",
-				"amount": 1
-			}
-	    ],
+      "conditions": [{"condition": "inZone", "zone": "graveyard"}],
+      "optional": true,
+      "optionMessage": "sacrifice a stone and return Reconfigure Golem to play?",
       "effects": [
         {
-		  "effect": "sendToZone",
-		  "destination": "play"
+          "effect": "sacrifice",
+          "tokenType": "stone",
+          "isCost": true
+        },
+        {
+          "effect": "sendToZone",
+          "destination": "play"
         }
       ]
     }

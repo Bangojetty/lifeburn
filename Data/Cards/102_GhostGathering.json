@@ -21,6 +21,10 @@
       "tribe": "shadow",
       "targetZones": ["hand", "graveyard"],
       "amountBasedOn": "playerChoice"
+    },
+    {
+      "effect": "replacementEffect",
+      "replacementPassive": "summonsToGraveyardExileInstead"
     }
   ]
 }

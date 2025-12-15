@@ -11,22 +11,22 @@
   "triggeredEffects": [
     {
       "trigger": "attack",
-      "self": true, 
+      "scope": "selfOnly",
+      "optional": true,
+      "optionMessage": "Sacrifice Ghastly Tutor and tutor a ghost to your graveyard?",
       "effects": [
         {
           "effect": "sacrifice",
-          "optional": true,
-		  "optionMessage": "Sacrifice Ghastly Tutor and tutor a ghost to your graveyard?",
-          "additionalEffects": [
-            {
-              "effect": "tutor",
-              "cardType": "summon",
-              "tribe": "shadow",
-              "destination": "graveyard"
-            }
-          ]
+          "scope": "selfOnly",
+          "isCost": true
+        },
+        {
+          "effect": "tutor",
+          "cardType": "summon",
+          "tribe": "shadow",
+          "destination": "graveyard"
         }
-      ] 
+      ]
     }
   ]
 }

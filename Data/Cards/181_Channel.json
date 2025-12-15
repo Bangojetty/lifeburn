@@ -5,7 +5,7 @@
   "type": "spell",
   "tribe": "goblin",
   "rarity": "common",
-  "description": "Deal X damage to target player. Channel cannot reduce players below 1 LP",
+  "description": "Deal {X} damage to target player. Channel cannot reduce players below 1 LP",
   "costModifiers": [
     {
       "modifier": "x", 

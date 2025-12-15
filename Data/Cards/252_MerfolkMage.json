@@ -12,7 +12,7 @@
   {
     "trigger": "enteredZone",
     "zone": "play",
-    "effecfts": [
+    "effects": [
       {
         "effect": "copySpell",
         "targetBasedOn": "nextSpell",

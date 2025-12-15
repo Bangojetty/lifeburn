@@ -7,13 +7,19 @@
   "rarity": "common",
   "description": "At the beginning of your draw phase, create a stone. \n Sacrifice any number of stones: Draw that many cards, then sacrifice Quarry.",
   "triggeredEffects": [
-	{
-	  "trigger": "phase",
-	  "phase": "draw",
-	  "effect": "createToken",
-	  "tokenType": "stone",
-	  "amount": 1
-	}
+    {
+      "trigger": "phase",
+      "phase": "draw",
+      "isPlayerTurn": true,
+      "description": "Create a stone.",
+      "effects": [
+        {
+          "effect": "createToken",
+          "tokenType": "stone",
+          "amount": 1
+        }
+      ]
+    }
   ],
   "activatedEffects": [
   {
@@ -27,7 +33,7 @@
       },
       {
         "effect": "sacrifice",
-		"self": true
+		"scope": "selfOnly"
       }
     ]
   }

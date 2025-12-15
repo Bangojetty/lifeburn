@@ -16,7 +16,7 @@
     {
       "effect": "gainLife",
       "targetType": "opponent",
-      "amount": 5
+      "amount": 3
     }
   ] 
 }

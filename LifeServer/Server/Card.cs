@@ -26,6 +26,7 @@ public class Card {
     public List<CostModifier>? costModifiers;
     public List<AdditionalCost>? additionalCosts;
     public List<CastRestriction>? castRestrictions;
+    public List<AlternateCost>? alternateCosts;
 
     // non-Json
     public int uid;
@@ -37,14 +38,20 @@ public class Card {
     public Player? lastControllingPlayer;
     public Player? playerHandOf;
     public int damageTaken;
+    public bool tookSpellDamage;  // tracks if card took spell damage (for DeathBySpell triggers)
     public int attackTargetUid;
     public int? x = null;
-    
 
-    public Dictionary<int, int> chosenIndices = new();
+    // counters
+    public int plusOnePlusOneCounters;
+    public int minusOneMinusOneCounters;
+
+    public Dictionary<int, List<int>> chosenIndices = new();
 
     // passives
     public List<PassiveEffect> grantedPassives = new();
+    // activated effects granted by other cards (e.g., from GrantActive passive)
+    public List<ActivatedEffect> grantedActivatedEffects = new();
 
 
     public static Card GetCard(int uid, int cardId, GameMatch? match = null) {
@@ -87,10 +94,11 @@ public class Card {
         costModifiers = cardDto.costModifiers;
         additionalCosts = cardDto.additionalCosts;
         castRestrictions = cardDto.castRestrictions;
+        alternateCosts = cardDto.alternateCosts;
         AssignSourceToEffects();
     }
 
-    private void AssignSourceToEffects() {
+    protected void AssignSourceToEffects() {
         HashSet<object> visited = new();
         if (stackEffects != null) {
             foreach (var effect in stackEffects)
@@ -109,21 +117,29 @@ public class Card {
     }
 
     /// <summary>
-    /// Within this object, recursively look for fields named "sourceCard" and assign "this" to that field.
+    /// Within this object, recursively look for fields named "sourceCard" or "grantedBy" and assign "this" to that field.
     /// </summary>
-    /// <param name="obj">The object to examine for fields named "sourceCard".</param>
+    /// <param name="obj">The object to examine for source card fields.</param>
     /// <param name="visited">A hashset of objects that have been visited already (to avoid recursive loops).</param>
-    /// <param name="source">The card whose reference should be set on the 'sourceCard' field, if present.</param>
+    /// <param name="source">The card whose reference should be set on the source card field, if present.</param>
     private void AssignSourceRecursive(object obj, HashSet<object> visited, Card source) {
         if (obj == null || obj is string || visited.Contains(obj)) return;
         visited.Add(obj);
 
         var objectType = obj.GetType();
 
-        // Assign to any public field named "sourceCard"
+        // Assign to any public field named "sourceCard" (Effect, TriggeredEffect, ActivatedEffect)
         var field = objectType.GetField("sourceCard", BindingFlags.Public | BindingFlags.Instance);
         if (field != null && field.FieldType == typeof(Card))
             field.SetValue(obj, source);
+
+        // Assign to any public field named "grantedBy" (PassiveEffect - for innate passives, this is the card itself)
+        var grantedByField = objectType.GetField("grantedBy", BindingFlags.Public | BindingFlags.Instance);
+        if (grantedByField != null && grantedByField.FieldType == typeof(Card))
+            grantedByField.SetValue(obj, source);
+
+        // Note: "owner" is NOT set here - it's only set explicitly for granted passives in GrantPassive()
+        // For innate passives, owner stays null and we use grantedBy as fallback in Qualifier
 
         foreach (var f in objectType.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)) {
             var value = f.GetValue(obj);
@@ -154,7 +170,14 @@ public void Reveal() {
     }
 
     public bool HasXCost() {
+        // Only check costModifiers for X (affects displayed cost)
         return costModifiers != null && costModifiers.Any(costMod => costMod.modifier == ModifierType.X);
+    }
+
+    public bool NeedsXSelection() {
+        // Only for true X cost spells (costModifiers), not X-based additional costs
+        // X-based additional costs determine X from the selection itself
+        return HasXCost();
     }
 
     public Card(int uid) {
@@ -236,6 +259,13 @@ public void Reveal() {
         return tempPassives;
     }
 
+    public List<ActivatedEffect> GetActivatedEffects() {
+        List<ActivatedEffect> tempActives = new();
+        if (activatedEffects != null) tempActives.AddRange(activatedEffects);
+        tempActives.AddRange(grantedActivatedEffects);
+        return tempActives;
+    }
+
     /// <summary>
     /// returns all passives on the card that either don't have conditions or all conditions have been verified
     /// </summary>
@@ -249,18 +279,23 @@ public void Reveal() {
     }
 
     public int GetAttack() {
-        Debug.Assert(attack != null, "card does not have attack"); 
+        Debug.Assert(attack != null, "card does not have attack");
         if (currentGameMatch == null) return attack.Value;
         int tempAttack = (int)attack;
+        // Apply counter bonuses
+        tempAttack += plusOnePlusOneCounters;
+        tempAttack -= minusOneMinusOneCounters;
         foreach (PassiveEffect pEffect in GetVerifiedPassives()) {
             // this prevents checking for passives if the card is not in play (combat stats can't be altered outside of play)
             if (currentZone != Zone.Play) continue;
             if(pEffect.statModifiers == null) continue;
+            // Skip innate passives with scope=OthersOnly (auras that only affect other cards)
+            if (pEffect.scope == Scope.OthersOnly && passiveEffects != null && passiveEffects.Contains(pEffect)) continue;
             foreach (StatModifier statMod in pEffect.statModifiers) {
                 if (statMod.statType != StatType.Attack) continue;
                 if (statMod.amountBasedOn != null) {
                     // you must set the stat modifiers amount before applying it if it has an amountBasedOn
-                    statMod.amount = ResolveAmount(statMod.amountBasedOn.Value, statMod.other) * (statMod.amountMulitplier ?? 1);
+                    statMod.amount = ResolveAmount(statMod.amountBasedOn.Value, statMod.scope) * (statMod.amountMulitplier ?? 1);
                 }
 
                 tempAttack = statMod.Apply(tempAttack);
@@ -270,18 +305,23 @@ public void Reveal() {
     }
 
     public int GetDefense() {
-        Debug.Assert(defense != null, "card does not have defense"); 
+        Debug.Assert(defense != null, "card does not have defense");
         if (currentGameMatch == null) return defense.Value;
         int tempDefense = (int)defense;
+        // Apply counter bonuses
+        tempDefense += plusOnePlusOneCounters;
+        tempDefense -= minusOneMinusOneCounters;
         foreach (PassiveEffect pEffect in GetVerifiedPassives()) {
             // this prevents checking for passives if the card is not in play (combat stats can't be altered outside of play)
             if (currentZone != Zone.Play) continue;
             if(pEffect.statModifiers == null) continue;
+            // Skip innate passives with scope=OthersOnly (auras that only affect other cards)
+            if (pEffect.scope == Scope.OthersOnly && passiveEffects != null && passiveEffects.Contains(pEffect)) continue;
             foreach (StatModifier statMod in pEffect.statModifiers) {
                 if (statMod.statType != StatType.Defense) continue;
                 if (statMod.amountBasedOn != null) {
                     // you must set the stat modifiers amount before applying it if it has an amountBasedOn
-                    statMod.amount = ResolveAmount(statMod.amountBasedOn.Value, statMod.other) * (statMod.amountMulitplier ?? 1);
+                    statMod.amount = ResolveAmount(statMod.amountBasedOn.Value, statMod.scope) * (statMod.amountMulitplier ?? 1);
                 }
 
                 tempDefense = statMod.Apply(tempDefense);
@@ -292,7 +332,9 @@ public void Reveal() {
     }
 
     public int GetCost() {
-        int finalCost = x ?? cost;
+        // Only use x as the cost if this is a true X-cost spell (has X costModifier)
+        // Cards like Stone Toss use x for additional costs/effects but have a fixed mana cost
+        int finalCost = HasXCost() && x != null ? x.Value : cost;
         if (currentGameMatch == null) return finalCost;
         foreach (PassiveEffect pEffect in GetVerifiedPassives()) {
             if(pEffect.passive != Passive.ModifyCost) continue;
@@ -300,14 +342,16 @@ public void Reveal() {
             finalCost = pEffect.cost.Value;
         }
         if (type == CardType.Spell && playerHandOf != null && playerHandOf.spellBurnt) finalCost += cost;
+        // Next spell free - reduces non-summon cost to 0
+        if (type != CardType.Summon && playerHandOf != null && playerHandOf.nextSpellFree) finalCost = 0;
         finalCost += grantedPassives.Sum(pEffect => pEffect.costModifier);
         return finalCost;
     }
     
-    public int ResolveAmount(AmountBasedOn basedOn, bool other = false, string? amountModifier = null, CardType? cardType = null, List<Restriction>? restrictions = null) {
+    public int ResolveAmount(AmountBasedOn basedOn, Scope scope = Scope.All, string? amountModifier = null, CardType? cardType = null, List<Restriction>? restrictions = null) {
         return currentGameMatch.GetAmountBasedOn(
             basedOn,
-            other,
+            scope,
             currentGameMatch.GetControllerOf(this),
             null,
             cardType,
@@ -320,11 +364,29 @@ public void Reveal() {
         List<Keyword> tempKeywords = new();
         if (keywords != null) {
             tempKeywords.AddRange(keywords);
-        } 
-        foreach (PassiveEffect pEffect in GetPassives()) {
-            if (pEffect.passive != Passive.GrantKeyword) continue;
-            Debug.Assert(pEffect.keyword != null, "Passive Effect has no keywords to grant");
-            if (!tempKeywords.Contains((Keyword)pEffect.keyword)) tempKeywords.Add((Keyword)pEffect.keyword);
+        }
+        // Use GetVerifiedPassives if in a match (to check conditions), otherwise use GetPassives
+        List<PassiveEffect> passivesToCheck = currentGameMatch != null ? GetVerifiedPassives() : GetPassives();
+        foreach (PassiveEffect pEffect in passivesToCheck) {
+            if (pEffect.passive == Passive.GrantKeyword) {
+                // Skip innate passives with scope=OthersOnly (auras that only affect other cards)
+                if (pEffect.scope == Scope.OthersOnly && passiveEffects != null && passiveEffects.Contains(pEffect)) continue;
+                Debug.Assert(pEffect.keyword != null, "Passive Effect has no keywords to grant");
+                if (!tempKeywords.Contains((Keyword)pEffect.keyword)) tempKeywords.Add((Keyword)pEffect.keyword);
+            }
+        }
+        // Check for DisableKeyword passives and remove those keywords
+        foreach (PassiveEffect pEffect in grantedPassives) {
+            if (pEffect.passive == Passive.DisableKeyword) {
+                if (pEffect.keyword == null) {
+                    // Disable all keywords
+                    tempKeywords.Clear();
+                    break;
+                } else {
+                    // Disable specific keyword
+                    tempKeywords.Remove((Keyword)pEffect.keyword);
+                }
+            }
         }
         return tempKeywords;
     }
@@ -332,7 +394,8 @@ public void Reveal() {
     public string GetAdditionalDescription() {
         string addDesc = "";
         foreach (PassiveEffect pEffect in grantedPassives) {
-            if (pEffect.statModifiers != null) continue;
+            // Skip stat modifiers that don't have a custom description (they show as +X/+Y)
+            if (pEffect.statModifiers != null && pEffect.description == null) continue;
             if (pEffect.passive == Passive.GrantKeyword) continue;
             if(addDesc.Length > 0) addDesc += "\n";
             addDesc += Utils.CapitalizeFirstLetter(pEffect.GetDescription());
@@ -344,7 +407,7 @@ public void Reveal() {
         return hasSummoningSickness && !HasKeyword(Keyword.Blitz);
     }
 
-    private bool HasKeyword(Keyword keyword) {
+    public bool HasKeyword(Keyword keyword) {
         return GetKeywords() != null &&  GetKeywords()!.Contains(keyword);
     }
 

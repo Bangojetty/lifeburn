@@ -8,6 +8,7 @@ using UnityEngine.Serialization;
 using UnityEngine.Video;
 using Utilities;
 using Image = UnityEngine.UI.Image;
+using Button = UnityEngine.UI.Button;
 
 public class CardDisplay : MonoBehaviour {
     // debug
@@ -60,6 +61,11 @@ public class CardDisplay : MonoBehaviour {
     public GameObject targetingLocationObj;
     public GameObject interactableObj;
     public Interactable interactable;
+
+    // Ordering arrows container (disabled by default, enabled during ordering mode)
+    public GameObject orderingArrowsContainer;
+    public Button leftArrowButton;
+    public Button rightArrowButton;
     
     // Dynamic Referencing
     public DynamicReferencer dynamicReferencer;
@@ -91,9 +97,13 @@ public class CardDisplay : MonoBehaviour {
     }
     private void SetBaseCard() {
         if (card == null) return;
-        // if it's a token
+        // if it's a token, create a baseCard with the base stats from the server
         if (card.tokenType != null) {
-            baseCard = card;
+            baseCard = new CardDisplayData {
+                attack = card.baseAttack ?? card.attack,
+                defense = card.baseDefense ?? card.defense,
+                cost = card.cost
+            };
             return;
         }
         baseCard = gameManager.serverApi.GetCard(gameData.accountData, card.id);
@@ -127,11 +137,11 @@ public class CardDisplay : MonoBehaviour {
         Destroy(playSlot);
     }
 
-    public void UpdateCardDisplayData(CardDisplayData newCard = null) {
+    public void UpdateCardDisplayData(CardDisplayData newCard = null, bool trackInUidToObj = true) {
         if (newCard != null) {
             card = newCard;
         }
-        if(card != null) AddToUidMap();
+        if(card != null) AddToUidMap(trackInUidToObj);
         SetBaseCard();
         DisplayCardData();
         if (card == null) return;
@@ -156,7 +166,11 @@ public class CardDisplay : MonoBehaviour {
         // set description and add additional text (added passives/actives etc.)
         // Util function sets the color of any chosen "choose" effects to cyan
         string tempDescription = Utils.GetStringWithChosenText(card.description);
-        descriptionText.text = tempDescription + "\n" + Utils.colorCyan + card.additionalDescription + "</color>";
+        // Add additional description (granted passives) in cyan if present
+        if (!string.IsNullOrEmpty(card.additionalDescription)) {
+            tempDescription += "\n" + Utils.colorCyan + card.additionalDescription + "</color>";
+        }
+        descriptionText.text = tempDescription;
         if (card.type != CardType.Summon) {
             atkDef.SetActive(false);
         } 
@@ -172,7 +186,12 @@ public class CardDisplay : MonoBehaviour {
                 newKeyword.GetComponent<Image>().sprite = gameData.keywordImgDict[keyword];
             }
         }
-        artworkImg.sprite = card.id >= 0 ? gameData.allArtworks[card.id] : gameData.tokenArtById[card.id];
+        // Tokens have negative IDs - use tokenArtById with safety check, regular cards use allArtworks
+        if (card.id >= 0) {
+            artworkImg.sprite = card.id < gameData.allArtworks.Count ? gameData.allArtworks[card.id] : null;
+        } else {
+            artworkImg.sprite = gameData.tokenArtById.ContainsKey(card.id) ? gameData.tokenArtById[card.id] : null;
+        }
     }
 
     private void DisplayDebugData() {
@@ -245,30 +264,43 @@ public class CardDisplay : MonoBehaviour {
         transform.SetParent(newCardSlot.transform);
         newCardSlot.GetComponent<CardSlot>().Initialize(gameObject);
         GetComponent<Animator>().enabled = false;
-        transform.localPosition = new Vector3(0, 0, 0);
-        RectTransform cardRectTransform = gameObject.GetComponent<RectTransform>();
-        cardRectTransform.anchorMin = new Vector2(0, 0.5f);
-        cardRectTransform.anchorMax = new Vector2(0, 0.5f);
-        cardRectTransform.pivot = new Vector2(0, 0.5f);
+        transform.localPosition = Vector3.zero;
     }
 
     public void RemoveFromHand() {
         DisableInteractableAndHighlights();
         GameObject oldCardSlot = transform.parent.gameObject;
+        // Clean up any temp hover/drag displays before removing from hand
+        CardSlot cardSlot = oldCardSlot.GetComponent<CardSlot>();
+        if (cardSlot != null) {
+            cardSlot.CleanupTempDisplays();
+        }
         transform.SetParent(gameManager.displayCanvas.transform);
         backgroundImg.raycastTarget = true;
-        RectTransform cardRectTransform = gameObject.GetComponent<RectTransform>();
-        transform.localPosition = new Vector3(0, 0, 0);
-        cardRectTransform.pivot = new Vector2(0.5f, 0);
-        cardRectTransform.anchorMin = new Vector2(0.5f, 0.5f);
-        cardRectTransform.anchorMax = new Vector2(0.5f, 0.5f);
+        transform.localPosition = Vector3.zero;
         Destroy(oldCardSlot);
     }
 
+    /// <summary>
+    /// Reparents this card to the stack view.
+    /// Cards maintain their CardDisplay identity throughout their lifecycle (hand → stack → play/graveyard).
+    /// Note: Abilities use GameManager.AddToStack(StackDisplayData) which creates StackObjDisplay instead.
+    /// </summary>
     public void AddToStack() {
-        gameManager.CreateNewStackObj(tempStackDisplayData, gameManager.stackView.transform);
-        gameManager.UidToObj.Remove(card.uid);
-        Destroy(gameObject);
+        // Show stack panel if not already active
+        if (!gameManager.stackPanel.activeSelf) {
+            gameManager.stackPanel.SetActive(true);
+        }
+
+        // Reparent to stack view (VerticalLayoutGroup will control anchors while on stack)
+        transform.SetParent(gameManager.stackView.transform);
+
+        GetComponent<Animator>().enabled = false;
+        transform.localPosition = Vector3.zero;
+        GetComponent<RectTransform>().localScale = Vector3.one;
+
+        // Keep in UidToObj - the card maintains its identity
+        AddToUidMap();
     }
 
     public void AddToHandOpponent() {
@@ -277,31 +309,59 @@ public class CardDisplay : MonoBehaviour {
         transform.SetParent(newOppCardSlot.transform);
         newOppCardSlot.GetComponent<HoverDisplayer>().cardDisplay = this;
         GetComponent<Animator>().enabled = false;
-        transform.localPosition = new Vector3(0, 0, 0);
-        gameObject.GetComponent<RectTransform>().pivot = new Vector2(0.5f, 0.5f);
+        transform.localPosition = Vector3.zero;
+        transform.localRotation = Quaternion.Euler(0, 0, 180);
+        // Track in opponent's hand list
+        Opponent opp = opponent as Opponent;
+        if (opp != null) {
+            opp.handCards.Add(this);
+        }
     }
     public void AddToGraveyard() {
+        Debug.Log($"[Graveyard Debug] AddToGraveyard called for card: {card?.name}, uid: {card?.uid}");
         if (card.id >= 0) {
             ResetCard();
         }
+        AddToUidMap();
         GetComponent<Animator>().enabled = false;
         transform.SetParent(player.graveyardContents.transform);
-        transform.localPosition = new Vector3(0, 0, 0);
-        gameObject.GetComponent<RectTransform>().localScale = new Vector3(0.6f, 0.6f, 0.6f);
-        gameObject.GetComponent<RectTransform>().pivot = new Vector2(0.5f, 0.5f);
+        transform.localPosition = Vector3.zero;
+        GetComponent<RectTransform>().localScale = new Vector3(0.6f, 0.6f, 0.6f);
     }
 
     public void AddToGraveyardOpponent() {
         if (card.id >= 0) {
             ResetCard();
         }
+        AddToUidMap();
         GetComponent<Animator>().enabled = false;
         transform.SetParent(opponent.graveyardContents.transform);
-        transform.localPosition = new Vector3(0, 0, 0);
-        gameObject.GetComponent<RectTransform>().localScale = new Vector3(0.6f, 0.6f, 0.6f);
-        gameObject.GetComponent<RectTransform>().pivot = new Vector2(0.5f, 0.5f);
+        transform.localPosition = Vector3.zero;
+        GetComponent<RectTransform>().localScale = new Vector3(0.6f, 0.6f, 0.6f);
     }
-    
+
+    public void AddToExile() {
+        if (card.id >= 0) {
+            ResetCard();
+        }
+        AddToUidMap();
+        GetComponent<Animator>().enabled = false;
+        transform.SetParent(player.exileContents.transform);
+        transform.localPosition = Vector3.zero;
+        GetComponent<RectTransform>().localScale = new Vector3(0.6f, 0.6f, 0.6f);
+    }
+
+    public void AddToExileOpponent() {
+        if (card.id >= 0) {
+            ResetCard();
+        }
+        AddToUidMap();
+        GetComponent<Animator>().enabled = false;
+        transform.SetParent(opponent.exileContents.transform);
+        transform.localPosition = Vector3.zero;
+        GetComponent<RectTransform>().localScale = new Vector3(0.6f, 0.6f, 0.6f);
+    }
+
     public void AddToDeck() {
         transform.SetParent(player.deckObj.transform);
         GetComponent<Animator>().enabled = false;
@@ -379,12 +439,19 @@ public class CardDisplay : MonoBehaviour {
         StartCoroutine(DisableSummonEffectWhenDone());
     }
 
-    private void AddToUidMap() {
+    private void AddToUidMap(bool trackInUidToObj = true) {
+        // Always set the DynamicReferencer uid (needed for selection)
+        dynamicReferencer.uid = card.uid;
+
+        // Only track in UidToObj if requested (skip for temp display cards)
+        if (!trackInUidToObj) return;
+
         if (!gameManager.UidToObj.ContainsKey(card.uid)) {
             gameManager.UidToObj[card.uid] = gameObject;
+        } else {
+            // Update the reference even if key exists (in case object changed)
+            gameManager.UidToObj[card.uid] = gameObject;
         }
-        // also sets the reference in the DRef
-        dynamicReferencer.uid = card.uid;
     }
 
     private IEnumerator DisableSummonEffectWhenDone() {
@@ -392,12 +459,11 @@ public class CardDisplay : MonoBehaviour {
         summonAnimation.SetActive(false);
     }
 
-    // might be a cleaner way to do this -> create an attack reference and call a GameManager function passing in this 
-    // card display as a parameter (e.g. DisplayAttackResolve).
+    // Called by combat animation event - updates visual damage display when attack hits
     public void UpdateDamageNumber() {
         DynamicReferencer targetDr = attackTarget.GetComponent<DynamicReferencer>();
         if (targetDr.atkDefText != null) {
-            CardDisplay targetCd = attackTarget.GetComponent<CardDisplay>(); 
+            CardDisplay targetCd = attackTarget.GetComponent<CardDisplay>();
             targetCd.card.defense -= card.attack;
             targetCd.UpdateStats();
         } else {
@@ -406,11 +472,11 @@ public class CardDisplay : MonoBehaviour {
             Debug.Assert(card.attack != null, "attacking card has no attack value");
             if (targetOpponent != null) {
                 targetOpponent.lifePoints -= card.attack.Value;
-                targetOpponent.UpdateUI(); 
+                targetOpponent.UpdateUI();
             } else {
                 targetPlayer.lifePoints -= card.attack.Value;
                 targetPlayer.UpdateUI();
-            } 
+            }
         }
     }
 }

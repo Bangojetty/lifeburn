@@ -13,8 +13,7 @@ public class Qualifier {
     public PassiveEffect? passive;
     public Card? sourceCard;
     public Player sourcePlayer;
-    public bool self;
-    public bool other;
+    public Scope scope = Scope.All;
 
 
 
@@ -26,8 +25,7 @@ public class Qualifier {
         if (e.restrictions != null) restrictions = e.restrictions.ToList();
         if (e.conditions != null) conditions = e.conditions.ToList();
         sourceCard = e.sourceCard;
-        self = e.self;
-        other = e.other;
+        scope = e.scope;
         this.sourcePlayer = sourcePlayer;
     }
 
@@ -38,7 +36,7 @@ public class Qualifier {
         if (t.restrictions != null) restrictions = t.restrictions.ToList();
         if (t.conditions != null) conditions = t.conditions.ToList();
         sourceCard = t.sourceCard;
-        self = t.self;
+        scope = t.scope;
         this.sourcePlayer = sourcePlayer;
     }
 
@@ -49,17 +47,20 @@ public class Qualifier {
         if(a.restrictions != null) restrictions = a.restrictions.ToList();
         if (a.conditions != null) conditions = a.conditions.ToList();
         sourceCard = a.sourceCard;
-        self = a.self;
+        // ActivatedEffect doesn't have scope yet - default to All
+        scope = Scope.All;
         this.sourcePlayer = sourcePlayer;
     }
 
     public Qualifier(PassiveEffect p, Player sourcePlayer) {
         tribe = p.tribe;
-        self = p.self;
+        scope = p.scope;
         passive = p;
-        sourceCard = p.sourceCard;
+        tokenType = p.tokenType;  // For passives targeting tokens (e.g., GrantActive)
+        // Use owner for logic (granted passives), fallback to grantedBy for innate passives
+        sourceCard = p.owner ?? p.grantedBy;
         if(p.restrictions != null) restrictions = p.restrictions.ToList();
-
+        this.sourcePlayer = sourcePlayer;
     }
     
     public Qualifier(AdditionalCost cost, Player sourcePlayer) {

@@ -9,18 +9,25 @@
   "rarity": "common",
   "description": "You may reveal Loot Ghost from your opening hand to draw 1, then discard 2.",
   "triggeredEffects": [
-  {
-    "trigger": "openingHand",
-    "effects": [
-      {
-        "effect": "draw",
-        "amount": 1
-      },
-      {
-        "effect": "discard",
-        "amount": 2
-      }
-    ]
-  }
+    {
+      "trigger": "openingHand",
+      "optional": true,
+      "optionMessage": "Reveal Loot Ghost to draw 1, then discard 2?",
+      "effects": [
+        {
+          "effect": "reveal",
+          "scope": "selfOnly",
+          "isCost": true
+        },
+        {
+          "effect": "draw",
+          "amount": 1
+        },
+        {
+          "effect": "discard",
+          "amount": 2
+        }
+      ]
+    }
   ]
 }

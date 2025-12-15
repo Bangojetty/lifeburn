@@ -9,6 +9,7 @@
   "stackEffects": [
   {
     "effect": "counter",
+    "targetType": "nonSummon",
     "restrictions": [
 	"nonSummon"
 	],

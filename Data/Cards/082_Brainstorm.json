@@ -7,24 +7,21 @@
   "rarity": "common",
   "description": "Draw 3 cards, then shuffle 2 cards from your hand into your deck.",
   "stackEffects": [
-  {
-    "effect": "draw",
-    "amount": 3
-  },
-  {
-    "effect": "sendToZone",
-    "targetZone": "hand",
-    "destination": "deck",
-    "deckDestinations": [
-      {
-        "deckDestination": "top",
-        "ordering": "random",
-        "amount": 2
-      }
-    ]  
-  },
-  {
-    "effect": "shuffleDeck"
-  }
-  ] 
+    {
+      "effect": "draw",
+      "amount": 3
+    },
+    {
+      "effect": "sendToZone",
+      "targetType": "cardInHand",
+      "minTargets": 2,
+      "maxTargets": 2,
+      "destination": "deck",
+      "deckDestination": "top",
+      "resolveTarget": true
+    },
+    {
+      "effect": "shuffleDeck"
+    }
+  ]
 }

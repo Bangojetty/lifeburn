@@ -1,0 +1,8 @@
+{
+  "tokenType": "ghost",
+  "name": "Ghost",
+  "type": "summon",
+  "tribe": "shadow",
+  "attack": 1,
+  "defense": 1
+}

@@ -28,16 +28,16 @@
 			  "statType": "attack",
 			  "operatorType": "add",
 			  "amountBasedOn": "goblinsInPlay",
-			  "other": true
+			  "scope": "othersOnly"
 		  },
 		  {
 			  "statType": "defense",
 			  "operatorType": "add",
 			  "amountBasedOn": "goblinsInPlay",
-			  "other": true
+			  "scope": "othersOnly"
 		  }
 	  ],
-	  "self": true
+	  "scope": "selfOnly"
     }
   ]
 }

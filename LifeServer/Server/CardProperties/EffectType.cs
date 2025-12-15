@@ -53,5 +53,6 @@ public enum EffectType {
     CantTribute,
     CardSetStraight,
     CardRitualOfDarkness,
-    EventTriggers
+    EventTriggers,
+    ReplacementEffect  // Adds a player passive that modifies zone destinations (e.g., graveyard -> exile)
 }

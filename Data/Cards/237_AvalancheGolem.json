@@ -16,7 +16,7 @@
         "effect": "dealDamage",
         "cardType": "summon",
         "amount": 1,
-		"other": true
+		"scope": "othersOnly"
       }
     ]
   }

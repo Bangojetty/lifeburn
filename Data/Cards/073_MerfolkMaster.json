@@ -13,11 +13,13 @@
 	  {
 		"passive": "grantKeyword",
 		"keyword": "dive",
-		"tribe": "merfolk" 
+		"tribe": "merfolk",
+		"scope": "othersOnly",
+		"restrictions": ["youControl"]
 	  },
 	  {
 		"passive": "changeStats",
-		"statModfiiers": [
+		"statModifiers": [
 			{
 				"statType": "attack",
 				"operatorType": "add",
@@ -29,7 +31,9 @@
 				"amount": 1
 			}
 		],
-		"tribe": "merfolk"
+		"tribe": "merfolk",
+		"scope": "othersOnly",
+		"restrictions": ["youControl"]
 	  }
     ] 
 } 

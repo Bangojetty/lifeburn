@@ -6,5 +6,6 @@ public enum Zone {
     Play,
     Graveyard,
     Exile,
-    Token
+    Token,
+    Stack
 }

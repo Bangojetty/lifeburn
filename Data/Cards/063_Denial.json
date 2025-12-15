@@ -5,34 +5,41 @@
   "type": "spell",
   "tribe": "merfolk",
   "rarity": "common",
-  "description": "Choose one: \n {c0}-Counter target summon spell. It's owner draws a card. \n {c0}-Counter target non-summon spell. You lose LPs equal to its cost.",
-  "choose": [
-  [
+  "description": "Choose one: \n {c0}-Counter target summon spell. Its owner draws a card. \n {c0}-Counter target non-summon spell. You lose LPs equal to its cost.",
+  "stackEffects": [
     {
-      "effect": "counter",
-      "targetType": "summon",
-      "additionalEffects": [
-        {
-          "effect": "draw",
-          "playerBasedOn": "ownerOfTarget"
-        }
+      "effect": "choose",
+      "choiceIndex": 0,
+      "choices": [
+        [
+          {
+            "effect": "counter",
+            "targetType": "summon",
+            "additionalEffects": [
+              {
+                "effect": "draw",
+                "amount": 1,
+                "playerBasedOn": "ownerOfTarget"
+              }
+            ]
+          }
+        ],
+        [
+          {
+            "effect": "counter",
+            "targetType": "spell",
+            "restrictions": [
+              "nonSummon"
+            ],
+            "additionalEffects": [
+              {
+                "effect": "loseLife",
+                "amountBasedOn": "targetCost"
+              }
+            ]
+          }
+        ]
       ]
     }
-  ],
-  [
-    {
-      "effect": "counter",
-      "targetType": "spell",
-      "restrictions": [
-	  "nonSummon"
-	  ],
-      "additionalEffects": [
-        {
-          "effect": "loseLife",
-          "amountBasedOn": "targetCost"
-        }
-      ]
-    }
-    ]
   ]
 }

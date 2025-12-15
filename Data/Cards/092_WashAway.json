@@ -7,11 +7,12 @@
   "rarity": "common",
   "description": "Return all summons to their owners hand.",
   "stackEffects": [
-  {
-    "effect": "sendToZone",
-    "cardType": "summon",
-    "zone": "play",
-    "destination": "hand"   
-  }
+    {
+      "effect": "sendToZone",
+      "cardType": "summon",
+      "zone": "play",
+      "destination": "hand",
+      "ownersControl": true
+    }
   ]
 }

@@ -11,7 +11,7 @@
   "passiveEffects": [
 		{
 			"passive": "changeStats",
-			"statModfiiers": [
+			"statModifiers": [
 				{
 					"statType": "attack",
 					"operatorType": "add",
@@ -22,7 +22,7 @@
 					"operatorType": "add",
 					"amountBasedOn": "subtractLife"
 				}
-			],
+			]
 		}
 	]
 }

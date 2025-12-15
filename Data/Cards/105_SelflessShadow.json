@@ -11,7 +11,7 @@
   "triggeredEffects": [
   {
     "trigger": "tribute",
-    "self": true,  
+    "scope": "selfOnly",
     "tribe": "shadow",
     "effects": [
       {  

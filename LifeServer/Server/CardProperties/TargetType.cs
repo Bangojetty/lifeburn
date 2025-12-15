@@ -9,5 +9,8 @@ public enum TargetType {
     NonSummon,
     Opponent,
     Token,
-    Any
+    Any,
+    CardInHand,
+    OpponentHand,
+    CardInHandOrGraveyard
 }

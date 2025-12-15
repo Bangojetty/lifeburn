@@ -9,10 +9,21 @@
   "rarity": "common",
   "description": "When Witness Shade enters play, each player mills 2.",
   "triggeredEffects": [
-  {
-    "effect": "mill",
-    "all": true,
-    "amount": 2
-  }
-  ] 
+    {
+      "trigger": "enteredZone",
+      "zone": "play",
+      "description": "each player mills 2.",
+      "effects": [
+        {
+          "effect": "mill",
+          "amount": 2
+        },
+        {
+          "effect": "mill",
+          "isOpponent": true,
+          "amount": 2
+        }
+      ]
+    }
+  ]
 }

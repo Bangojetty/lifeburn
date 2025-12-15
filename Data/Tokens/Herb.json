@@ -1,0 +1,20 @@
+{
+  "tokenType": "herb",
+  "name": "Herb",
+  "type": "token",
+  "tribe": "treefolk",
+  "activatedEffects": [
+    {
+      "costType": "sacrifice",
+      "self": true,
+      "amount": 1,
+      "description": "Sacrifice: Gain 2 life (1 for each consecutive herb).",
+      "effects": [
+        {
+          "effect": "gainLife",
+          "amountBasedOn": "herbSacrificeLifeGain"
+        }
+      ]
+    }
+  ]
+}

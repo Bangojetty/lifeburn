@@ -11,7 +11,7 @@
   "triggeredEffects": [
     {
       "trigger": "death",
-      "self": true,
+      "scope": "selfOnly",
       "effects": [
         {
           "effect": "createToken",
@@ -22,7 +22,7 @@
     },
     {
       "trigger": "mill",
-      "self": true,
+      "scope": "selfOnly",
       "effects": [
         {
           "effect": "createToken",

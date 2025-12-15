@@ -43,7 +43,6 @@ public class ZoneScaler : MonoBehaviour {
             layoutGroup.spacing = new Vector2(hSpacingRatio * currentChildScale, vSpacingRatio * currentChildScale);
             // cellsize for the whole play zone
             layoutGroup.cellSize = new Vector2(cardMaxWidth * currentChildScale, cardMaxHeight * currentChildScale);
-            Debug.Log("current child scale is: " + currentChildScale);
             break;
         }
     }

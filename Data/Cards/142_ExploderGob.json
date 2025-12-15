@@ -12,7 +12,7 @@
   "triggeredEffects": [
     {
       "trigger": "death",
-      "self": true,
+      "scope": "selfOnly",
       "effects": [
         {
           "effect": "dealDamage",

@@ -4,6 +4,8 @@ namespace InGame.CardDataEnums {
         Hand,
         Play,
         Graveyard,
-        Exile
+        Exile,
+        Token,
+        Stack
     }
 }

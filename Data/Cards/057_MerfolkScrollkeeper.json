@@ -22,15 +22,15 @@
   {
     "trigger": "phase",
     "phase": "draw",
-    "isOpponent": true,
+    "isPlayerTurn": false,
+    "conditions": [
+      {
+        "condition": "handSize",
+        "amount": 5
+      }
+    ],
     "effects": [
       {
-        "conditions": [
-          {
-            "condition": "handSize",
-            "amount": 5
-          }
-        ],
         "effect": "draw",
         "amount": 1
       }

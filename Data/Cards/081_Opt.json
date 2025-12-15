@@ -19,7 +19,8 @@
     },
     {
       "effect": "shuffleDeck",
-      "optional": true 
+      "optional": true,
+      "optionMessage": "Shuffle your deck?"
     },
     {
       "effect": "draw",

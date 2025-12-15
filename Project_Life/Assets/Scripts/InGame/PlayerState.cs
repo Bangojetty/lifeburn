@@ -7,5 +7,8 @@ namespace InGame {
         public List<CardDisplayData> playables { get; set; }
         public List<CardDisplayData> activatables { get; set; }
         public List<GameEvent> eventList { get; set; }
+
+        // Debug: current deck contents (top of deck = first in list)
+        public List<CardDisplayData> deckContents { get; set; }
     }
 }

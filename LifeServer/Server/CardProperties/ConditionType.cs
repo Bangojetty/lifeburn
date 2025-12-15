@@ -6,6 +6,7 @@ public enum ConditionType {
     FirstSpell,
     InZone,
     RootTargetTribe,
+    RootTargetNotSummon,
     Spellburnt,
     IsTribe,
     IsNotTribe,
@@ -20,5 +21,7 @@ public enum ConditionType {
     OpponentHasMore,
     TargetIs,
     EnteredZoneThisTurn,
-    Attacked
+    Attacked,
+    SummonsInPlay,      // Any summons exist in play (either player)
+    NoSummonsInPlay     // No summons exist in play
 }

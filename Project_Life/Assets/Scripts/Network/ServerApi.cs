@@ -8,7 +8,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 
 public class ServerApi {
-    private string baseAddress = "https://f0f8217697ce.ngrok-free.app/life/";
+    private string baseAddress = "http://localhost:5239/life/";
 
 
     private UnityWebRequest CreateRequest(string path, RequestType type = RequestType.GET, object data = null) {
@@ -193,6 +193,20 @@ public class ServerApi {
         Debug.Log("ExitQueue returned code: " + deleteRequest.responseCode);
     }
 
+    public MatchState CreateTestMatch(AccountData accountData, int deckId) {
+        Debug.Log("request: CreateTestMatch");
+        UnityWebRequest postRequest = CreateRequest(baseAddress + $"test-match/{deckId}", RequestType.POST);
+        postRequest.SetRequestHeader("Authorization",
+            "Basic " + Base64Encode(accountData.username + ":" + accountData.hashedPassword));
+        postRequest.SendWebRequest();
+        while (!postRequest.isDone) Task.Delay(10);
+        if (postRequest.responseCode == 200) {
+            return JsonConvert.DeserializeObject<MatchState>(postRequest.downloadHandler.text);
+        }
+        Debug.Log("CreateTestMatch returned code: " + postRequest.responseCode);
+        return null;
+    }
+
     public MatchState GameReadyCheck(AccountData accountData, int matchId) {
         Debug.Log("request: GameReadyCheck");
         UnityWebRequest getRequest = CreateRequest(baseAddress + $"match/{matchId}/game-ready", RequestType.GET);
@@ -338,9 +352,27 @@ public class ServerApi {
         }
         Debug.Log("SetAmount returned code: " + postRequest.responseCode);
     }
-    
-    public void PassPrio(AccountData accountData, int matchId) {
-        UnityWebRequest getRequest = CreateRequest(baseAddress + $"match/{matchId}/pass");
+
+    public void CancelCast(AccountData accountData, int matchId) {
+        Debug.Log("request: CancelCast");
+        UnityWebRequest postRequest =
+            CreateRequest(baseAddress + $"match/{matchId}/cancel-cast", RequestType.POST);
+        postRequest.SetRequestHeader("Authorization",
+            "Basic " + Base64Encode(accountData.username + ":" + accountData.hashedPassword));
+        postRequest.SendWebRequest();
+        while (!postRequest.isDone) Task.Delay(10);
+        if (postRequest.responseCode == 200) {
+            Debug.Log("CancelCast successful");
+        }
+        Debug.Log("CancelCast returned code: " + postRequest.responseCode);
+    }
+
+    public void PassPrio(AccountData accountData, int matchId, int? passToPhase = null) {
+        string url = baseAddress + $"match/{matchId}/pass";
+        if (passToPhase.HasValue) {
+            url += $"?passToPhase={passToPhase.Value}";
+        }
+        UnityWebRequest getRequest = CreateRequest(url);
         getRequest.SetRequestHeader("Authorization",
             "Basic " + Base64Encode(accountData.username + ":" + accountData.hashedPassword));
         getRequest.SendWebRequest();

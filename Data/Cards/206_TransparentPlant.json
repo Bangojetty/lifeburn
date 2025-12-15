@@ -12,17 +12,17 @@
     {
       "trigger": "openingHand",
       "optional": true,
-	  "optionMessage": "Reveal Transparent Plant to create 2 Herbs?",
-	  "additionalCosts": [
-		{
-			"costType": "reveal"
-		}
-	  ],
+      "optionMessage": "Reveal Transparent Plant to create 2 Herbs?",
       "effects": [
+        {
+          "effect": "reveal",
+          "scope": "selfOnly",
+          "isCost": true
+        },
         {
           "effect": "createToken",
           "tokenType": "herb",
-          "amount": 2  
+          "amount": 2
         }
       ]
     }
@@ -30,27 +30,26 @@
   "activatedEffects": [
     {
       "costType": "discard",
-      "self": true,
+      "scope": "selfOnly",
       "targetType": "summon",
-      "tribe": "treefolk", 
+      "tribe": "treefolk",
       "effects": [
         {
           "effect": "grantPassive",
-		  "passives":[
-			  {
-				"passive": "changeStats",
-				"statModifiers": [
-					{
-						"statType": "attack",
-						"operatorType": "add",
-						"amount": 2
-					}
-				],
-				"thisTurn": true
-			  }
-		  ]
+          "passives": [
+            {
+              "passive": "changeStats",
+              "statModifiers": [
+                {
+                  "statType": "attack",
+                  "operatorType": "add",
+                  "amount": 2
+                }
+              ],
+              "thisTurn": true
+            }
+          ]
         }
-	
       ]
     }
   ]

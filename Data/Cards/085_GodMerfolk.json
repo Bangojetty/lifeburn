@@ -9,27 +9,32 @@
   "rarity": "common",
   "description": "At the beginning of each player's draw phase, double God Merfolk's attack and defense.",
   "triggeredEffects": [
-   {
-    "trigger": "phase",
-    "phase": "draw", 
-    "effect": "grantPassive",
-	"passives": [
-	    {
-		 "passive": "changeStats",
-		 "statModfiiers": [
-			{
-				"statType": "attack",
-				"operatorType": "multiply",
-				"amount": 2
-			},
-			{
-				"statType": "defense",
-				"operatorType": "multiply",
-				"amount": 2
-			}
-		  ]
-	    }
-	  ]
+    {
+      "trigger": "phase",
+      "phase": "draw",
+      "effects": [
+        {
+          "effect": "grantPassive",
+          "scope": "selfOnly",
+          "passives": [
+            {
+              "passive": "changeStats",
+              "statModifiers": [
+                {
+                  "statType": "attack",
+                  "operatorType": "multiply",
+                  "amount": 2
+                },
+                {
+                  "statType": "defense",
+                  "operatorType": "multiply",
+                  "amount": 2
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ]
 }

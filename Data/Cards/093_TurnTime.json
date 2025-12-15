@@ -9,38 +9,41 @@
   "stackEffects": [
     {
       "effect": "extraTurn"
-    }
-  ],
-  "triggeredEffects": [
+    },
     {
-      "trigger": "phase",
-      "phase": "draw",
-      "phaseOfPlayer": "opponent",
-      "effects": [
-        {   
-          "effect": "choose",
-          "amount": 1,
-		  "choiceIndex": 0,
-          "choices": [
-            [
-              {
-                "effect": "extraTurn",
-                "isOpponent": true
-              }
-            ],
-            [
-              {
-                "effect": "gainLife",
-                "amount": 10,
-                "isOpponent": true
-              }
-            ]
-          ],
-          "isOpponent": true
-        },
+      "effect": "eventTriggers",
+      "triggeredEffects": [
         {
-          "effect": "gainLife",
-          "amount": 10
+          "trigger": "phase",
+          "phase": "draw",
+          "phaseOfPlayer": "opponent",
+          "effects": [
+            {
+              "effect": "choose",
+              "amount": 1,
+              "choiceIndex": 0,
+              "choices": [
+                [
+                  {
+                    "effect": "extraTurn",
+                    "isOpponent": true
+                  }
+                ],
+                [
+                  {
+                    "effect": "gainLife",
+                    "amount": 10,
+                    "isOpponent": true
+                  }
+                ]
+              ],
+              "isOpponent": true
+            },
+            {
+              "effect": "gainLife",
+              "amount": 10
+            }
+          ]
         }
       ]
     }

@@ -23,14 +23,14 @@
     {
       "trigger": "death",
       "tribe": "golem",
-	  "triggerZone": "hand",
-	  "self": false,
+      "conditions": [{"condition": "inZone", "zone": "hand"}],
+      "scope": "othersOnly",
       "optional": true,
-	  "optionMessage": "Cast Golem Blinker without paying its cost?",
+      "optionMessage": "Cast Golem Blinker without paying its cost?",
       "effects": [
         {
           "effect": "castCard",
-		  "self": true
+          "scope": "selfOnly"
         }
       ]
     }

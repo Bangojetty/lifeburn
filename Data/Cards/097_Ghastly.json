@@ -9,33 +9,34 @@
   "rarity": "common",
   "description": "If Ghastly is in your opening hand, you may reveal it and discard any number ghosts. Draw cards and lose LPs equal the amount revealed.",
   "triggeredEffects": [
-	  {
-		"trigger": "openingHand",
-		"optional": true,
-		"optionMessage": "Discard any number of ghosts to draw that many cards and lose that many LPs?",
-		"additionalCosts": [
-			{
-				"costType": "reveal"
-			},
-		],
-		"effects": [
-		  {
-			"effect": "discard",
-			"cardType": "summon",
-			"tribe": "shadow",
-			"amountBasedOn": "playerChoice",
-			"additionalEffects": [
-			  {
-				"effect": "draw",
-				"amountBasedOn": "rootAmount"
-			  },
-			  {
-				"effect": "loseLife",
-				"amountBasedOn": "rootAmount"
-			  }
-			]
-		  }
-		] 
-	  }
-    ]
+    {
+      "trigger": "openingHand",
+      "optional": true,
+      "optionMessage": "Discard any number of ghosts to draw that many cards and lose that many LPs?",
+      "description": "Discard any number of ghosts, draw that many cards, and lose that many LPs.",
+      "effects": [
+        {
+          "effect": "reveal",
+          "scope": "selfOnly",
+          "isCost": true
+        },
+        {
+          "effect": "discard",
+          "cardType": "summon",
+          "tribe": "shadow",
+          "amountBasedOn": "playerChoice",
+          "additionalEffects": [
+            {
+              "effect": "draw",
+              "amountBasedOn": "rootAmount"
+            },
+            {
+              "effect": "loseLife",
+              "amountBasedOn": "rootAmount"
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

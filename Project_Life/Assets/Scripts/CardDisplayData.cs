@@ -10,6 +10,8 @@ public class CardDisplayData {
     public CardType type { get; set; }
     public int? attack { get; set; }
     public int? defense { get; set; }
+    public int? baseAttack { get; set; }
+    public int? baseDefense { get; set; }
     public List<Keyword> keywords { get; set; }
     public Tribe tribe { get; set; }
     public Rarity rarity { get; set; }

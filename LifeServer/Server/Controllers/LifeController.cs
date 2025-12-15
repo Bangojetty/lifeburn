@@ -220,7 +220,37 @@ public class LifeController : ControllerBase {
         }
         return Ok();
     }
-    
+
+    [HttpPost("test-match/{deckId}")]
+    public IActionResult CreateTestMatch(int deckId) {
+        if (!IsAuthorized(Request.Headers["Authorization"], out var accountData)) return Unauthorized();
+        RequestToConsole(accountData.displayName, "CreateTestMatch");
+        lock (MatchLockObj) {
+            // Create bot player with ID -999 (avoiding -1 which means "no priority" in GameMatch)
+            Player botPlayer = new Player("Test Bot", -999, isBot: true);
+
+            // Create match with real player and bot
+            GameMatch testMatch = new GameMatch(matches.NextMatchId(),
+                new Player(accountData.displayName, accountData.id),
+                botPlayer);
+
+            matches.SetMatchData(testMatch);
+
+            // Load decks - player gets their deck, bot gets all Gamble cards (ID 175)
+            testMatch.playerOne.deck = GetDeckCards(deckId, testMatch);
+            testMatch.playerTwo.deck = Enumerable.Range(0, 40)
+                .Select(_ => Card.GetCard(testMatch.GetNextUid(), 175, testMatch)).ToList();
+
+            // Initialize the match
+            testMatch.InitializeMatch();
+
+            Console.WriteLine($"Test match {testMatch.matchId} created for {accountData.displayName} vs Bot");
+
+            MatchState matchState = new MatchState(testMatch, true);
+            return Ok(matchState);
+        }
+    }
+
     // In-game requests
 
     [HttpGet("match/{matchId}")]
@@ -274,12 +304,21 @@ public class LifeController : ControllerBase {
     }
     
     [HttpGet("match/{matchId}/pass")]
-    public IActionResult PassPrio(int matchId) {
+    public IActionResult PassPrio(int matchId, [FromQuery] int? passToPhase = null) {
         if (!IsAuthorized(Request.Headers["Authorization"], out var accountData)) return Unauthorized();
         lock (MatchLockObj) {
             GameMatch myGameMatch = matches.ValidatePlayerMatch(accountData.id, matchId);
+            Player player = myGameMatch.accountIdToPlayer[accountData.id];
+            // passToPhase == 6 is special case for "pass to my main"
+            if (passToPhase == 6) {
+                player.passToPhase = Phase.Main;
+                player.passToMyMain = true;
+            } else {
+                player.passToPhase = passToPhase.HasValue ? (Phase)passToPhase.Value : null;
+                player.passToMyMain = false;
+            }
             myGameMatch.PassPrio();
-            RequestToConsole(accountData.displayName, "PassPrio");
+            RequestToConsole(accountData.displayName, "PassPrio" + (passToPhase.HasValue ? (passToPhase == 6 ? " (passTo: MyMain)" : $" (passTo: {(Phase)passToPhase.Value})") : ""));
             return Ok();
         }
     }
@@ -303,8 +342,9 @@ public class LifeController : ControllerBase {
             // TODO This passes in the first ability a card has. For multiple activated abilities, we'll need
             // TODO the player to choose an index (which ability to activate) and pass that in here instead of .First()
             Card cardWithAbility = myGameMatch.cardByUid[cardUid];
-            Debug.Assert(cardWithAbility.activatedEffects != null, "this card has no activatable abilities");
-            ActivatedEffect aEffect = cardWithAbility.activatedEffects.First();
+            List<ActivatedEffect> allActivatedEffects = cardWithAbility.GetActivatedEffects();
+            Debug.Assert(allActivatedEffects.Count > 0, "this card has no activatable abilities");
+            ActivatedEffect aEffect = allActivatedEffects.First();
             myGameMatch.AttemptToActivate(myGameMatch.accountIdToPlayer[accountData.id], aEffect);
             RequestToConsole(accountData.displayName, "AttemptToActivate | eventCount: " + myGameMatch.accountIdToPlayer[accountData.id].eventList.Count);
             return Ok();
@@ -358,7 +398,19 @@ public class LifeController : ControllerBase {
             return Ok();
         }
     }
-    
+
+    [HttpPost("match/{matchId}/cancel-cast")]
+    public IActionResult CancelCast(int matchId) {
+        if (!IsAuthorized(Request.Headers["Authorization"], out var accountData)) return Unauthorized();
+        lock (MatchLockObj) {
+            GameMatch myGameMatch = matches.ValidatePlayerMatch(accountData.id, matchId);
+            Player player = myGameMatch.accountIdToPlayer[accountData.id];
+            myGameMatch.CancelCast(player);
+            RequestToConsole(accountData.displayName, "CancelCast | eventCount: " + myGameMatch.accountIdToPlayer[accountData.id].eventList.Count);
+            return Ok();
+        }
+    }
+
     [HttpPost("match/{matchId}/set-amount/{amount}")]
     public IActionResult SetAmount(int matchId, int amount) {
         if (!IsAuthorized(Request.Headers["Authorization"], out var accountData)) return Unauthorized();

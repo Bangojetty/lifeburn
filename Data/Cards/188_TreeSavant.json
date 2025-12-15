@@ -16,7 +16,7 @@
 		}
 	  ],
       "trigger": "enteredZone",
-	  "self": true,
+	  "scope": "selfOnly",
       "zone": "play",
       "effects": [
         {

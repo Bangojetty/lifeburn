@@ -5,33 +5,20 @@
   "type": "spell",
   "tribe": "goblin",
   "rarity": "common",
-  "description": "Deal 3 damage to any target. If you control a Goblin in play, deal 4 instead.",
+  "description": "Deal 3 damage to any target. If you control a Goblin, deal 4 instead.",
   "stackEffects": [
     {
-      "conditions": [
+      "effect": "dealDamage",
+      "targetType": "any",
+      "amount": 3,
+      "amountModifier": "+1",
+      "modifierConditions": [
         {
           "condition": "control",
-          "cardType": "summon",
           "tribe": "goblin",
-          "maxAmount": 0 
+          "minAmount": 1
         }
-      ],
-      "effect": "dealDamage",
-      "targetType": "any",
-      "amount": 3  
-    },
-    {
-      "conditions": [
-        {  
-          "condition": "control",
-          "cardType": "summon",
-          "tribe": "goblin",
-          "minAmount": 1 
-        }
-      ],
-      "effect": "dealDamage",
-      "targetType": "any",
-      "amount": 4  
+      ]
     }
   ]
 }

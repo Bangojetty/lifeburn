@@ -6,30 +6,48 @@
   "tribe": "merfolk",
   "rarity": "common",
   "description": "Choose Two: \n {c0}-Counter target spell. \n {c0}-Draw a card. \n {c0}-Gain 2 LPs. \n {c0}-Exile target player's graveyard. \n {c0}-Create a 2/1 merfolk token.",
-  "chooseAmount": 2, 
-  "choose": [
-  {
-    "effect": "counter"
-  },
-  {
-    "effect": "draw",
-    "amount": 1 
-  },
-  {
-    "effect": "gainLife",
-    "amount": 2 
-  },
-  {
-    "effect": "sendToZone",
-    "targetType": "graveyard",
-    "destination": "exile"   
-  },
-  {
-    "effect": "createToken",
-    "tokenType": "merfolk",
-    "attack": 2,
-    "defense": 1,
-    "amount": 1 
-  }
+  "stackEffects": [
+    {
+      "effect": "choose",
+      "amount": 2,
+      "choiceIndex": 0,
+      "choices": [
+        [
+          {
+            "effect": "counter",
+            "targetType": "spell"
+          }
+        ],
+        [
+          {
+            "effect": "draw",
+            "amount": 1
+          }
+        ],
+        [
+          {
+            "effect": "gainLife",
+            "amount": 2
+          }
+        ],
+        [
+          {
+            "effect": "sendToZone",
+            "targetType": "graveyard",
+            "destination": "exile",
+            "all": true
+          }
+        ],
+        [
+          {
+            "effect": "createToken",
+            "tokenType": "merfolk",
+            "attack": 2,
+            "defense": 1,
+            "amount": 1
+          }
+        ]
+      ]
+    }
   ]
 }

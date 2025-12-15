@@ -27,7 +27,7 @@
   },
   {
     "trigger": "deathBySpell",
-    "self": true, 
+    "scope": "selfOnly",
     "effects": [
       {
         "effect": "sendToZone",

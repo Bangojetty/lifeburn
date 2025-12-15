@@ -9,7 +9,7 @@ using Utilities;
 
 public class StackObjDisplay : MonoBehaviour {
     public GameData gameData;
-    
+
     public CardDisplayData card;
     public StackDisplayData stackDisplayData;
 
@@ -24,12 +24,30 @@ public class StackObjDisplay : MonoBehaviour {
     public Image artworkImg;
     public Image backgroundImg;
 
+    // For targeting support (set up in Unity prefab)
+    public DynamicReferencer dynamicReferencer;
 
-    public void Initialize(StackDisplayData sourceDisplayData) {
+    public void Initialize(StackDisplayData sourceDisplayData, GameManager gameManager = null) {
         gameData = GameObject.Find("GameData").GetComponent<GameData>();
         card = sourceDisplayData.cardDisplayData;
         stackDisplayData = sourceDisplayData;
         DisplayData();
+
+        // Set up targeting support if DynamicReferencer exists
+        // Note: DynamicReferencer's highlight/selectable references are set in the prefab
+        if (dynamicReferencer != null && gameManager != null) {
+            dynamicReferencer.uid = card.uid;
+            dynamicReferencer.gameManager = gameManager;
+
+            // Set up SelectableTarget component
+            if (dynamicReferencer.selectableTargetObj != null) {
+                SelectableTarget selectableTarget = dynamicReferencer.selectableTargetObj.GetComponent<SelectableTarget>();
+                if (selectableTarget != null) {
+                    selectableTarget.gameManager = gameManager;
+                    selectableTarget.dRef = dynamicReferencer;
+                }
+            }
+        }
     }
 
     private void DisplayData() {
@@ -64,7 +82,10 @@ public class StackObjDisplay : MonoBehaviour {
             descriptionText.text = String.Join(" ", stackDisplayData.effectStrings);
             SetTypeAbility();
         }
-        artworkImg.sprite = gameData.allArtworks[card.id];
+        // Tokens and cards with invalid IDs don't have artwork
+        if (card.id >= 0 && card.id < gameData.allArtworks.Count) {
+            artworkImg.sprite = gameData.allArtworks[card.id];
+        }
     }
     
     private void SetTypeSpell() {

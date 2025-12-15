@@ -26,5 +26,6 @@ public enum AmountBasedOn {
     LifeTotal,
     DeckSize,
     Attack,
-    RootAffected
+    RootAffected,
+    HerbSacrificeLifeGain  // 2 for first herb, 1 for each subsequent herb sacrificed this turn
 }

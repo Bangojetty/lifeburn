@@ -1,0 +1,8 @@
+{
+  "tokenType": "merfolk",
+  "name": "Merfolk",
+  "type": "summon",
+  "tribe": "merfolk",
+  "attack": 1,
+  "defense": 1
+}

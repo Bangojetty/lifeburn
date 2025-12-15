@@ -5,7 +5,7 @@
   "type": "spell",
   "tribe": "goblin",
   "rarity": "common",
-  "description": "Destroy all summons. X is 3 times the number of summons you don't control.",
+  "description": "Destroy all summons. {X} is 3 times the number of summons you don't control.",
   "costModifiers": [
     {
       "modifier": "x",

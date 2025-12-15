@@ -21,9 +21,10 @@ public class CostContext {
         playerChosenAmount = aEffect.playerChosenAmount;
     }
 
-    public CostContext(AdditionalCost aCost) {
+    public CostContext(AdditionalCost aCost, Card? sourceCard = null) {
         costType = aCost.costType;
         tokenType = aCost.tokenType;
-        amount = aCost.amount;
-    } 
+        // Use resolved amount (handles X-based costs)
+        amount = aCost.GetAmount(sourceCard);
+    }
 }

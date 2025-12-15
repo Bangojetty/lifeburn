@@ -12,13 +12,16 @@
   {
     "trigger": "enteredZone",
     "zone": "play",
+    "optional": true,
+    "optionMessage": "Cast a merfolk summon (cost 1 or less) from hand for free?",
     "effects": [
       {
         "effect": "castCard",
+        "targetType": "cardInHand",
         "cardType": "summon",
         "tribe": "merfolk",
         "restrictions": [
-		"cost"
+		  "cost"
 		],
         "restrictionMax": 1
       }

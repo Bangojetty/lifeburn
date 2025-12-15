@@ -29,6 +29,8 @@ public class EffectTypeConverter : JsonConverter {
                 return jo.ToObject<BypassSummonLimitEffect>(serializer);
             case "canAttack":
                 return jo.ToObject<CanAttackEffect>(serializer);
+            case "cantAttack":
+                return jo.ToObject<CantAttackEffect>(serializer);
             case "cantAttackOrBlock":
                 return jo.ToObject<CantAttackOrBlockEffect>(serializer);
             case "cantGainLife":
@@ -71,6 +73,8 @@ public class EffectTypeConverter : JsonConverter {
                 return jo.ToObject<EndTurnEffect>(serializer);
             case "exileAndReturn":
                 return jo.ToObject<ExileAndReturnEffect>(serializer);
+            case "extraTurn":
+                return jo.ToObject<ExtraTurnEffect>(serializer);
             case "forceAttack":
                 return jo.ToObject<ForceAttackEffect>(serializer);
             case "gainControl":
@@ -121,6 +125,8 @@ public class EffectTypeConverter : JsonConverter {
                 return jo.ToObject<TutorEffect>(serializer);
             case "eventTriggers":
                 return jo.ToObject<EventTriggersEffect>(serializer);
+            case "replacementEffect":
+                return jo.ToObject<ReplacementEffectEffect>(serializer);
             default:
                 throw new Exception("Unknown Effect: " + effect);
         }

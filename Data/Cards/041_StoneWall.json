@@ -9,7 +9,7 @@
   "stackEffects": [
   {
     "effect": "cantAttack",
-	"targetType": "opponent"
+    "player": "opponent"
   },
   {
     "effect": "gainLife",

@@ -20,4 +20,5 @@ public class CardDto {
     public List<CostModifier>? costModifiers;
     public List<AdditionalCost>? additionalCosts;
     public List<CastRestriction>? castRestrictions;
+    public List<AlternateCost>? alternateCosts;
 }

@@ -13,7 +13,7 @@
   "triggeredEffects": [
     {
       "trigger": "discard",
-      "self": true,
+      "scope": "selfOnly",
       "effects": [
         {
           "effect": "dealDamage",
@@ -24,7 +24,7 @@
     },
     {
       "trigger": "mill",
-      "self": true,
+      "scope": "selfOnly",
       "effects": [
         {
           "effect": "dealDamage",

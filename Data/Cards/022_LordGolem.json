@@ -28,9 +28,7 @@
       "passive": "grantKeyword",
       "keyword": "trample",
       "tribe": "golem",
-	  "restrictions": [
-	  "youControl"
-	  ]
+      "restrictions": ["youControl"]
     }
   ]
 }

@@ -9,17 +9,20 @@
   "stackEffects": [
     {
       "effect": "sendToZone",
-      "targetZone": "hand",
-      "destination": "deck", 
-      "all": true
+      "zone": "hand",
+      "destination": "deck",
+      "deckDestination": "bottom",
+      "all": true,
+      "eachPlayer": true
     },
     {
-      "effect": "shuffleDeck" 
+      "effect": "shuffleDeck",
+      "eachPlayer": true
     },
     {
       "effect": "draw",
       "amount": 5,
-      "all": true
+      "eachPlayer": true
     },
     {
       "conditions": [

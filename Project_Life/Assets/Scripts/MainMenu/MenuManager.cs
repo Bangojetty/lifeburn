@@ -212,5 +212,22 @@ public class MenuManager : MonoBehaviour {
         Destroy(selectedDeckObj);
         gameData.currentDeck = null;
     }
+
+    public void StartTestGame() {
+        if (gameData.currentDeck == null || gameData.currentDeck.id == 0) {
+            Debug.Log("Please select a deck first before starting a test game");
+            return;
+        }
+
+        Debug.Log("Starting test game with deck: " + gameData.currentDeck.deckName);
+        MatchState matchState = serverApi.CreateTestMatch(accountDataGO.accountData, gameData.currentDeck.id);
+
+        if (matchState != null) {
+            gameData.matchState = matchState;
+            SceneManager.LoadScene("Game Scene");
+        } else {
+            Debug.Log("Failed to create test match");
+        }
+    }
 }
     

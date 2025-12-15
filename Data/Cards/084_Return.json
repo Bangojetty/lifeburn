@@ -7,24 +7,16 @@
   "rarity": "common",
   "description": "Each player returns a summon from play to its owners hand. Draw a card.",
   "stackEffects": [
-  {
-    "effect": "sendToZone",
-    "targetZone": "play",
-    "destination": "hand", 
-    "zoneOfPlayer": "player", 
-    "amount": 1 
-  },
-  {
-    "effect": "sendToZone",
-    "targetZone": "play",
-    "destination": "hand", 
-    "zoneOfPlayer": "opponent",
-    "amount": 1,
-    "isOpponent": true
-  },
-  {
-    "effect": "draw",
-    "amount": 1
-  }
+    {
+      "effect": "sendToZone",
+      "destination": "hand",
+      "cardType": "summon",
+      "eachPlayer": true,
+      "amount": 1
+    },
+    {
+      "effect": "draw",
+      "amount": 1
+    }
   ]
 }

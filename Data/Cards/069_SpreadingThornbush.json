@@ -19,9 +19,8 @@
         {
           "effect": "modifyType",
           "tokenType": "herb",
-          "typeModifier": "summon",
           "attack": 1,
-          "defense": 1  
+          "defense": 1
         }
       ]
     }

@@ -11,38 +11,37 @@
   "triggeredEffects": [
     {
       "trigger": "enteredZone",
-      "zone": "token", 
+      "zone": "play",
       "tokenType": "stone",
-	  "self": false,
+      "scope": "all",
       "effects": [
         {
           "effect": "grantPassive",
           "cardType": "summon",
           "tribe": "golem",
-		  "other": true,
-		  "description": "Other golems you control get +1/+1 this turn",
-		  "restrictions": [
-		  "youControl"
-		  ],
-		  "passives": [
-		    {
-				"passive": "changeStats",
-				"statModfiiers": [
-					{
-						"statType": "attack",
-						"operatorType": "add",
-						"amount": 1
-					},
-					{
-						"statType": "defense",
-						"operatorType": "add",
-						"amount": 1
-					}
-				],
-				"self": true,
-				"thisTurn": true
-		    }
-		  ]
+          "scope": "othersOnly",
+          "description": "Other golems you control get +1/+1 this turn",
+          "restrictions": [
+            "youControl"
+          ],
+          "passives": [
+            {
+              "passive": "changeStats",
+              "statModifiers": [
+                {
+                  "statType": "attack",
+                  "operatorType": "add",
+                  "amount": 1
+                },
+                {
+                  "statType": "defense",
+                  "operatorType": "add",
+                  "amount": 1
+                }
+              ],
+              "thisTurn": true
+            }
+          ]
         }
       ]
     }

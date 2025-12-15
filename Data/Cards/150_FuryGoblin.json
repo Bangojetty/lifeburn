@@ -13,11 +13,11 @@
     {
       "conditions": [
 		{
-		  "condition": "youHaveMoreLife",
+		  "condition": "youHaveMoreLife"
 		}
 	  ],
       "trigger": "attack",
-      "self": true,
+      "scope": "selfOnly",
       "effects": [
         {
           "effect": "gainLife",

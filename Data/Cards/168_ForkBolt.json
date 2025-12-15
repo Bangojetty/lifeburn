@@ -12,7 +12,7 @@
       "targetType": "summon",
       "maxTargets": 2,
       "minTargets": 2,
-      "amount": 1,
+      "amount": 1
     }
   ]
 }

@@ -12,19 +12,27 @@
   {
     "trigger": "enteredZone",
     "zone": "play",
+    "scope": "selfOnly",
+    "conditions": [
+      {
+        "condition": "handSize",
+        "amounts": [0, 5]
+      }
+    ],
+    "optional": true,
+    "optionMessage": "Sacrifice Eidolon of the Tides to tutor a merfolk into play?",
     "effects": [
       {
-        "conditions": [
-          {
-            "condition": "handSize",
-            "amounts": [0, 5]
-          }
-        ],
+        "effect": "sacrifice",
+        "scope": "selfOnly"
+      },
+      {
         "effect": "tutor",
         "cardType": "summon",
+        "tribe": "merfolk",
         "destination": "play"
       }
     ]
   }
-  ] 
+  ]
 }

@@ -17,7 +17,7 @@
       "effects": [
         {
           "effect": "castCard",
-          "self": true,
+          "scope": "selfOnly",
           "targetZones": [
             "graveyard",
             "hand"

@@ -12,7 +12,7 @@
   "triggeredEffects": [
     {
       "trigger": "discard",
-      "self": true,
+      "scope": "selfOnly",
       "effects": [
         {
           "effect": "sendToZone",

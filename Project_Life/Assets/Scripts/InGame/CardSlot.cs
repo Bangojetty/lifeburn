@@ -19,7 +19,7 @@ public class CardSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     public float dragSpeed = 5f;
     private bool isHovered;
     private bool isGrabbed;
-    private int cardCastThreshold = -120;
+    private float castThresholdPercent = 0.2f; // Cast when above bottom 20% of screen (top 80%)
     
     public bool isSelectable;
 
@@ -71,7 +71,7 @@ public class CardSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     private void MoveDragCard() {
         CardDisplay dragCardDisplay = tempDragDisplay.GetComponent<CardDisplay>();
         tempDragTransform.position = Vector3.Lerp(tempDragTransform.position, gameManager.GetMouseWorldPositionWithZAs(0), dragSpeed * Time.deltaTime);
-        if (tempDragTransform.anchoredPosition.y > cardCastThreshold) {
+        if (Input.mousePosition.y > Screen.height * castThresholdPercent) {
             if (castVideoIsPlaying) return;
             dragCardDisplay.playableHighlight.SetActive(false);
             dragCardDisplay.castingAnimation.SetActive(true);
@@ -130,7 +130,6 @@ public class CardSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         tempDragDisplay.transform.SetAsLastSibling();
         tempDragDisplay.GetComponent<Animator>().enabled = false;
         tempDragTransform = tempDragDisplay.GetComponent<RectTransform>();
-        tempDragTransform.pivot = new Vector2(0.5f, 0.5f);
     }
 
 
@@ -143,6 +142,8 @@ public class CardSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     }
     
     public void OnPointerDown(PointerEventData eventData) {
+        // Only left-click starts drag (right-click is for inspect)
+        if (eventData.button != PointerEventData.InputButton.Left) return;
         // TODO !SECURITY ISSUE! verify on the server that a card is playable before attempting to cast
         if (!cardObj.GetComponent<CardDisplay>().isPlayable) return;
         CreateTempDragCard();
@@ -152,8 +153,11 @@ public class CardSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         tempDisplayObjExists = false;
     }
     public void OnPointerUp(PointerEventData eventData) {
+        // Only handle left-click release
+        if (eventData.button != PointerEventData.InputButton.Left) return;
         if (!cardObj.GetComponent<CardDisplay>().isPlayable) return;
-        if (tempDragTransform.anchoredPosition.y > cardCastThreshold) {
+        if (tempDragDisplay == null) return; // Guard against rapid clicks
+        if (Input.mousePosition.y > Screen.height * castThresholdPercent) {
             gameManager.AttemptToCast(cardObj.GetComponent<CardDisplay>().card.uid);
         }
         gameManager.cardIsGrabbed = false;
@@ -175,6 +179,26 @@ public class CardSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         }
     }
 
+    /// <summary>
+    /// Cleans up any temporary display objects (hover/drag) and restores the original card.
+    /// Call this before removing the card from hand to prevent orphaned UI elements.
+    /// </summary>
+    public void CleanupTempDisplays() {
+        if (tempDragDisplay != null) {
+            Destroy(tempDragDisplay);
+            tempDragDisplay = null;
+        }
+        if (tempDisplayObj != null) {
+            Destroy(tempDisplayObj);
+            tempDisplayObj = null;
+            tempDisplayObjExists = false;
+        }
+        isHovered = false;
+        isGrabbed = false;
+        gameManager.cardIsGrabbed = false;
+        cardObj.SetActive(true);
+    }
+
 
     public void EnableSelectable() {
         if (tempDisplayObj != null) {
@@ -187,8 +211,18 @@ public class CardSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         isSelectable = true;
     }
     public void OnPointerClick(PointerEventData eventData) {
+        // Right-click to inspect
+        if (eventData.button == PointerEventData.InputButton.Right) {
+            CardDisplay cardDisplay = cardObj.GetComponent<CardDisplay>();
+            if (cardDisplay != null && cardDisplay.card != null) {
+                gameManager.DisplayCardDetails(cardDisplay.card);
+            }
+            return;
+        }
+
+        // Left-click for selectable
         if (isSelectable) {
-            ExecuteEvents.Execute(tempDisplayObj.GetComponent<DynamicReferencer>().selectableTargetObj, 
+            ExecuteEvents.Execute(tempDisplayObj.GetComponent<DynamicReferencer>().selectableTargetObj,
                 eventData, ExecuteEvents.pointerClickHandler);
             DynamicReferencer cardDRef = cardObj.GetComponent<DynamicReferencer>();
             cardDRef.highlightSelectable.SetActive(!cardDRef.highlightSelectable.activeSelf);

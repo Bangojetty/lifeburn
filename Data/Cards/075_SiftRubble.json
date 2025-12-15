@@ -9,21 +9,21 @@
   "stackEffects": [
     {
       "effect": "lookAtDeck",
+      "amount": 2,
       "deckDestinations": [
-		  {
-			"deckDestination": "top",
-			"amountIsPlayerChosen": true,
-			"ordering": "any"
-		  },
-		  {
-			"deckDestination": "graveyard",
-			"amountIsPlayerChosen": true
-		  }
-	  ]
+        {
+          "deckDestination": "graveyard",
+          "amountIsPlayerChosen": true
+        },
+        {
+          "deckDestination": "top",
+          "ordering": "any"
+        }
+      ]
     },
     {
       "effect": "draw",
       "amount": 1
     }
-  ] 
+  ]
 }

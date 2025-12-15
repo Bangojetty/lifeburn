@@ -26,10 +26,16 @@ namespace InGame {
         AttackCapable,
         LoseLife,
         CreateToken,
+        RemoveToken,
         Destroy,
         Cost,
         EndGame,
         Discard,
-        AmountSelection
+        AmountSelection,
+        SkipToPhase,
+        Peek,
+        ReturnToHand,
+        Counter,
+        GainControl
     }
 }

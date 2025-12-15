@@ -12,7 +12,7 @@
   "triggeredEffects": [  
     {
       "trigger": "attack",
-      "self": true,
+      "scope": "selfOnly",
       "effects": [
         {
           "effect": "createToken",

@@ -17,7 +17,7 @@
 		"effects": [
 		    {
 			  "effect": "reveal",
-			  "self": true
+			  "scope": "selfOnly"
 		    },
 		    {
 			  "effect": "createToken",

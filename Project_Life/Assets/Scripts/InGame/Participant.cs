@@ -16,6 +16,8 @@ namespace InGame {
         public GameObject handZoneObj;
         public List<CardDisplayData> graveyard = new();
         public GameObject graveyardContents;
+        public List<CardDisplayData> exile = new();
+        public GameObject exileContents;
         public GameObject deckObj;
         public List<CardDisplayData> playField = new();
         private Dictionary<int, GameObject> stackIdToCardObj = new();
@@ -61,9 +63,14 @@ namespace InGame {
             float scaleFactor = playZoneScaler.GetScaleFactor();
             newPlaySlot.GetComponent<RectTransform>().localScale = new Vector3(scaleFactor, scaleFactor, scaleFactor);
             newCardObj.GetComponent<RectTransform>().localScale = new Vector3(0.7f, 0.7f, 0.7f);
+            Debug.Log($"[UID] Summon: Adding CardDisplay uid={cardDisplayData.uid} ({cardDisplayData.name}) to UidToObj");
             gameManager.UidToObj[cardDisplayData.uid] = newCardObj;
             CardDisplay newCardDisplay = newCardObj.GetComponent<CardDisplay>();
             newCardObj.GetComponent<Animator>().enabled = false;
+            // Disable selectableCardObj raycast - it's only used for card selection dialogues, not in-play cards
+            if (newCardDisplay.selectableCardObj != null) {
+                newCardDisplay.selectableCardObj.GetComponent<SelectableCard>()?.Deactivate();
+            }
             newCardDisplay.PlaySummonAnim();
             playZoneScaler.Rescale();
             return newCardDisplay;
@@ -78,6 +85,13 @@ namespace InGame {
                         newCardDisplay.AddToGraveyardOpponent();
                     } else {
                         newCardDisplay.AddToGraveyard();
+                    }
+                    break;
+                case Zone.Exile:
+                    if (this is Opponent) {
+                        newCardDisplay.AddToExileOpponent();
+                    } else {
+                        newCardDisplay.AddToExile();
                     }
                     break;
                 default:
@@ -96,8 +110,15 @@ namespace InGame {
             UpdateUI();
         }
 
-        public void LoseLife(int amount) {
-            lifePoints -= amount;
+        public void LoseLife(int amount, int? expectedLifeTotal = null) {
+            // If expectedLifeTotal provided, use it to verify and correct
+            // This prevents double-subtraction if animation already applied damage
+            if (expectedLifeTotal.HasValue) {
+                if (lifePoints == expectedLifeTotal.Value) return; // Already correct
+                lifePoints = expectedLifeTotal.Value;
+            } else {
+                lifePoints -= amount;
+            }
             UpdateUI();
         }
         

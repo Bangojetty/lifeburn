@@ -17,7 +17,10 @@ using Vector3 = UnityEngine.Vector3;
 public class GameManager : MonoBehaviour {
     // ebug
     public Ebug ebug;
-    
+
+    [Header("Testing")]
+    public bool skipAnimations;
+
     public GameData gameData;
     public Player player;
     public Participant opponent;
@@ -123,9 +126,16 @@ public class GameManager : MonoBehaviour {
     public ActionButtonType currentSelectionType;
     public Dictionary<DynamicReferencer, List<int>> dRefToSelectedUids = new();
     public GameObject amountSelectionPanel;
+    // tribute value tracking (for tribute multipliers)
+    public Dictionary<int, int> tributeValues = new();
+    public int currentTributeValue = 0;
+    // variable selection (0 to max instead of exact amount)
+    public bool variableSelection = false;
 
     // activated abilites
     public CardDisplay currentActivatedAbilityCdd;
+    public int? currentActivatedTokenUid;  // For token activation
+    public TokenDisplay currentActivatedTokenDisplay;
     public GameObject activationVerificationPanel;
 
     
@@ -152,7 +162,11 @@ public class GameManager : MonoBehaviour {
     
     // UI Panel Stack
     public List<GameObject> stackablePanels;
-    
+
+    // Debug deck viewer (press D to toggle)
+    public GameObject debugDeckPanel;
+    public TMP_Text debugDeckText;
+
     private void Update() {
         if (Input.GetKeyUp(KeyCode.Escape)) {
             if(gameData.panelStack.Count < 1) {
@@ -161,13 +175,40 @@ public class GameManager : MonoBehaviour {
                 gameData.panelStack.Last().Disable();
             }
         }
-        
+
         if (Input.GetKeyDown("9")) {
             ebug.Slog("Current UidToCardObj Dict:");
             foreach (KeyValuePair<int, GameObject> keyPair in UidToObj) {
                 ebug.Slog("uid: " + keyPair.Key);
             }
         }
+
+        // Toggle debug deck viewer with D key
+        if (Input.GetKeyDown(KeyCode.D) && debugDeckPanel != null) {
+            ToggleDebugDeckPanel();
+        }
+    }
+
+    private void ToggleDebugDeckPanel() {
+        debugDeckPanel.SetActive(!debugDeckPanel.activeSelf);
+        if (debugDeckPanel.activeSelf) {
+            RefreshDebugDeckDisplay();
+        }
+    }
+
+    private void RefreshDebugDeckDisplay() {
+        if (debugDeckText == null || gameData.matchState?.playerState?.deckContents == null) return;
+
+        var deckContents = gameData.matchState.playerState.deckContents;
+        string deckString = $"=== DECK ({deckContents.Count} cards) ===\n";
+        deckString += "(Top of deck first)\n\n";
+
+        for (int i = 0; i < deckContents.Count; i++) {
+            var card = deckContents[i];
+            deckString += $"{card.name}\n";
+        }
+
+        debugDeckText.text = deckString;
     }
     private void Start() {
         ebug = GameObject.Find("eBugger").GetComponent<Ebug>();
@@ -271,14 +312,38 @@ public class GameManager : MonoBehaviour {
                 case EventType.Resolve:
                     Debug.Log("Resolve Event");
                     int count = stackView.transform.childCount;
-                    // destroy the last object in the stack(First in last out)
-                    Destroy(currentResolvingStackObj);
-                    if (gEvent.sourceCard != null) {
-                        if (gEvent.isOpponent) {
-                            opponent.CreateAndAddCardToZone(gEvent.sourceCard, Zone.Graveyard);
-                        } else {
-                            player.CreateAndAddCardToZone(gEvent.sourceCard, Zone.Graveyard);
+                    if (currentResolvingStackObj != null) {
+                        // Check if resolving object is a CardDisplay (card) or StackObjDisplay (ability)
+                        CardDisplay resolvingCardDisplay = currentResolvingStackObj.GetComponent<CardDisplay>();
+                        StackObjDisplay resolvingStackDisplay = currentResolvingStackObj.GetComponent<StackObjDisplay>();
+
+                        if (resolvingCardDisplay != null) {
+                            // Card on stack - move to appropriate zone based on sourceCard
+                            Debug.Log($"[UID] Resolve: CardDisplay uid={resolvingCardDisplay.card.uid} resolving");
+                            if (gEvent.sourceCard != null) {
+                                // Spell card goes to graveyard
+                                if (gEvent.isOpponent) {
+                                    resolvingCardDisplay.ownerIsOpponent = true;
+                                    resolvingCardDisplay.AddToGraveyardOpponent();
+                                } else {
+                                    resolvingCardDisplay.AddToGraveyard();
+                                }
+                            }
+                            // Note: Summon/Object cards will be handled by SummonEvent - the CardDisplay
+                            // is moved from stack to play zone there, so we don't destroy here
+                        } else if (resolvingStackDisplay != null) {
+                            // Ability on stack - remove from UidToObj and destroy
+                            if (resolvingStackDisplay.card != null) {
+                                int resolveUid = resolvingStackDisplay.card.uid;
+                                if (UidToObj.TryGetValue(resolveUid, out GameObject objInMap) && objInMap == currentResolvingStackObj) {
+                                    Debug.Log($"[UID] Resolve: Removing StackObjDisplay uid={resolveUid} from UidToObj");
+                                    UidToObj.Remove(resolveUid);
+                                }
+                            }
+                            Destroy(currentResolvingStackObj);
                         }
+                    } else {
+                        Debug.LogWarning("[UID] Resolve: currentResolvingStackObj is null!");
                     }
                     if (count == 1) {
                         Debug.Log("stack is empty, disabling stack panel");
@@ -290,6 +355,10 @@ public class GameManager : MonoBehaviour {
                 case EventType.LookAtDeck:
                     Debug.Log("LookAtDeck Event");
                     DisplayLookAtDeckDialogue(gEvent);
+                    break;
+                case EventType.Peek:
+                    Debug.Log("Peek Event");
+                    DisplayPeekDialogue(gEvent);
                     break;
                 case EventType.SendToZone:
                     Debug.Log("SendToZone Event");
@@ -308,26 +377,53 @@ public class GameManager : MonoBehaviour {
                     break;
                 case EventType.Combat:
                     Debug.Log("Combat Event");
-                    Debug.Log("Attacker is " + UidToObj[gEvent.attackerUid].GetComponent<CardDisplay>().card.name +
-                              ". defender uid is " + gEvent.defenderUid + ". damage amount is " + gEvent.amount);
+                    if (UidToObj.TryGetValue(gEvent.attackerUid, out GameObject attackerDebugObj)) {
+                        Debug.Log("Attacker is " + attackerDebugObj.GetComponent<CardDisplay>()?.card?.name +
+                                  ". defender uid is " + gEvent.defenderUid + ". damage amount is " + gEvent.amount);
+                    }
                     StartCoroutine(CombatEvent(gEvent));
-                    
+
                     break;
                 case EventType.Death:
                     Debug.Log("Death Event");
-                    Debug.Log("Dying unit is " + UidToObj[gEvent.focusUid].GetComponent<CardDisplay>().card.name);
-                    UidToObj[gEvent.focusUid].GetComponent<CardDisplay>().Kill();
+                    if (UidToObj.TryGetValue(gEvent.focusUid, out GameObject dyingObj)) {
+                        CardDisplay dyingCard = dyingObj.GetComponent<CardDisplay>();
+                        if (dyingCard != null) {
+                            Debug.Log("Dying unit is " + dyingCard.card?.name);
+                            dyingCard.Kill();
+                        } else {
+                            // Handle token death - tokens use TokenDisplay, not CardDisplay
+                            TokenDisplay dyingToken = dyingObj.GetComponent<TokenDisplay>();
+                            if (dyingToken != null) {
+                                Debug.Log($"Dying token uid: {gEvent.focusUid}");
+                                dyingToken.RemoveToken(gEvent.focusUid);
+                                // If no more tokens in stack, destroy the display
+                                if (dyingToken.tokenUids.Count == 0) {
+                                    Destroy(dyingToken.gameObject);
+                                }
+                            }
+                        }
+                    }
                     gEventIsInProgress = false;
                     break;
                 case EventType.TributeRequirement:
                     Debug.Log("Tribute Requirement Event");
                     waitingForOpponentTextObj.SetActive(false);
                     Debug.Assert(gEvent.focusCard != null, "There is no card associated with this event to pull tribute cost from");
-                    currentSelectionMax = gEvent.focusCard.cost;
+                    currentSelectionMax = gEvent.focusCard.cost;  // This is the tribute VALUE needed
+                    currentTributeValue = 0;  // Reset current tribute value
+                    tributeValues = gEvent.tributeValues ?? new Dictionary<int, int>();
                     plurality = currentSelectionMax == 1 ? "" : "s";
                     selectTextObj.GetComponent<TMP_Text>().text = "Select Tribute" + plurality + ".";
                     selectTextObj.SetActive(true);
                     possibleSelectables = gEvent.focusUidList;
+                    Debug.Log($"[UID] TributeRequirement: Expected selectable UIDs: [{string.Join(", ", possibleSelectables)}]");
+                    Debug.Log($"[UID] TributeRequirement: UidToObj keys: [{string.Join(", ", UidToObj.Keys)}]");
+                    foreach (int uid in possibleSelectables) {
+                        if (!UidToObj.ContainsKey(uid)) {
+                            Debug.LogWarning($"[UID] TributeRequirement: uid {uid} is expected but NOT in UidToObj!");
+                        }
+                    }
                     currentSelectionType = ActionButtonType.Tribute;
                     EnableUnselectedSelectables();
                     break;
@@ -353,6 +449,10 @@ public class GameManager : MonoBehaviour {
                     Debug.Log("NextPhase Event");
                     StartCoroutine(NextPhaseEvent());
                     break;
+                case EventType.SkipToPhase:
+                    Debug.Log($"SkipToPhase Event: {gEvent.amount} phases from {(Phase)gEvent.universalInt}");
+                    StartCoroutine(SkipToPhaseEvent(gEvent.amount, (Phase)gEvent.universalInt));
+                    break;
                 case EventType.TriggerOrdering:
                     Debug.Log("TriggerOrdering Event");
                     waitingForOpponentTextObj.SetActive(false);
@@ -366,10 +466,22 @@ public class GameManager : MonoBehaviour {
                     break;
                 case EventType.TargetSelection:
                     Debug.Log("TargetSelection Event");
+                    Debug.Log($"[UID] TargetSelection: Expected selectable UIDs: [{string.Join(", ", gEvent.targetSelection.selectableUids)}]");
+                    Debug.Log($"[UID] TargetSelection: UidToObj keys: [{string.Join(", ", UidToObj.Keys)}]");
+                    foreach (int uid in gEvent.targetSelection.selectableUids) {
+                        if (!UidToObj.ContainsKey(uid)) {
+                            Debug.LogWarning($"[UID] TargetSelection: uid {uid} is expected but NOT in UidToObj!");
+                        }
+                    }
                     waitingForOpponentTextObj.SetActive(false);
                     currentTargetMax = gEvent.targetSelection.amount;
-                    plurality = gEvent.targetSelection.amount == 1 ? "" : "s";
-                    selectTextObj.GetComponent<TMP_Text>().text = "Select Target" + plurality + ".";
+                    // Use custom message if provided, otherwise default to "Select Target(s)."
+                    if (!string.IsNullOrEmpty(gEvent.targetSelection.message)) {
+                        selectTextObj.GetComponent<TMP_Text>().text = gEvent.targetSelection.message;
+                    } else {
+                        plurality = gEvent.targetSelection.amount == 1 ? "" : "s";
+                        selectTextObj.GetComponent<TMP_Text>().text = "Select Target" + plurality + ".";
+                    }
                     selectTextObj.SetActive(true);
                     possibleSelectables = gEvent.targetSelection.selectableUids;
                     currentSelectionType = ActionButtonType.Target;
@@ -385,7 +497,12 @@ public class GameManager : MonoBehaviour {
                 case EventType.RefreshCardDisplays:
                     Debug.Log("RefreshCardDisplays Event");
                     foreach (CardDisplayData cdd in gEvent.cards) {
-                        UidToObj[cdd.uid].GetComponent<CardDisplay>().DisplayCardData(cdd);
+                        if (UidToObj.TryGetValue(cdd.uid, out GameObject cardObj)) {
+                            CardDisplay cardDisplay = cardObj.GetComponent<CardDisplay>();
+                            if (cardDisplay != null) {
+                                cardDisplay.DisplayCardData(cdd);
+                            }
+                        }
                     }
                     gEventIsInProgress = false;
                     break;
@@ -399,21 +516,27 @@ public class GameManager : MonoBehaviour {
                     gEventIsInProgress = false;
                     break;
                 case EventType.PayLifeCost or EventType.LoseLife:
-                    Debug.Log("PayLifeCost Event");
-                    // this will be updated later to show an animation
+                    Debug.Log("PayLifeCost/LoseLife Event");
+                    // universalInt contains expected life total for verification (prevents double-damage from animation)
+                    int? expectedLifeTotal = gEvent.universalInt != 0 ? gEvent.universalInt : null;
                     if (gEvent.isOpponent) {
-                        opponent.LoseLife(gEvent.amount);
+                        opponent.LoseLife(gEvent.amount, expectedLifeTotal);
                     } else {
-                        player.LoseLife(gEvent.amount);
+                        player.LoseLife(gEvent.amount, expectedLifeTotal);
                     }
                     gEventIsInProgress = false;
                     break;
                 case EventType.Reveal:
                     Debug.Log("Reveal Event");
-                    foreach (CardDisplay cDisplay in opponent.GetCardsInHand()) {
-                        if (cDisplay.card != null) continue;
-                        cDisplay.UpdateCardDisplayData(gEvent.focusCard);
-                        break;
+                    Opponent opp = opponent as Opponent;
+                    if (opp != null) {
+                        // Find first unrevealed card in opponent's tracked hand
+                        CardDisplay cardToReveal = opp.handCards.Find(c => c.card == null);
+                        if (cardToReveal != null) {
+                            cardToReveal.UpdateCardDisplayData(gEvent.focusCard);
+                            // Unrotate the card now that it's revealed (was rotated 180 for face-down)
+                            cardToReveal.transform.localRotation = Quaternion.identity;
+                        }
                     }
                     gEventIsInProgress = false;
                     break;
@@ -430,6 +553,16 @@ public class GameManager : MonoBehaviour {
                         opponent.CreateOrAddToken(gEvent.focusCard, gEvent.universalInt);
                     } else {
                         player.CreateOrAddToken(gEvent.focusCard, gEvent.universalInt);
+                    }
+                    gEventIsInProgress = false;
+                    break;
+                case EventType.RemoveToken:
+                    Debug.Log("RemoveToken Event");
+                    // Remove token from token zone (used when tokens are converted to summons)
+                    if (gEvent.isOpponent) {
+                        opponent.RemoveToken(gEvent.focusCard, gEvent.universalInt);
+                    } else {
+                        player.RemoveToken(gEvent.focusCard, gEvent.universalInt);
                     }
                     gEventIsInProgress = false;
                     break;
@@ -460,6 +593,9 @@ public class GameManager : MonoBehaviour {
                         case CostType.Discard:
                             EnableCostCardSelection(gEvent);
                             break;
+                        case CostType.ExileFromHand:
+                            EnableCostCardSelection(gEvent);
+                            break;
                     }
                     currentSelectionType = ActionButtonType.Cost;
                     break;
@@ -474,12 +610,25 @@ public class GameManager : MonoBehaviour {
                     break;
                 case EventType.AmountSelection:
                     Debug.Log("AmountSelection Event");
-                    currentSelectionMax = player.lifePoints;
+                    // Use server-provided max if available, otherwise fall back to life points
+                    currentSelectionMax = gEvent.amount > 0 ? gEvent.amount : player.lifePoints;
                     if (gEvent.universalBool) {
-                        DisplayAmountSelector(SetX);
+                        DisplayAmountSelector(SetX, CancelCast);
                     } else {
-                        DisplayAmountSelector(SetAmount);
+                        DisplayAmountSelector(SetAmount, CancelCast);
                     }
+                    break;
+                case EventType.ReturnToHand:
+                    Debug.Log("ReturnToHand Event");
+                    StartCoroutine(ReturnToHandEvent(gEvent));
+                    break;
+                case EventType.Counter:
+                    Debug.Log("Counter Event");
+                    StartCoroutine(CounterEvent(gEvent));
+                    break;
+                case EventType.GainControl:
+                    Debug.Log("GainControl Event");
+                    StartCoroutine(GainControlEvent(gEvent));
                     break;
                 default:
                     Debug.Log("EventType: " + gEvent.eventType + " not implemented.");
@@ -497,10 +646,16 @@ public class GameManager : MonoBehaviour {
         waitingForOpponentTextObj.SetActive(false);
         Debug.Assert(gEvent.focusUidList != null, "selectableCosts list is null");
         currentSelectionMax = gEvent.amount;
+        variableSelection = gEvent.universalBool; // true = select 0 to max, false = select exactly amount
         selectTextObj.GetComponent<TMP_Text>().text = gEvent.eventMessages.First();
         selectTextObj.SetActive(true);
         possibleSelectables = gEvent.focusUidList;
         EnableUnselectedSelectables();
+        // For variable selection, action button is enabled immediately (can confirm with 0 selections)
+        if (variableSelection) {
+            actionButtonComponent.interactable = true;
+            actionButton.SetButtonType(ActionButtonType.Cost);
+        }
     }
 
     private void RefreshStateDisplays() {
@@ -510,6 +665,10 @@ public class GameManager : MonoBehaviour {
     }
 
     private void IteratePhase() {
+        // Clear attack capables when leaving Combat phase
+        if (localPhase == Phase.Combat) {
+            attackCapableUids.Clear();
+        }
         if (localPhase == Phase.End) {
             localPhase = Phase.Draw;
             return;
@@ -523,6 +682,10 @@ public class GameManager : MonoBehaviour {
             Destroy(go);
         }
         activeCoroutines.Clear();
+
+        // Reset all interactable states before enabling new ones
+        DisableAllInteractables();
+
         // only auto pass if there are no possible attackers
         if (autoPass && attackCapableUids.Count == 0) {
             if(ShouldAutoPass()) {
@@ -536,8 +699,10 @@ public class GameManager : MonoBehaviour {
         }
         // displays any playable cards/moves
         foreach (CardDisplayData card in gameData.matchState.playerState.playables) {
-            GameObject cardObj = UidToObj[card.uid];
-            cardObj.GetComponent<CardDisplay>().EnablePlayable();
+            if (!UidToObj.TryGetValue(card.uid, out GameObject cardObj)) continue;
+            CardDisplay cardDisplay = cardObj.GetComponent<CardDisplay>();
+            if (cardDisplay == null) continue;
+            cardDisplay.EnablePlayable();
             CardSlot cardSlot = cardObj.GetComponentInParent<CardSlot>();
             if (cardSlot != null) {
                 cardSlot.ActivateTempHighlights();
@@ -545,10 +710,24 @@ public class GameManager : MonoBehaviour {
         }
 
         foreach (CardDisplayData card in gameData.matchState.playerState.activatables) {
+            if (!UidToObj.ContainsKey(card.uid)) continue;
             GameObject cardObj = UidToObj[card.uid];
-            cardObj.GetComponent<CardDisplay>().EnableActivatable();
+            // Check if it's a card or token and enable appropriately
+            CardDisplay cardDisplay = cardObj.GetComponent<CardDisplay>();
+            if (cardDisplay != null) {
+                cardDisplay.EnableActivatable();
+            } else {
+                // It's a token - enable via TokenDisplay
+                TokenDisplay tokenDisplay = cardObj.GetComponent<TokenDisplay>();
+                if (tokenDisplay != null) {
+                    tokenDisplay.EnableActivatable();
+                }
+            }
         }
-        
+
+        // Re-enable attack capables (they were disabled by DisableAllInteractables)
+        ActivateAttackCapables();
+
         waitingForOpponentTextObj.SetActive(false);
         actionButtonComponent.interactable = true;
         gEventIsInProgress = false;
@@ -563,7 +742,11 @@ public class GameManager : MonoBehaviour {
 
     public void PassPrio() {
         LosePrio();
-        serverApi.PassPrio(gameData.accountData, gameData.matchState.matchId);
+        int? passToPhaseValue = null;
+        if (autoPass) {
+            passToPhaseValue = passToMyMain ? 6 : (int)phaseToPassTo;
+        }
+        serverApi.PassPrio(gameData.accountData, gameData.matchState.matchId, passToPhaseValue);
         WaitForEvents();
     }
 
@@ -574,8 +757,19 @@ public class GameManager : MonoBehaviour {
     }
 
     private void DisableAllInteractables() {
-        foreach (GameObject cardOrPlayerObj in UidToObj.Values) {
-            cardOrPlayerObj.GetComponent<DynamicReferencer>().DisableAllInteractable();
+        List<int> nullUids = new();
+        foreach (var kvp in UidToObj) {
+            if (kvp.Value == null) {
+                Debug.LogWarning($"[UidToObj Debug] Found null/destroyed object for uid: {kvp.Key}");
+                nullUids.Add(kvp.Key);
+                continue;
+            }
+            DynamicReferencer dRef = kvp.Value.GetComponent<DynamicReferencer>();
+            if (dRef != null) dRef.DisableAllInteractable();
+        }
+        // Clean up null entries
+        foreach (int uid in nullUids) {
+            UidToObj.Remove(uid);
         }
     }
     
@@ -623,13 +817,27 @@ public class GameManager : MonoBehaviour {
         CreateNewStackObj(stackDisplayData, newOrderingContainer.transform);
     }
     
-    public void CreateNewStackObj(StackDisplayData stackDisplayData, Transform parentTransform) {
+    public void CreateNewStackObj(StackDisplayData stackDisplayData, Transform parentTransform, bool trackInUidToObj = false) {
         if (!stackPanel.activeSelf) {
             stackPanel.SetActive(true);
         }
         GameObject pfbBasedOnType = stackDisplayData.stackObjType == StackObjType.Spell ? spellStackDisplayPfb : abilityStackDisplayPfb;
-        StackObjDisplay newStackObjDisplay = Instantiate(pfbBasedOnType, parentTransform).GetComponent<StackObjDisplay>();
-        newStackObjDisplay.Initialize(stackDisplayData);
+        GameObject newStackObjGameObject = Instantiate(pfbBasedOnType, parentTransform);
+        StackObjDisplay newStackObjDisplay = newStackObjGameObject.GetComponent<StackObjDisplay>();
+        newStackObjDisplay.Initialize(stackDisplayData, this);
+
+        // Track stack objects in UidToObj for targeting (e.g., counter spells)
+        Debug.Log($"[Counter Debug] CreateNewStackObj: trackInUidToObj={trackInUidToObj}, cardDisplayData null={stackDisplayData.cardDisplayData == null}");
+        if (trackInUidToObj && stackDisplayData.cardDisplayData != null) {
+            int uid = stackDisplayData.cardDisplayData.uid;
+            Debug.Log($"[Counter Debug] Adding stack obj uid={uid} to UidToObj");
+            if (!UidToObj.ContainsKey(uid)) {
+                UidToObj.Add(uid, newStackObjGameObject);
+                Debug.Log($"[Counter Debug] Successfully added uid={uid} to UidToObj. Keys now: [{string.Join(", ", UidToObj.Keys)}]");
+            } else {
+                Debug.Log($"[Counter Debug] uid={uid} already in UidToObj");
+            }
+        }
     }
 
     public void UpdateAllOrderingContainers() {
@@ -665,19 +873,61 @@ public class GameManager : MonoBehaviour {
         yield return new WaitForSeconds(phaseBtnBorderAnim.GetCurrentAnimatorStateInfo(0).length);
         gEventIsInProgress = false;
     }
-    
+
+    private IEnumerator SkipToPhaseEvent(int phasesToSkip, Phase startPhase) {
+        Debug.Log($"SkipToPhaseEvent: phasesToSkip={phasesToSkip}, startPhase={startPhase}, localPhase={localPhase}");
+
+        Animator phaseBtnBorderAnim = phaseBtnBorderObj.GetComponent<Animator>();
+        const float speedMultiplier = 4f;
+
+        // Ensure animator speed starts at normal (in case previous skip was interrupted)
+        phaseBtnBorderAnim.speed = speedMultiplier;
+
+        // Play each phase transition animation in sequence
+        for (int i = 0; i < phasesToSkip; i++) {
+            string animName = gameData.phaseToAnimDict[localPhase];
+            Debug.Log($"  Playing animation {i + 1}/{phasesToSkip}: {animName} (localPhase={localPhase})");
+
+            // Play the transition animation for current phase at 4x speed
+            phaseBtnBorderAnim.Play(animName, -1, 0f);
+            IteratePhase();
+
+            // Wait until the animation is complete (normalizedTime >= 1)
+            yield return null; // Wait one frame for Play to take effect
+            while (phaseBtnBorderAnim.GetCurrentAnimatorStateInfo(0).normalizedTime < 1f) {
+                yield return null;
+            }
+        }
+
+        // Reset animator speed back to normal
+        phaseBtnBorderAnim.speed = 1f;
+        Debug.Log($"SkipToPhaseEvent complete, localPhase now={localPhase}");
+        gEventIsInProgress = false;
+    }
+
     private IEnumerator CombatEvent(GameEvent gEvent) {
         // TODO update the attack animation keyframes to match the position of the card and its target (dynamic anim)
-        GameObject attackerObj = UidToObj[gEvent.attackerUid];
+        if (!UidToObj.TryGetValue(gEvent.attackerUid, out GameObject attackerObj)) {
+            Debug.LogWarning($"CombatEvent: Attacker uid {gEvent.attackerUid} not found");
+            gEventIsInProgress = false;
+            yield break;
+        }
         // remove arrow
-        Destroy(attackerToAttackArrow[attackerObj]);
-        attackerToAttackArrow.Remove(attackerObj);
+        if (attackerToAttackArrow.TryGetValue(attackerObj, out GameObject arrow)) {
+            Destroy(arrow);
+            attackerToAttackArrow.Remove(attackerObj);
+        }
         // unassign AttackCapable
-        attackerObj.GetComponent<DynamicReferencer>().attackCapable.isSelected = false;
-        // disable highlights and interactables (CardDisplay.UpdateDamageNumber)
-        attackerObj.GetComponent<DynamicReferencer>().DisableAllInteractable();
-        // set attacker for use in combat animation event (
-        attackerObj.GetComponent<CardDisplay>().attackTarget = UidToObj[gEvent.defenderUid];
+        DynamicReferencer attackerDRef = attackerObj.GetComponent<DynamicReferencer>();
+        if (attackerDRef != null) {
+            if (attackerDRef.attackCapable != null) attackerDRef.attackCapable.isSelected = false;
+            attackerDRef.DisableAllInteractable();
+        }
+        // set attacker for use in combat animation event
+        CardDisplay attackerCardDisplay = attackerObj.GetComponent<CardDisplay>();
+        if (attackerCardDisplay != null && UidToObj.TryGetValue(gEvent.defenderUid, out GameObject defenderObj)) {
+            attackerCardDisplay.attackTarget = defenderObj;
+        }
         // play animation and get current parent
         Animator attackerAnimator = attackerObj.GetComponent<Animator>();
         Transform parentTransform = attackerObj.transform.parent;
@@ -718,34 +968,43 @@ public class GameManager : MonoBehaviour {
         } else {
             newCardDisplay.card = gEvent.focusCard;
         }
-        // animate it
+        // animate it (skip if testing)
         Animator newCardAnimator = newCardDisplay.GetComponent<Animator>();
-        newCardAnimator.enabled = true;
-        // set the animDelay to exceed the animation duration if next event is gainprio
-        List<GameEvent> eventList = gameData.matchState.playerState.eventList;
-        if (eventList.Last() != gEvent) {
-            int index = eventList.IndexOf(gEvent);
-            if (eventList[index + 1].eventType != EventType.Draw) {
-                isLastDrawEvent = true;
-            }
-        }
-        if (gEvent.isOpponent) {
-            newCardAnimator.Play("DrawOpp",-1, 0f);
-            // wait longer if the next event is not a draw event
-            if (isLastDrawEvent) {
-                yield return new WaitUntil(() => newCardAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1
-                                                 && !newCardAnimator.IsInTransition(0));
+        if (skipAnimations) {
+            newCardAnimator.enabled = false;
+            if (gEvent.isOpponent) {
+                newCardDisplay.AddToHandOpponent();
             } else {
-                yield return new WaitForSeconds(0.5f);
+                newCardDisplay.AddToHand();
             }
         } else {
-            newCardAnimator.Play("Draw",-1, 0f);
-            // wait longer if the next event is not a draw event
-            if (isLastDrawEvent) {
-                yield return new WaitUntil(() => newCardAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1
-                                                 && !newCardAnimator.IsInTransition(0));
+            newCardAnimator.enabled = true;
+            // set the animDelay to exceed the animation duration if next event is gainprio
+            List<GameEvent> eventList = gameData.matchState.playerState.eventList;
+            if (eventList.Last() != gEvent) {
+                int index = eventList.IndexOf(gEvent);
+                if (eventList[index + 1].eventType != EventType.Draw) {
+                    isLastDrawEvent = true;
+                }
+            }
+            if (gEvent.isOpponent) {
+                newCardAnimator.Play("DrawOpp",-1, 0f);
+                // wait longer if the next event is not a draw event
+                if (isLastDrawEvent) {
+                    yield return new WaitUntil(() => newCardAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1
+                                                     && !newCardAnimator.IsInTransition(0));
+                } else {
+                    yield return new WaitForSeconds(0.5f);
+                }
             } else {
-                yield return new WaitForSeconds(0.5f);
+                newCardAnimator.Play("Draw",-1, 0f);
+                // wait longer if the next event is not a draw event
+                if (isLastDrawEvent) {
+                    yield return new WaitUntil(() => newCardAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1
+                                                     && !newCardAnimator.IsInTransition(0));
+                } else {
+                    yield return new WaitForSeconds(0.5f);
+                }
             }
         }
         // finalize the event by toggling gEventsInProgress
@@ -756,18 +1015,29 @@ public class GameManager : MonoBehaviour {
         CardDisplay handCardDisplay;
         Debug.Assert(gEvent.focusCard != null, "There is no focusCard for this discard event");
         if (gEvent.isOpponent) {
-            if (UidToObj.ContainsKey(gEvent.focusUid)) {
-                handCardDisplay = UidToObj[gEvent.focusCard.uid].GetComponent<CardDisplay>();
+            int cardUid = gEvent.focusCard.uid;
+            Opponent opp = opponent as Opponent;
+            if (UidToObj.ContainsKey(cardUid)) {
+                // Revealed card - found in UidToObj
+                handCardDisplay = UidToObj[cardUid].GetComponent<CardDisplay>();
                 handCardDisplay.RemoveFromHand();
-            } else {
-                foreach (CardDisplay cDisplay in opponent.handZoneObj.GetComponentsInChildren<CardDisplay>()) {
-                    if (cDisplay.card != null) continue;
-                    Destroy(cDisplay.gameObject);
-                    break;
+                // Also remove from opponent's hand tracking
+                opp?.handCards.Remove(handCardDisplay);
+            } else if (opp != null) {
+                // Unrevealed card - use tracking to remove
+                CardDisplay removedCard = opp.RemoveCardFromHand(cardUid);
+                if (removedCard != null) {
+                    GameObject cardSlot = removedCard.transform.parent.gameObject;
+                    Destroy(cardSlot);
                 }
-                handCardDisplay = CreateAndInitializeNewCardDisplay(gEvent.focusCard, 
+                // Create new display for animation
+                handCardDisplay = CreateAndInitializeNewCardDisplay(gEvent.focusCard,
                     displayCanvas.transform).GetComponent<CardDisplay>();
-            } 
+            } else {
+                // Fallback - shouldn't happen
+                handCardDisplay = CreateAndInitializeNewCardDisplay(gEvent.focusCard,
+                    displayCanvas.transform).GetComponent<CardDisplay>();
+            }
         } else {
             handCardDisplay = UidToObj[gEvent.focusCard.uid].GetComponent<CardDisplay>();
             handCardDisplay.RemoveFromHand();
@@ -776,11 +1046,161 @@ public class GameManager : MonoBehaviour {
         handCardAnimator.enabled = true;
         string animName = gEvent.isOpponent ? "DiscardOpp" : "Discard";
         handCardAnimator.Play(animName, -1, 0f);
+        // Wait a frame for animator to update, then get the actual clip length
+        yield return null;
         yield return new WaitForSeconds(handCardAnimator.GetCurrentAnimatorStateInfo(0).length);
-        // finalize event 
+        // finalize event
         gEventIsInProgress = false;
     }
-    
+
+    private IEnumerator ReturnToHandEvent(GameEvent gEvent) {
+        Debug.Assert(gEvent.focusCard != null, "There is no focusCard for this ReturnToHand event");
+
+        // Remove card from play zone UI if it exists
+        if (UidToObj.ContainsKey(gEvent.focusCard.uid)) {
+            GameObject cardInPlay = UidToObj[gEvent.focusCard.uid];
+            UidToObj.Remove(gEvent.focusCard.uid);
+            // Destroy the card slot (which contains the card)
+            Transform cardSlot = cardInPlay.transform.parent;
+            if (cardSlot != null && cardSlot.parent != null && cardSlot.parent.name == "PlayZone") {
+                Destroy(cardSlot.gameObject);
+            } else {
+                Destroy(cardInPlay);
+            }
+        }
+
+        // Create new card display for hand (similar to DrawEvent)
+        GameObject newCardObj = CreateAndInitializeNewCardDisplay(gEvent.focusCard, displayCanvas.transform);
+        CardDisplay newCardDisplay = newCardObj.GetComponent<CardDisplay>();
+        if (gEvent.isOpponent) {
+            RectTransform newCardRectTransform = newCardDisplay.GetComponent<RectTransform>();
+            newCardRectTransform.localEulerAngles = new Vector3(newCardRectTransform.localEulerAngles.x,
+                newCardRectTransform.localEulerAngles.y, 180);
+        } else {
+            newCardDisplay.card = gEvent.focusCard;
+        }
+
+        // Animate card going to hand
+        Animator newCardAnimator = newCardDisplay.GetComponent<Animator>();
+        if (skipAnimations) {
+            newCardAnimator.enabled = false;
+            if (gEvent.isOpponent) {
+                newCardDisplay.AddToHandOpponent();
+            } else {
+                newCardDisplay.AddToHand();
+            }
+        } else {
+            string animName = gEvent.isOpponent ? "DrawOpp" : "Draw";
+            newCardAnimator.Play(animName, -1, 0f);
+            yield return new WaitUntil(() => newCardAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1
+                                             && !newCardAnimator.IsInTransition(0));
+        }
+
+        gEventIsInProgress = false;
+    }
+
+    private IEnumerator CounterEvent(GameEvent gEvent) {
+        Debug.Log($"CounterEvent: Countering card with uid {gEvent.focusUid}");
+
+        // Find the stack object with this uid - could be CardDisplay (card) or StackObjDisplay (ability)
+        GameObject stackObjToHandle = null;
+        bool isCardDisplay = false;
+
+        foreach (Transform child in stackView.transform) {
+            // Check for CardDisplay first (cards on stack)
+            CardDisplay cardDisplay = child.GetComponent<CardDisplay>();
+            if (cardDisplay != null && cardDisplay.card != null && cardDisplay.card.uid == gEvent.focusUid) {
+                stackObjToHandle = child.gameObject;
+                isCardDisplay = true;
+                break;
+            }
+
+            // Check for StackObjDisplay (abilities on stack)
+            StackObjDisplay stackDisplay = child.GetComponent<StackObjDisplay>();
+            if (stackDisplay != null && stackDisplay.card != null && stackDisplay.card.uid == gEvent.focusUid) {
+                stackObjToHandle = child.gameObject;
+                isCardDisplay = false;
+                break;
+            }
+        }
+
+        if (stackObjToHandle != null) {
+            if (isCardDisplay) {
+                // CardDisplay - don't destroy, just move to displayCanvas for SendToZone animation
+                // The card will be sent to graveyard by a separate SendToZone event
+                Debug.Log($"[UID] CounterEvent: Moving CardDisplay uid={gEvent.focusUid} off stack for graveyard");
+                stackObjToHandle.transform.SetParent(displayCanvas.transform);
+            } else {
+                // StackObjDisplay (ability) - remove from UidToObj and destroy
+                if (UidToObj.TryGetValue(gEvent.focusUid, out GameObject objInMap) && objInMap == stackObjToHandle) {
+                    UidToObj.Remove(gEvent.focusUid);
+                }
+                Destroy(stackObjToHandle);
+            }
+
+            // Check if stack is now empty
+            yield return null;
+            if (stackView.transform.childCount == 0) {
+                stackPanel.SetActive(false);
+            }
+        } else {
+            Debug.LogWarning($"CounterEvent: Could not find stack object with uid {gEvent.focusUid}");
+        }
+
+        // Note: The countered card will be sent to graveyard by a separate SendToZone event
+        gEventIsInProgress = false;
+    }
+
+    private IEnumerator GainControlEvent(GameEvent gEvent) {
+        Debug.Assert(gEvent.focusCard != null, "There is no focusCard for this GainControl event");
+        int cardUid = gEvent.focusCard.uid;
+
+        if (!UidToObj.TryGetValue(cardUid, out GameObject cardObj)) {
+            Debug.LogWarning($"GainControlEvent: Could not find card with uid {cardUid}");
+            gEventIsInProgress = false;
+            yield break;
+        }
+
+        CardDisplay cardDisplay = cardObj.GetComponent<CardDisplay>();
+        if (cardDisplay == null) {
+            Debug.LogWarning($"GainControlEvent: Object with uid {cardUid} is not a CardDisplay");
+            gEventIsInProgress = false;
+            yield break;
+        }
+
+        // Determine the new controller - isOpponent means the opponent gained control
+        Participant newController = gEvent.isOpponent ? opponent : player;
+        Participant oldController = gEvent.isOpponent ? player : opponent;
+
+        // Get the card's slot (parent) and destroy it from old play zone
+        Transform oldSlot = cardObj.transform.parent;
+        cardObj.transform.SetParent(displayCanvas.transform);
+        if (oldSlot != null) {
+            Destroy(oldSlot.gameObject);
+        }
+        oldController.playZoneScaler.Rescale();
+
+        // Create new slot in new controller's play zone
+        GameObject newPlaySlot = Instantiate(playSlotPfb, newController.playZoneObj.transform);
+        cardObj.transform.SetParent(newPlaySlot.transform);
+        cardObj.transform.localPosition = Vector3.zero;
+
+        // Scale appropriately
+        float scaleFactor = newController.playZoneScaler.GetScaleFactor();
+        newPlaySlot.GetComponent<RectTransform>().localScale = new Vector3(scaleFactor, scaleFactor, scaleFactor);
+        cardObj.GetComponent<RectTransform>().localScale = new Vector3(0.7f, 0.7f, 0.7f);
+
+        // Update ownership
+        cardDisplay.ownerIsOpponent = gEvent.isOpponent;
+
+        // Play summon animation
+        cardDisplay.PlaySummonAnim();
+        newController.playZoneScaler.Rescale();
+
+        yield return new WaitForSeconds((float)cardDisplay.summonVideoPlayer.clip.length);
+        gEventIsInProgress = false;
+    }
+
     private IEnumerator MillEvent(GameEvent gEvent) {
         GameObject newCardObj = CreateAndInitializeNewCardDisplay(gEvent.focusCard, displayCanvas.transform);
         CardDisplay newCardDisplay = newCardObj.GetComponent<CardDisplay>();      
@@ -800,20 +1220,33 @@ public class GameManager : MonoBehaviour {
         CardDisplay handCardDisplay;
         Debug.Assert(gEvent.focusStackObj != null, "there was no focusStackObj for this cast event");
         if (gEvent.isOpponent) {
-            if (UidToObj.ContainsKey(gEvent.focusStackObj.cardDisplayData.uid)) {
-                handCardDisplay = UidToObj[gEvent.focusStackObj.cardDisplayData.uid].GetComponent<CardDisplay>();
+            int cardUid = gEvent.focusStackObj.cardDisplayData.uid;
+            Opponent opp = opponent as Opponent;
+            if (UidToObj.ContainsKey(cardUid)) {
+                // Revealed card - found in UidToObj
+                handCardDisplay = UidToObj[cardUid].GetComponent<CardDisplay>();
                 handCardDisplay.RemoveFromHand();
-            } else {
-                foreach (CardDisplay cDisplay in opponent.handZoneObj.GetComponentsInChildren<CardDisplay>()) {
-                    if (cDisplay.card != null) continue;
-                    Destroy(cDisplay.gameObject);
-                    break;
+                // Also remove from opponent's hand tracking
+                opp?.handCards.Remove(handCardDisplay);
+            } else if (opp != null) {
+                // Unrevealed card - use tracking to remove
+                CardDisplay removedCard = opp.RemoveCardFromHand(cardUid);
+                if (removedCard != null) {
+                    GameObject cardSlot = removedCard.transform.parent.gameObject;
+                    Destroy(cardSlot);
                 }
-                handCardDisplay = CreateAndInitializeNewCardDisplay(gEvent.focusStackObj.cardDisplayData, 
+                // Create new display for animation
+                handCardDisplay = CreateAndInitializeNewCardDisplay(gEvent.focusStackObj.cardDisplayData,
+                    displayCanvas.transform).GetComponent<CardDisplay>();
+            } else {
+                // Fallback - shouldn't happen
+                handCardDisplay = CreateAndInitializeNewCardDisplay(gEvent.focusStackObj.cardDisplayData,
                     displayCanvas.transform).GetComponent<CardDisplay>();
             }
         } else {
             handCardDisplay = UidToObj[gEvent.focusStackObj.cardDisplayData.uid].GetComponent<CardDisplay>();
+            // Update with fresh server data (includes chosenIndices for highlighting choices)
+            handCardDisplay.UpdateCardDisplayData(gEvent.focusStackObj.cardDisplayData);
             handCardDisplay.RemoveFromHand();
         }
         handCardDisplay.tempStackDisplayData = gEvent.focusStackObj;
@@ -824,41 +1257,167 @@ public class GameManager : MonoBehaviour {
         yield return new WaitForSeconds(castingAnimator.GetCurrentAnimatorStateInfo(0).length);
         castingAnimator.Play("ToStack", -1, 0f);
         yield return new WaitForSeconds(castingAnimator.GetCurrentAnimatorStateInfo(0).length);
-        // finalize the event by toggling gEventsInProgress
+        // The ToStack animation event calls CardDisplay.AddToStack() which reparents the card
+        // to the stack (keeping UidToObj tracking intact for counter spell targeting)
         gEventIsInProgress = false;
     }
 
     private IEnumerator SummonEvent(GameEvent gEvent) {
-        CardDisplay newSummonCardDisplay;
+        CardDisplay summonCardDisplay;
         CardDisplayData focusCard = gEvent.focusCard;
-        // add to map for retrieval when resetting stats
-        if (gEvent.isOpponent) {
-            newSummonCardDisplay = opponent.Summon(focusCard);
+
+        // Check if this card is already on the stack (cast from hand)
+        if (UidToObj.TryGetValue(focusCard.uid, out GameObject existingObj)) {
+            CardDisplay existingCard = existingObj.GetComponent<CardDisplay>();
+            if (existingCard != null && existingCard.transform.parent == stackView.transform) {
+                // Card exists on stack - move it to play zone
+                Debug.Log($"[UID] SummonEvent: Moving existing CardDisplay uid={focusCard.uid} from stack to play");
+                summonCardDisplay = SummonFromStack(existingCard, gEvent.isOpponent);
+            } else {
+                // Card exists but not on stack - create new (fallback)
+                summonCardDisplay = gEvent.isOpponent ? opponent.Summon(focusCard) : player.Summon(focusCard);
+            }
         } else {
-            newSummonCardDisplay = player.Summon(focusCard);
-            // isAttacking
-            if(gEvent.universalBool) SelectAttackCapable(newSummonCardDisplay.dynamicReferencer.attackCapable, false);
+            // Card doesn't exist in UidToObj - create new
+            summonCardDisplay = gEvent.isOpponent ? opponent.Summon(focusCard) : player.Summon(focusCard);
         }
-        yield return new WaitForSeconds((float)newSummonCardDisplay.summonVideoPlayer.clip.length);
-        // finalize the event by toggling gEventsInProgress
+
+        // Handle attacking summons
+        if (!gEvent.isOpponent && gEvent.universalBool) {
+            SelectAttackCapable(summonCardDisplay.dynamicReferencer.attackCapable, false);
+        }
+
+        yield return new WaitForSeconds((float)summonCardDisplay.summonVideoPlayer.clip.length);
         gEventIsInProgress = false;
     }
 
+    /// <summary>
+    /// Moves an existing CardDisplay from the stack to the play zone.
+    /// Used when summoning cards that were cast from hand (already have a CardDisplay on stack).
+    /// </summary>
+    private CardDisplay SummonFromStack(CardDisplay cardDisplay, bool isOpponent) {
+        Participant targetParticipant = isOpponent ? opponent : player;
+        RectTransform rt = cardDisplay.GetComponent<RectTransform>();
+
+        // Create play slot and move the card there
+        GameObject newPlaySlot = Instantiate(playSlotPfb, targetParticipant.playZoneObj.transform);
+        cardDisplay.transform.SetParent(newPlaySlot.transform);
+
+        // Reset anchors to center - VerticalLayoutGroup on stack controls anchors while cards are there
+        rt.anchorMin = new Vector2(0.5f, 0.5f);
+        rt.anchorMax = new Vector2(0.5f, 0.5f);
+
+        // Position and scale
+        float scaleFactor = targetParticipant.playZoneScaler.GetScaleFactor();
+        newPlaySlot.GetComponent<RectTransform>().localScale = new Vector3(scaleFactor, scaleFactor, scaleFactor);
+        rt.localScale = new Vector3(0.7f, 0.7f, 0.7f);
+        cardDisplay.transform.localPosition = Vector3.zero;
+
+        // Update UidToObj (already there, but ensure reference is correct)
+        UidToObj[cardDisplay.card.uid] = cardDisplay.gameObject;
+
+        // Set owner flag for opponent cards
+        cardDisplay.ownerIsOpponent = isOpponent;
+
+        // Disable selectableCardObj raycast - only used for card selection dialogues, not in-play cards
+        if (cardDisplay.selectableCardObj != null) {
+            cardDisplay.selectableCardObj.GetComponent<SelectableCard>()?.Deactivate();
+        }
+
+        // Play summon animation
+        cardDisplay.PlaySummonAnim();
+
+        targetParticipant.playZoneScaler.Rescale();
+
+        return cardDisplay;
+    }
+
     private IEnumerator SendToZoneEvent(GameEvent gEvent) {
+        GameObject existingCardObj = null;
         if (gEvent.sourceZone != null && gEvent.sourceZone != Zone.Deck) {
             Debug.Assert(gEvent.focusCard != null, "there is no card for sendToZone Event");
-            GameObject cardObj = UidToObj[gEvent.focusCard.uid];
-            UidToObj.Remove(gEvent.focusCard.uid);
-            switch (gEvent.sourceZone) {
-                case Zone.Play:
-                    Transform cardSlot = cardObj.transform.parent;
-                    Destroy(cardSlot.parent.name == "PlayZone" ? cardSlot.gameObject : cardObj);
-                    break;
-                default:
-                    Destroy(cardObj);
-                    break;
+
+            // For Stack source zone, card may be a CardDisplay (moved to displayCanvas by CounterEvent)
+            // or already destroyed (old StackObjDisplay behavior)
+            if (gEvent.sourceZone == Zone.Stack) {
+                // Try to find existing CardDisplay (cards on stack now stay as CardDisplay)
+                if (UidToObj.TryGetValue(gEvent.focusCard.uid, out existingCardObj)) {
+                    CardDisplay cardDisplay = existingCardObj.GetComponent<CardDisplay>();
+                    if (cardDisplay != null) {
+                        Debug.Log($"[SendToZone Debug] Found existing CardDisplay uid={gEvent.focusCard.uid} from stack");
+                        // Card is already in displayCanvas from CounterEvent, ready for animation
+                    } else {
+                        // Not a CardDisplay, must be old StackObjDisplay - shouldn't happen anymore
+                        existingCardObj = null;
+                    }
+                } else {
+                    Debug.Log($"[SendToZone Debug] Card uid={gEvent.focusCard.uid} not in UidToObj for Stack source");
+                    existingCardObj = null;
+                }
+            } else if (gEvent.sourceZone == Zone.Exile || gEvent.sourceZone == Zone.Graveyard) {
+                // Find and destroy the card in exile/graveyard, create fresh for animation
+                if (UidToObj.TryGetValue(gEvent.focusCard.uid, out existingCardObj)) {
+                    UidToObj.Remove(gEvent.focusCard.uid);
+                    Destroy(existingCardObj);
+                } else {
+                    Debug.LogWarning($"[SendToZone Debug] Card uid {gEvent.focusCard.uid} ({gEvent.focusCard.name}) not found in UidToObj for sourceZone {gEvent.sourceZone}");
+                }
+                existingCardObj = null;
+            } else {
+                if (!UidToObj.TryGetValue(gEvent.focusCard.uid, out existingCardObj)) {
+                    Debug.LogWarning($"[SendToZone Debug] Card uid {gEvent.focusCard.uid} ({gEvent.focusCard.name}) not found in UidToObj for sourceZone {gEvent.sourceZone}");
+                    existingCardObj = null;
+                } else {
+                    UidToObj.Remove(gEvent.focusCard.uid);
+                }
+                // Only process source zone cleanup if we found the card object
+                if (existingCardObj != null) {
+                    switch (gEvent.sourceZone) {
+                        case Zone.Play:
+                            Transform cardSlot = existingCardObj.transform.parent;
+                            Destroy(cardSlot.parent.name == "PlayZone" ? cardSlot.gameObject : existingCardObj);
+                            existingCardObj = null; // Card was destroyed, don't reuse
+                            break;
+                        case Zone.Hand:
+                            CardDisplay handCard = existingCardObj.GetComponent<CardDisplay>();
+                            // If this is an opponent's revealed card, also remove from tracking
+                            if (gEvent.isOpponent) {
+                                Opponent oppTracking = opponent as Opponent;
+                                oppTracking?.handCards.Remove(handCard);
+                            }
+                            // For Hand->Deck, destroy and create fresh to ensure correct anchoring for animation
+                            if (gEvent.zone == Zone.Deck) {
+                                handCard.RemoveFromHand();
+                                Destroy(existingCardObj);
+                                existingCardObj = null;
+                            } else {
+                                handCard.RemoveFromHand();
+                                // Card still exists, will be reused for animation
+                            }
+                            break;
+                        default:
+                            Destroy(existingCardObj);
+                            existingCardObj = null;
+                            break;
+                    }
+                } else if (gEvent.sourceZone == Zone.Hand && gEvent.isOpponent) {
+                    // Card not found in UidToObj - it's from opponent's hand
+                    // Use proper tracking to remove the card
+                    Opponent opp = opponent as Opponent;
+                    if (opp != null) {
+                        int? cardUid = gEvent.focusCard?.uid;
+                        CardDisplay removedCard = opp.RemoveCardFromHand(cardUid);
+                        if (removedCard != null) {
+                            // Destroy the card slot (parent) and the card
+                            GameObject cardSlot = removedCard.transform.parent.gameObject;
+                            Destroy(cardSlot);
+                        }
+                    }
+                }
+                // Animation will create a temporary card object below
             }
         }
+
         string animationName;
         float sendToZoneDelay = eventDelayLong;
         bool isTemp = false;
@@ -875,6 +1434,10 @@ public class GameManager : MonoBehaviour {
                 sendToZoneDelay = eventDelayShort;
                 animationName = gEvent.isOpponent ? "ToGraveOpp" : "ToGrave";
                 break;
+            case Zone.Exile:
+                sendToZoneDelay = eventDelayShort;
+                animationName = gEvent.isOpponent ? "ToExileOpp" : "ToExile";
+                break;
             case Zone.Play:
                 sendToZoneDelay = eventDelayShort;
                 animationName = gEvent.isOpponent ? "ToPlayOpp" : "ToPlay";
@@ -884,17 +1447,31 @@ public class GameManager : MonoBehaviour {
                 animationName = "";
                 break;
         }
-        GameObject newCardObj = CreateAndInitializeNewCardDisplay(gEvent.focusCard, displayCanvas.transform, isTemp);
-        Animator newCardAnimator = newCardObj.GetComponent<Animator>();
-        newCardAnimator.enabled = true;
-        newCardAnimator.Play(animationName, -1, 0f);
+
+        // Reuse existing card from hand if available, otherwise create new display
+        GameObject cardObjForAnimation;
+        if (existingCardObj != null) {
+            cardObjForAnimation = existingCardObj;
+        } else {
+            cardObjForAnimation = CreateAndInitializeNewCardDisplay(gEvent.focusCard, displayCanvas.transform, isTemp);
+        }
+
+        Animator cardAnimator = cardObjForAnimation.GetComponent<Animator>();
+        cardAnimator.enabled = true;
+        cardAnimator.Play(animationName, -1, 0f);
         yield return new WaitForSeconds(sendToZoneDelay);
+
+        // Re-add to UidToObj if card went to play (so RefreshCardDisplays can find it)
+        if (gEvent.zone == Zone.Play && gEvent.focusCard != null) {
+            UidToObj[gEvent.focusCard.uid] = cardObjForAnimation;
+        }
+
         gEventIsInProgress = false;
     }
 
     private void DisplayLookAtDeckDialogue(GameEvent gEvent) {
         cardSelectionDialogue.SetActive(true);
-        Debug.Assert(gEvent.cards != null, 
+        Debug.Assert(gEvent.cards != null,
             "there are no cards to look at for this look at deck event");
         foreach (CardDisplayData cdd in gEvent.cards) {
             GameObject newCardDisplayObj = CreateAndInitializeNewCardDisplay(cdd, cardSelectionView.transform, true);
@@ -904,22 +1481,40 @@ public class GameManager : MonoBehaviour {
         cardSelectionManager.InitializeFirstDestination(gEvent);
     }
 
+    private void DisplayPeekDialogue(GameEvent gEvent) {
+        cardSelectionDialogue.SetActive(true);
+        Debug.Assert(gEvent.cards != null,
+            "there are no cards to peek at for this peek event");
+        foreach (CardDisplayData cdd in gEvent.cards) {
+            GameObject newCardDisplayObj = CreateAndInitializeNewCardDisplay(cdd, cardSelectionView.transform, true);
+            cardSelectionManager.cDisplaysToSelectFrom.Add(newCardDisplayObj.GetComponent<CardDisplay>());
+        }
+        // For peek, just show cards and use OK button to continue (no selection needed)
+        cardSelectionManager.InitializePeek();
+    }
+
     public GameObject CreateAndInitializeNewCardDisplay(CardDisplayData cdd, Transform parentTransform, bool isTemp = false) {
         GameObject newCardDisplayObj = Instantiate(cardDisplayPfb, parentTransform);
         if (cdd != null) {
             newCardDisplayObj.name = cdd.name + "(" + cdd.uid + ")";
         }
         CardDisplay newCardDisplay = newCardDisplayObj.GetComponent<CardDisplay>();
-        newCardDisplay.UpdateCardDisplayData(cdd);
-        if (isTemp && cdd != null) UidToObj.Remove(cdd.uid);
+        // Temp cards don't track in UidToObj - they're just for display, the real card stays tracked
+        newCardDisplay.UpdateCardDisplayData(cdd, trackInUidToObj: !isTemp);
         return newCardDisplayObj;
     }
     
     // TODO create PlaySlot initializer to normalize code from CardDisplay.AddToPlay() and Participant.Summon()
     // public GameObject CreateAndInitializeNewPlaySlot(CardDisplayData cdd)
     
+    /// <summary>
+    /// Adds an ability/trigger to the stack using StackObjDisplay.
+    /// Note: Cards use CardDisplay.AddToStack() which reparents the original card to the stack.
+    /// Abilities use this method because they don't have a card identity to preserve.
+    /// </summary>
     private void AddToStack(StackDisplayData stackDisplayData) {
-        CreateNewStackObj(stackDisplayData, stackView.transform);
+        // Track stack objects for counter spell targeting
+        CreateNewStackObj(stackDisplayData, stackView.transform, trackInUidToObj: true);
     }
 
     // -------
@@ -970,18 +1565,36 @@ public class GameManager : MonoBehaviour {
     
     public void DisplayActivationVerification(CardDisplay cardDisplay) {
         currentActivatedAbilityCdd = cardDisplay;
+        currentActivatedTokenUid = null;
+        currentActivatedTokenDisplay = null;
+        activationVerificationPanel.SetActive(true);
+    }
+
+    public void DisplayTokenActivationVerification(TokenDisplay tokenDisplay, int tokenUid) {
+        currentActivatedAbilityCdd = null;
+        currentActivatedTokenUid = tokenUid;
+        currentActivatedTokenDisplay = tokenDisplay;
         activationVerificationPanel.SetActive(true);
     }
 
     public void CancelAbilityActivation() {
         currentActivatedAbilityCdd = null;
+        currentActivatedTokenUid = null;
+        currentActivatedTokenDisplay = null;
         activationVerificationPanel.SetActive(false);
     }
 
     public void AttemptToActivate() {
         LosePrio();
-        serverApi.AttemptToActivate(gameData.accountData, gameData.matchState.matchId, currentActivatedAbilityCdd.card.uid);
+        // Determine which UID to use - card or token
+        int uidToActivate = currentActivatedAbilityCdd != null
+            ? currentActivatedAbilityCdd.card.uid
+            : currentActivatedTokenUid.Value;
+        serverApi.AttemptToActivate(gameData.accountData, gameData.matchState.matchId, uidToActivate);
         activationVerificationPanel.SetActive(false);
+        currentActivatedAbilityCdd = null;
+        currentActivatedTokenUid = null;
+        currentActivatedTokenDisplay = null;
         WaitForEvents();
     }
     
@@ -999,7 +1612,9 @@ public class GameManager : MonoBehaviour {
 
     private void ActivateAttackables(List<int> uids) {
         foreach (int uid in uids) {
-            DynamicReferencer dRef = UidToObj[uid].GetComponent<DynamicReferencer>();
+            if (!UidToObj.TryGetValue(uid, out GameObject obj)) continue;
+            DynamicReferencer dRef = obj.GetComponent<DynamicReferencer>();
+            if (dRef == null) continue;
             dRef.EnableAttackable();
             attackableDRefs.Add(dRef);
         }
@@ -1015,7 +1630,12 @@ public class GameManager : MonoBehaviour {
 
     private void ActivateAttackCapables() {
         foreach (int uid in attackCapableUids) {
-            UidToObj[uid].GetComponent<CardDisplay>().EnableAttackCapable();
+            if (UidToObj.TryGetValue(uid, out GameObject cardObj)) {
+                CardDisplay cardDisplay = cardObj.GetComponent<CardDisplay>();
+                if (cardDisplay != null) {
+                    cardDisplay.EnableAttackCapable();
+                }
+            }
         }
     }
 
@@ -1048,14 +1668,17 @@ public class GameManager : MonoBehaviour {
         }
         attackerToAttackArrow.Clear();
         foreach (var pair in attackUids) {
+            if (!UidToObj.TryGetValue(pair.Key, out GameObject attackerObj)) continue;
+            if (!UidToObj.ContainsKey(pair.Value)) continue; // defender must exist too
             GameObject newAttArrow = CreateAttackArrow((pair.Key, pair.Value));
-            attackerToAttackArrow.Add(UidToObj[pair.Key], newAttArrow);
+            attackerToAttackArrow.Add(attackerObj, newAttArrow);
         }
     }
 
     private Vector3 GetCardTargetLocation(int uid) {
-        CardDisplay cDisplay = UidToObj[uid].GetComponent<CardDisplay>();
-        Participant participant = UidToObj[uid].GetComponent<Participant>();
+        if (!UidToObj.TryGetValue(uid, out GameObject obj)) return Vector3.zero;
+        CardDisplay cDisplay = obj.GetComponent<CardDisplay>();
+        Participant participant = obj.GetComponent<Participant>();
         if (cDisplay != null) {
             return cDisplay.targetingLocationObj.transform.position;
         }
@@ -1141,7 +1764,8 @@ public class GameManager : MonoBehaviour {
     }
 
     private void DisplayAttack((int, int) attackUidPair, bool isOpponent) {
-        GameObject attackingObj = UidToObj[attackUidPair.Item1];
+        if (!UidToObj.TryGetValue(attackUidPair.Item1, out GameObject attackingObj)) return;
+        if (!UidToObj.ContainsKey(attackUidPair.Item2)) return; // defender must exist
         float localYAdjust = attackYAdjust;
         // reverse the YAdjust for opponent attacks
         if(isOpponent) localYAdjust = -localYAdjust;
@@ -1158,17 +1782,22 @@ public class GameManager : MonoBehaviour {
     }
 
     private void UnDisplayAttack(int attackerUid, bool isOpponent = false) {
-        GameObject attackerObj = UidToObj[attackerUid];
+        if (!UidToObj.TryGetValue(attackerUid, out GameObject attackerObj)) {
+            attackUids.Remove(attackerUid);
+            return;
+        }
         float localYAdjust = attackYAdjust;
         // reverse the YAdjust for opponent attacks
         if(isOpponent) localYAdjust = -localYAdjust;
         // destroy the attack arrow
-        Destroy(attackerToAttackArrow[attackerObj]);
+        if (attackerToAttackArrow.TryGetValue(attackerObj, out GameObject arrow)) {
+            Destroy(arrow);
+            attackerToAttackArrow.Remove(attackerObj);
+        }
         // move the card y position back down
         RectTransform baseObjRectTransform = attackerObj.GetComponent<RectTransform>();
         Vector2 baseObjPos = baseObjRectTransform.anchoredPosition;
         baseObjRectTransform.anchoredPosition = new Vector2(baseObjPos.x, baseObjPos.y - localYAdjust);
-        attackerToAttackArrow.Remove(attackerObj);
         attackUids.Remove(attackerUid);
     }
 
@@ -1205,13 +1834,25 @@ public class GameManager : MonoBehaviour {
     }
     
     public void EnableUnselectedSelectables() {
+        Debug.Log($"[Counter Debug] EnableUnselectedSelectables called. possibleSelectables: [{string.Join(", ", possibleSelectables)}]");
         foreach (DynamicReferencer dRef in GetAllDynamicReferencers()) {
+            Debug.Log($"[Counter Debug] Checking dRef uid={dRef.uid}, isSelected={isSelected(dRef)}, isSelectable={isSelectable(dRef)}");
+            if (dRef == null) {
+                Debug.Log($"[Counter Debug] dRef is null, skipping");
+                continue;
+            }
             if (isSelected(dRef)) continue;
             if (!isSelectable(dRef)) continue;
-            if (dRef.tokenDisplay == null && CardIsInHand(dRef.cardDisplay, out var cSlot)) {
+            Debug.Log($"[Counter Debug] Enabling selectable for uid={dRef.uid}");
+            // Check if this is a card in hand (not a player or token)
+            if (dRef.cardDisplay != null && dRef.tokenDisplay == null && CardIsInHand(dRef.cardDisplay, out var cSlot)) {
                 cSlot.EnableSelectable();
-            } else dRef.EnableSelectable();
+            } else {
+                dRef.EnableSelectable();
+            }
         }
+        // Also enable selectables in card group view (graveyard/exile inspection)
+        EnableUnselectedSelectablesInCardGroup();
     }
 
     private bool CardIsInHand(CardDisplay cDisplay, out CardSlot cSlot) {
@@ -1232,6 +1873,7 @@ public class GameManager : MonoBehaviour {
     }
 
     public void SendSelection() {
+        Debug.Log($"[Selection Debug] SendSelection called. Type: {currentSelectionType}, SelectedUids: [{string.Join(", ", selectedUids)}]");
         // reset possible selectables
         possibleSelectables.Clear();
         // send selected Uids based on the selection type
@@ -1240,6 +1882,7 @@ public class GameManager : MonoBehaviour {
                 serverApi.SendCostSelection(gameData.accountData, gameData.matchState.matchId, selectedUids);
                 break;
             case ActionButtonType.Target:
+                Debug.Log($"[Selection Debug] Sending target selection with UIDs: [{string.Join(", ", selectedUids)}]");
                 serverApi.SendTargetSelection(gameData.accountData, gameData.matchState.matchId, selectedUids);
                 break;
             case ActionButtonType.Tribute:
@@ -1253,6 +1896,10 @@ public class GameManager : MonoBehaviour {
         selectedUids.Clear();
         currentSelectionType = 0;
         currentSelectionMax = 0;
+        variableSelection = false;
+        // reset tribute values
+        tributeValues.Clear();
+        currentTributeValue = 0;
         // disable interactables
         LosePrio();
         gEventIsInProgress = false;
@@ -1264,6 +1911,8 @@ public class GameManager : MonoBehaviour {
             if (isSelected(dRef)) continue;
             dRef.DisableAllInteractable();
         }
+        // Also disable selectables in card group view (graveyard/exile inspection)
+        DisableUnselectedSelectablesInCardGroup();
     }
 
     private bool isSelected(DynamicReferencer dRef) {
@@ -1280,18 +1929,40 @@ public class GameManager : MonoBehaviour {
         return false;
     }
 
-    public void DisplayAmountSelector(Action<int> action) {
+    /// <summary>
+    /// Get the tribute value for a specific UID. Returns 1 if not in tributeValues dict.
+    /// </summary>
+    public int GetTributeValue(int uid) {
+        return tributeValues.TryGetValue(uid, out int value) ? value : 1;
+    }
+
+    /// <summary>
+    /// Get remaining tribute value needed to reach currentSelectionMax.
+    /// </summary>
+    public int GetRemainingTributeNeeded() {
+        return currentSelectionMax - currentTributeValue;
+    }
+
+    public void DisplayAmountSelector(Action<int> action, Action cancelAction = null, int? maxOverride = null) {
         amountSelectionPanel.SetActive(true);
-        amountSelectionPanel.GetComponent<AmountSelector>().SetConfirmCallback(action);
+        var selector = amountSelectionPanel.GetComponent<AmountSelector>();
+        selector.SetConfirmCallback(action);
+        selector.SetCancelCallback(cancelAction);
+        selector.SetMaxOverride(maxOverride);
     }
 
     private void SetX(int amount) {
         serverApi.SetX(gameData.accountData, gameData.matchState.matchId, amount);
         gEventIsInProgress = false;
     }
-    
+
     private void SetAmount(int amount) {
         serverApi.SetAmount(gameData.accountData, gameData.matchState.matchId, amount);
+        gEventIsInProgress = false;
+    }
+
+    private void CancelCast() {
+        serverApi.CancelCast(gameData.accountData, gameData.matchState.matchId);
         gEventIsInProgress = false;
     }
 
@@ -1305,10 +1976,73 @@ public class GameManager : MonoBehaviour {
             Destroy(cardObj);
         }
         cardGroupPanel.SetActive(true);
+
         foreach (GameObject cardObj in containerObj.GetChildObjects()) {
-            GameObject newSimpleCardObj = Instantiate(simpleCardDisplayPfb, cardGroupView.transform);
-            CardDisplaySimple newSimpleCardDisplay = newSimpleCardObj.GetComponent<CardDisplaySimple>();
-            newSimpleCardDisplay.UpdateCardDisplayData(cardObj.GetComponent<CardDisplay>().card);
+            CardDisplayData cardData = cardObj.GetComponent<CardDisplay>().card;
+            GameObject newCardObj = CreateAndInitializeNewCardDisplay(cardData, cardGroupView.transform, true);
+            newCardObj.GetComponent<Animator>().enabled = false;
+
+            if (cardData == null) continue;
+
+            DynamicReferencer dRef = newCardObj.GetComponent<DynamicReferencer>();
+            if (dRef == null) continue;
+
+            // Check if this card was already selected (from a previous view)
+            if (selectedUids.Contains(cardData.uid)) {
+                dRef.highlightSelected.SetActive(true);
+                dRef.highlightSelectable.SetActive(false);
+                dRef.selectableTargetObj.SetActive(true);
+            }
+            // Otherwise, enable as selectable if it's a valid target
+            else if (possibleSelectables.Contains(cardData.uid)) {
+                // Only enable if we haven't reached max selection yet
+                if (!IsSelectionComplete()) {
+                    dRef.EnableSelectable();
+                }
+            }
+        }
+    }
+
+    private bool IsSelectionComplete() {
+        if (possibleSelectables.Count == 0) return false;
+
+        int selectionMax = currentSelectionType == ActionButtonType.Target
+            ? currentTargetMax
+            : currentSelectionMax;
+
+        if (currentSelectionType == ActionButtonType.Tribute) {
+            return currentTributeValue >= selectionMax;
+        }
+        return selectedUids.Count >= selectionMax;
+    }
+
+    public void CloseCardGroupPanel() {
+        if (cardGroupPanel.activeSelf) {
+            cardGroupPanel.SetActive(false);
+        }
+    }
+
+    public void ConfirmCardGroupSelection() {
+        CloseCardGroupPanel();
+        SendSelection();
+    }
+
+    public void EnableUnselectedSelectablesInCardGroup() {
+        foreach (Transform child in cardGroupView.transform) {
+            DynamicReferencer dRef = child.GetComponent<DynamicReferencer>();
+            if (dRef == null) continue;
+            if (selectedUids.Contains(dRef.uid)) continue;
+            if (!possibleSelectables.Contains(dRef.uid)) continue;
+            dRef.EnableSelectable();
+        }
+    }
+
+    public void DisableUnselectedSelectablesInCardGroup() {
+        foreach (Transform child in cardGroupView.transform) {
+            DynamicReferencer dRef = child.GetComponent<DynamicReferencer>();
+            if (dRef == null) continue;
+            if (selectedUids.Contains(dRef.uid)) continue;
+            dRef.DisableAllInteractable();
         }
     }
 }

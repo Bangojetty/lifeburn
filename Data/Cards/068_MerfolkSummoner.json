@@ -12,13 +12,15 @@
   {
     "trigger": "enteredZone",
     "zone": "play",
+    "scope": "selfOnly",
     "effects": [
       {
         "effect": "sendToZone",
+        "targetType": "cardInHandOrGraveyard",
         "cardType": "summon",
         "tribe": "merfolk",
-        "targetZones": ["hand", "graveyard"],
-        "destination": "play" 
+        "destination": "play",
+        "resolveTarget": true
       }
     ]
   }

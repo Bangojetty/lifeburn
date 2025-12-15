@@ -1,0 +1,8 @@
+{
+  "tokenType": "treefolk",
+  "name": "Treefolk",
+  "type": "summon",
+  "tribe": "treefolk",
+  "attack": 1,
+  "defense": 1
+}

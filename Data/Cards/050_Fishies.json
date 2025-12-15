@@ -9,13 +9,15 @@
   "activatedEffects": [
   {
     "costType": "sacrifice",
+    "scope": "selfOnly",
     "effects": [
       {
         "effect": "castCard",
+        "targetType": "cardInHand",
         "cardType": "summon",
         "tribe": "merfolk"
       }
     ]
   }
-  ] 
+  ]
 }

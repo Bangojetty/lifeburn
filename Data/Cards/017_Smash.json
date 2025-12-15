@@ -5,7 +5,7 @@
   "type": "spell",
   "tribe": "golem",
   "rarity": "common",
-  "description": "Target golem gets +X/+0 and trample this turn. At your next end phase, create a stone.",
+  "description": "Target golem gets +{X}/+0 and trample this turn. At your next end phase, create a stone.",
   "costModifiers": [
     {
       "modifier": "x"
@@ -23,15 +23,16 @@
 				{
 				  "statType": "attack",
 				  "operatorType": "add",
-				  "xAmount": true	
+				  "xAmount": true
 				}
 			  ],
-			  "self": true
+			  "scope": "selfOnly",
+			  "thisTurn": true
 		  },
 		  {
 			  "passive": "grantKeyword",
 			  "keyword": "trample",
-			  "self": true,
+			  "scope": "selfOnly",
 			  "thisTurn": true
 		  }
 	  ]
@@ -51,6 +52,5 @@
 	  }
      ]
     }
-  ],
-  
+  ]
 }
