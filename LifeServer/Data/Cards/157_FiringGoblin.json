@@ -1,0 +1,36 @@
+{
+  "id": 157,
+  "name": "Firing Goblin",
+  "cost": 0,
+  "type": "summon",
+  "attack": 1,
+  "defense": 1,
+  "keywords": ["blitz"],
+  "tribe": "goblin",
+  "rarity": "common",
+  "description": "When Firing Goblin enters play, you may reveal a goblin from hand. If you do, deal 2 damage to target summon.",
+  "triggeredEffects": [
+    {
+      "trigger": "enteredZone",
+      "zone": "play",
+      "scope": "selfOnly",
+      "optional": true,
+      "optionMessage": "Reveal a Goblin to deal 2 damage to a summon?",
+      "additionalCosts": [
+        {
+          "costType": "reveal",
+          "tribe": "goblin",
+          "amount": 1
+        }
+      ],
+      "effects": [
+        {
+          "effect": "dealDamage",
+          "targetType": "summon",
+          "amount": 2,
+          "maxTargets": 1
+        }
+      ]
+    }
+  ]
+}

@@ -51,8 +51,10 @@ public enum EffectType {
     Repeat,
     SetLifeTotal,
     CantTribute,
-    CardSetStraight,
     CardRitualOfDarkness,
     EventTriggers,
-    ReplacementEffect  // Adds a player passive that modifies zone destinations (e.g., graveyard -> exile)
+    ReplacementEffect,  // Adds a player passive that modifies zone destinations (e.g., graveyard -> exile)
+    OnlySummonTribe,  // Player passive: can only summon cards of a specific tribe this turn
+    GroundTactics,  // Forces opponent's summons to attack, caster controls attack target assignments
+    TriggerSprout  // Manually trigger sprout keyword's herb creation for sourceCard
 }

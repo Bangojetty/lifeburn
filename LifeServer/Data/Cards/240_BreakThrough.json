@@ -1,0 +1,46 @@
+{
+  "id": 240,
+  "name": "Break Through",
+  "cost": 0,
+  "type": "spell",
+  "tribe": "golem",
+  "rarity": "common",
+  "description": "Target attacking summon gains Trample this turn. If it's a golem, give it +2/+0 this turn.",
+  "castRestrictions": ["duringCombat"],
+  "stackEffects": [
+  {
+    "effect": "grantKeyword",
+    "targetType": "summon",
+    "keyword": "trample",
+    "thisTurn": true,
+    "restrictions": [
+	"attacking"
+	],
+    "additionalEffects": [
+      {
+        "targetBasedOn": "rootAffected",
+        "conditions": [
+          {
+            "condition": "isTribe",
+            "tribe": "golem"
+          }
+        ],
+        "effect": "grantPassive",
+		"thisTurn": true,
+		"passives": [
+			{
+				"passive": "changeStats",
+				"statModifiers": [
+					{
+						"statType": "attack",
+						"operatorType": "add",
+						"amount": 2
+					}
+				]
+			}
+		]
+      }
+    ] 
+  }
+  ] 
+}

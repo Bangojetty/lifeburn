@@ -1,0 +1,23 @@
+{
+  "id": 84,
+  "name": "Return",
+  "cost": 4,
+  "type": "spell",
+  "keywords": ["finale"],
+  "tribe": "merfolk",
+  "rarity": "common",
+  "description": "Each player returns a summon from play to its owners hand. Draw a card.",
+  "stackEffects": [
+    {
+      "effect": "sendToZone",
+      "destination": "hand",
+      "cardType": "summon",
+      "eachPlayer": true,
+      "amount": 1
+    },
+    {
+      "effect": "draw",
+      "amount": 1
+    }
+  ]
+}

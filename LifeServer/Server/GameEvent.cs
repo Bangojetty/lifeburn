@@ -30,6 +30,7 @@ public class GameEvent {
     // universal properties
     public bool universalBool { get; set; }
     public int universalInt { get; set; }
+    public int minAmount { get; set; } // minimum selection for variable amount costs
 
     // tribute values (maps UID to tribute value for tribute multipliers)
     public Dictionary<int, int>? tributeValues { get; set; }
@@ -45,9 +46,10 @@ public class GameEvent {
     }
     
     // StackDisplayData
-    public static GameEvent CreateStackEvent(EventType eventType, StackDisplayData stackDisplayData, bool isOpponent = false) {
+    public static GameEvent CreateStackEvent(EventType eventType, StackDisplayData stackDisplayData, bool isOpponent = false, Zone? sourceZone = null) {
         GameEvent gEvent = new GameEvent(eventType, isOpponent);
         gEvent.focusStackObj = stackDisplayData;
+        gEvent.sourceZone = sourceZone;
         return gEvent;
     }
     
@@ -168,12 +170,13 @@ public class GameEvent {
     }
     
     // Cost
-    public static GameEvent CreateCostEvent(CostType costType, int amount, List<int>? selectableUids = null, List<string>? eventMessages = null, bool variableAmount = false) {
+    public static GameEvent CreateCostEvent(CostType costType, int amount, List<int>? selectableUids = null, List<string>? eventMessages = null, bool variableAmount = false, int minAmount = 0) {
         GameEvent gEvent = new GameEvent(EventType.Cost);
         gEvent.isOpponent = false;
         gEvent.costType = costType;
         gEvent.amount = amount;
-        gEvent.universalBool = variableAmount; // true = select 0 to amount, false = select exactly amount
+        gEvent.universalBool = variableAmount; // true = select minAmount to amount, false = select exactly amount
+        gEvent.minAmount = minAmount; // minimum selection for variable amount costs (0 = no minimum)
         if (selectableUids != null) {
             gEvent.focusUidList = selectableUids.ToList();
         }
@@ -199,7 +202,42 @@ public class GameEvent {
         gEvent.focusUid = winningPlayerUid;
         return gEvent;
     }
-    
+
+    // Ritual of Darkness - player chooses a summon from hand or passes
+    public static GameEvent CreateRitualOfDarknessChoiceEvent(List<int> selectableSummonUids) {
+        GameEvent gEvent = new GameEvent(EventType.RitualOfDarknessChoice);
+        gEvent.isOpponent = false;
+        gEvent.focusUidList = selectableSummonUids.ToList();
+        return gEvent;
+    }
+
+    // GoToPhase - jump directly to a specific phase (for Rewind)
+    public static GameEvent CreateGoToPhaseEvent(Phase targetPhase, bool isOpponent = false) {
+        GameEvent gEvent = new GameEvent(EventType.GoToPhase, isOpponent);
+        gEvent.universalInt = (int)targetPhase;
+        return gEvent;
+    }
+
+    // RepeatChoice - ask player if they want to pay to repeat the effect
+    public static GameEvent CreateRepeatChoiceEvent(int costAmount, string costType, int targetUid) {
+        GameEvent gEvent = new GameEvent(EventType.RepeatChoice);
+        gEvent.isOpponent = false;
+        gEvent.universalInt = costAmount;
+        gEvent.eventMessages = new List<string> { $"Pay {costAmount} LP to repeat?" };
+        gEvent.focusUid = targetUid;  // The target of the repeat effect
+        return gEvent;
+    }
+
+    // RepeatAmountSelection - select how many times to repeat upfront (0 to max)
+    public static GameEvent CreateRepeatAmountSelectionEvent(int maxRepeats, int costPerRepeat) {
+        GameEvent gEvent = new GameEvent(EventType.RepeatAmountSelection);
+        gEvent.isOpponent = false;
+        gEvent.amount = maxRepeats;
+        gEvent.universalInt = costPerRepeat;
+        gEvent.eventMessages = new List<string> { $"Repeat: {costPerRepeat} LP each (max {maxRepeats})" };
+        return gEvent;
+    }
+
     // Copy Constructor
     public GameEvent(GameEvent playerEvent) {
         focusCard = playerEvent.focusCard;
@@ -227,6 +265,7 @@ public class GameEvent {
         costType = playerEvent.costType;
         universalBool = playerEvent.universalBool;
         universalInt = playerEvent.universalInt;
+        minAmount = playerEvent.minAmount;
         if(playerEvent.tributeValues != null) tributeValues = new Dictionary<int, int>(playerEvent.tributeValues);
         if(playerEvent.validChoiceIndices != null) validChoiceIndices = playerEvent.validChoiceIndices.ToList();
 

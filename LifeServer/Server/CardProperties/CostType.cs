@@ -9,7 +9,6 @@ public enum CostType {
     Discard,
     Exile,
     LoseLife,
-    DiscardOrSacrificeMerfolk,
     Reveal,
     Life
 }

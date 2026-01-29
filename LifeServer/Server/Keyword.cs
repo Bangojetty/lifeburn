@@ -9,5 +9,6 @@ public enum Keyword {
     Dive,
     Scorch,
     Exhaust,
-    Spectral
+    Spectral,
+    Finale  // Can cast even without enough LP, cost can't reduce below 1 LP
 }

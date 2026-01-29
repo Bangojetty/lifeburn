@@ -17,5 +17,5 @@ public enum AltCostType {
     Sacrifice,
     ExileFromHand,
     Tribute,
-    TribueMultiplier  // Typo in JSON, keep for compatibility
+    Discard
 }

@@ -77,6 +77,7 @@ public class GameManager : MonoBehaviour {
     public Phase phaseToPassTo;
     public bool autoPass;
     public bool passToMyMain;
+    public bool autopassPausedForStack; // Pause autopass when trigger is added to stack
     public Phase localPhase;
     public PhaseButtonManager PhaseButtonManager;
     
@@ -96,6 +97,7 @@ public class GameManager : MonoBehaviour {
     private GameEvent currentGameEvent;
     public bool gEventIsInProgress;
     public bool eventAnimsAreInProgress;
+    private bool pendingGameOver;  // Flag to show game over after all animations finish
     private readonly float eventDelaySuperShort = 0.05f;
     private readonly float eventDelayShort = 0.2f;
     private readonly float eventDelayLong = 1f;
@@ -114,11 +116,19 @@ public class GameManager : MonoBehaviour {
     private Dictionary<GameObject, GameObject> attackerToAttackArrow = new();
     private bool isSecondaryAttack;
 
+    // Ground Tactics: when active, player controls opponent's attack assignments
+    private bool isGroundTacticsMode;
+    private int groundTacticsAttackerPlayerId;
+
     // targeting
     public GameObject targetingArrowPfb;
     public GameObject targetingArrow;
     public int currentTargetMax;
-    
+    public int currentTargetMin;  // Minimum targets required (0 for optional/"any number")
+    public bool currentTargetRequireOneFromEach;
+    public List<int> currentTargetPlayerUids = new();
+    public List<int> currentTargetOpponentUids = new();
+
     // selecting
     public List<int> possibleSelectables = new();
     public List<int> selectedUids = new();
@@ -137,6 +147,10 @@ public class GameManager : MonoBehaviour {
     public int? currentActivatedTokenUid;  // For token activation
     public TokenDisplay currentActivatedTokenDisplay;
     public GameObject activationVerificationPanel;
+    public TMP_Text activationVerificationText;
+
+    // deck top casting (Sky Scryer)
+    public CardDisplay currentDeckTopCastCard;
 
     
     public Dictionary<int, GameObject> UidToObj = new();
@@ -166,6 +180,14 @@ public class GameManager : MonoBehaviour {
     // Debug deck viewer (press D to toggle)
     public GameObject debugDeckPanel;
     public TMP_Text debugDeckText;
+
+    // Game over UI
+    [Header("Game Over")]
+    public GameObject gameOverPanel;
+    public TMP_Text gameOverResultText;       // "VICTORY" or "DEFEAT"
+    public TMP_Text gameOverSeriesScoreText;  // "1 - 0" series score
+    public TMP_Text gameOverMessageText;      // "You win the series!" or "Next game..."
+    public Button gameOverContinueButton;
 
     private void Update() {
         if (Input.GetKeyUp(KeyCode.Escape)) {
@@ -215,6 +237,10 @@ public class GameManager : MonoBehaviour {
         InitializeStaticCardDisplays();
         InitializeGame();
         InitializePlayers();
+
+        if (gameOverContinueButton != null)
+            gameOverContinueButton.onClick.AddListener(OnGameOverContinueClicked);
+
         StartCoroutine(StartGame());
     }
     
@@ -264,7 +290,24 @@ public class GameManager : MonoBehaviour {
 
     // The SCF (Small Checker Function) -> checks for any changes and applies them
     private void CheckForMatchStateChanges() {
+        // Skip the first check if we came from lobby (events already fetched in InitializeGame)
+        if (skipFirstMatchStateCheck) {
+            skipFirstMatchStateCheck = false;
+            Debug.Log("[Lobby] Skipping first CheckForMatchStateChanges, processing existing events");
+            // Process events that were fetched in InitializeGame
+            if (gameData.matchState.playerState.eventList.Count > 0) {
+                InitiateEvents();
+            }
+            return;
+        }
+
         gameData.matchState = serverApi.GetMatchState(gameData.accountData, gameData.matchState.matchId);
+        // Phase state logging
+        Debug.Log($"[PhaseState] serverPhase={gameData.matchState.currentPhase}, localPhase={localPhase}, autoPass={autoPass}, phaseToPassTo={phaseToPassTo}");
+
+        // Update revealed top card (from TopCardRevealed passive) - only for player, not opponent
+        player.UpdateRevealedTopCard(gameData.matchState.playerState.revealedTopCard);
+
         // Event Update
         Debug.Log("checked for matchstate changes, event count is: " + gameData.matchState.playerState.eventList.Count);
         if (gameData.matchState.playerState.eventList.Count > 0) {
@@ -279,6 +322,14 @@ public class GameManager : MonoBehaviour {
 
     // EVENT FUNCTION
     private IEnumerator QueueEventAnims() {
+        // Log all phase-related events for debugging
+        Debug.Log($"[QueueEventAnims] Received {gameData.matchState.playerState.eventList.Count} events, localPhase={localPhase}, serverPhase={gameData.matchState.currentPhase}");
+        foreach (var evt in gameData.matchState.playerState.eventList) {
+            if (evt.eventType == EventType.NextPhase || evt.eventType == EventType.SkipToPhase || evt.eventType == EventType.GoToPhase || evt.eventType == EventType.GainPrio) {
+                Debug.Log($"  - {evt.eventType} (amount={evt.amount}, universalInt={evt.universalInt})");
+            }
+        }
+
         // set the current resolving stack object if resolve event exists
         if (gameData.matchState.playerState.eventList.Any(gEvent => gEvent.eventType == EventType.Resolve)) {
             currentResolvingStackObj = stackView.transform.GetChild(stackView.transform.childCount - 1).gameObject;
@@ -303,6 +354,7 @@ public class GameManager : MonoBehaviour {
                 case EventType.Trigger:
                     Debug.Log("Trigger Event");
                     AddToStack(gEvent.focusStackObj);
+                    autopassPausedForStack = true; // Pause autopass when trigger is added to stack
                     gEventIsInProgress = false;
                     break;
                 case EventType.Summon:
@@ -348,6 +400,7 @@ public class GameManager : MonoBehaviour {
                     if (count == 1) {
                         Debug.Log("stack is empty, disabling stack panel");
                         stackPanel.SetActive(false);
+                        autopassPausedForStack = false; // Clear flag when stack is empty
                     }
                     // finalize the event by toggling gEventsInProgress
                     gEventIsInProgress = false;
@@ -387,6 +440,11 @@ public class GameManager : MonoBehaviour {
                 case EventType.Death:
                     Debug.Log("Death Event");
                     if (UidToObj.TryGetValue(gEvent.focusUid, out GameObject dyingObj)) {
+                        // Clean up attack visuals if dying unit was attacking
+                        if (attackUids.ContainsKey(gEvent.focusUid)) {
+                            bool isOppAttack = dyingObj.transform.IsChildOf(opponent.playZoneObj.transform);
+                            UnDisplayAttack(gEvent.focusUid, isOppAttack);
+                        }
                         CardDisplay dyingCard = dyingObj.GetComponent<CardDisplay>();
                         if (dyingCard != null) {
                             Debug.Log("Dying unit is " + dyingCard.card?.name);
@@ -453,6 +511,10 @@ public class GameManager : MonoBehaviour {
                     Debug.Log($"SkipToPhase Event: {gEvent.amount} phases from {(Phase)gEvent.universalInt}");
                     StartCoroutine(SkipToPhaseEvent(gEvent.amount, (Phase)gEvent.universalInt));
                     break;
+                case EventType.GoToPhase:
+                    Debug.Log($"GoToPhase Event: jumping to {(Phase)gEvent.universalInt}");
+                    StartCoroutine(GoToPhaseEvent((Phase)gEvent.universalInt));
+                    break;
                 case EventType.TriggerOrdering:
                     Debug.Log("TriggerOrdering Event");
                     waitingForOpponentTextObj.SetActive(false);
@@ -475,6 +537,11 @@ public class GameManager : MonoBehaviour {
                     }
                     waitingForOpponentTextObj.SetActive(false);
                     currentTargetMax = gEvent.targetSelection.amount;
+                    currentTargetMin = gEvent.targetSelection.minAmount;
+                    Debug.Log($"[TargetSelection] amount={currentTargetMax}, minAmount={currentTargetMin}");
+                    currentTargetRequireOneFromEach = gEvent.targetSelection.requireOneFromEach;
+                    currentTargetPlayerUids = gEvent.targetSelection.playerUids ?? new List<int>();
+                    currentTargetOpponentUids = gEvent.targetSelection.opponentUids ?? new List<int>();
                     // Use custom message if provided, otherwise default to "Select Target(s)."
                     if (!string.IsNullOrEmpty(gEvent.targetSelection.message)) {
                         selectTextObj.GetComponent<TMP_Text>().text = gEvent.targetSelection.message;
@@ -486,6 +553,14 @@ public class GameManager : MonoBehaviour {
                     possibleSelectables = gEvent.targetSelection.selectableUids;
                     currentSelectionType = ActionButtonType.Target;
                     EnableUnselectedSelectables();
+                    // If minimum targets is 0, enable submit button immediately (for "any number" selection)
+                    if (currentTargetMin == 0) {
+                        Debug.Log($"[TargetSelection] minAmount is 0, enabling action button immediately");
+                        actionButtonComponent.interactable = true;
+                        actionButton.SetButtonType(ActionButtonType.Target);
+                    } else {
+                        Debug.Log($"[TargetSelection] minAmount is {currentTargetMin}, not enabling action button yet");
+                    }
                     break;
                 case EventType.GainPrio:
                     Debug.Log("GainPrio Event");
@@ -528,15 +603,23 @@ public class GameManager : MonoBehaviour {
                     break;
                 case EventType.Reveal:
                     Debug.Log("Reveal Event");
-                    Opponent opp = opponent as Opponent;
-                    if (opp != null) {
-                        // Find first unrevealed card in opponent's tracked hand
-                        CardDisplay cardToReveal = opp.handCards.Find(c => c.card == null);
-                        if (cardToReveal != null) {
-                            cardToReveal.UpdateCardDisplayData(gEvent.focusCard);
-                            // Unrotate the card now that it's revealed (was rotated 180 for face-down)
-                            cardToReveal.transform.localRotation = Quaternion.identity;
+                    if (gEvent.isOpponent) {
+                        // Opponent is revealing a card from their hand
+                        Opponent opp = opponent as Opponent;
+                        if (opp != null) {
+                            // Find first unrevealed card in opponent's tracked hand
+                            CardDisplay cardToReveal = opp.handCards.Find(c => c.card == null);
+                            if (cardToReveal != null) {
+                                cardToReveal.UpdateCardDisplayData(gEvent.focusCard);
+                                // Unrotate the card now that it's revealed (was rotated 180 for face-down)
+                                cardToReveal.transform.localRotation = Quaternion.identity;
+                            }
                         }
+                    } else {
+                        // Player is revealing their own card - just show a visual indication
+                        // The card is already visible to the player, so we just need to mark it as revealed
+                        // Could add a reveal animation/highlight here if desired
+                        Debug.Log($"Player revealed card: {gEvent.focusCard?.name}");
                     }
                     gEventIsInProgress = false;
                     break;
@@ -544,6 +627,16 @@ public class GameManager : MonoBehaviour {
                     Debug.Log("AttackCapable Event");
                     Debug.Assert(gEvent.focusUidList != null, "AttackCapableUids list is null");
                     attackCapableUids = gEvent.focusUidList.ToList();
+
+                    // Check for Ground Tactics forced attack mode
+                    if (gEvent.universalBool) {
+                        isGroundTacticsMode = true;
+                        groundTacticsAttackerPlayerId = gEvent.universalInt;
+                        Debug.Log($"Ground Tactics mode: controlling opponent's {attackCapableUids.Count} attackers");
+                    } else {
+                        isGroundTacticsMode = false;
+                    }
+
                     ActivateAttackCapables();
                     gEventIsInProgress = false;
                     break;
@@ -596,12 +689,15 @@ public class GameManager : MonoBehaviour {
                         case CostType.ExileFromHand:
                             EnableCostCardSelection(gEvent);
                             break;
+                        case CostType.Reveal:
+                            EnableCostCardSelection(gEvent);
+                            break;
                     }
                     currentSelectionType = ActionButtonType.Cost;
                     break;
                 case EventType.EndGame:
-                    Debug.Log("EndGame Event");
-                    // TODO end game animation and resolution
+                    Debug.Log("EndGame Event - will show game over after animations complete");
+                    pendingGameOver = true;  // Flag to show game over after all animations finish
                     gEventIsInProgress = false;
                     break;
                 case EventType.Discard:
@@ -630,6 +726,26 @@ public class GameManager : MonoBehaviour {
                     Debug.Log("GainControl Event");
                     StartCoroutine(GainControlEvent(gEvent));
                     break;
+                case EventType.RitualOfDarknessChoice:
+                    Debug.Log("RitualOfDarknessChoice Event");
+                    waitingForOpponentTextObj.SetActive(false);
+                    currentSelectionMax = 1;
+                    selectTextObj.GetComponent<TMP_Text>().text = gEvent.eventMessages?.FirstOrDefault() ?? "Put a summon into play or pass";
+                    selectTextObj.SetActive(true);
+                    possibleSelectables = gEvent.focusUidList ?? new List<int>();
+                    currentSelectionType = ActionButtonType.RitualSummon;
+                    EnableUnselectedSelectables();
+                    // Enable the pass button - player can always pass
+                    actionButtonComponent.interactable = true;
+                    actionButton.SetButtonType(ActionButtonType.RitualPass);
+                    gEventIsInProgress = false;
+                    break;
+                case EventType.RepeatAmountSelection:
+                    Debug.Log("RepeatAmountSelection Event");
+                    // amount = max repeats, universalInt = cost per repeat
+                    currentSelectionMax = gEvent.amount;
+                    DisplayAmountSelector(SetAmount, CancelCast);
+                    break;
                 default:
                     Debug.Log("EventType: " + gEvent.eventType + " not implemented.");
                     break;
@@ -640,6 +756,13 @@ public class GameManager : MonoBehaviour {
         RefreshStateDisplays();
         eventAnimsAreInProgress = false;
         Debug.Log("events anims complete");
+
+        // Show game over panel after all animations have finished
+        if (pendingGameOver) {
+            Debug.Log("Showing game over screen now that animations are complete");
+            pendingGameOver = false;
+            HandleGameOver(null);  // We don't need the event data, we use matchState
+        }
     }
 
     private void EnableCostCardSelection(GameEvent gEvent) {
@@ -686,13 +809,21 @@ public class GameManager : MonoBehaviour {
         // Reset all interactable states before enabling new ones
         DisableAllInteractables();
 
+        // Log phase state for debugging desync
+        Phase serverPhase = gameData.matchState.currentPhase;
+        if (localPhase != serverPhase) {
+            Debug.LogError($"[GainPrio] PHASE DESYNC! localPhase={localPhase}, serverPhase={serverPhase}");
+        }
+
         // only auto pass if there are no possible attackers
         if (autoPass && attackCapableUids.Count == 0) {
             if(ShouldAutoPass()) {
+                Debug.Log($"[GainPrio] Auto-passing: localPhase={localPhase}, phaseToPassTo={phaseToPassTo}");
                 gEventIsInProgress = false;
                 PassPrio();
                 return;
             }
+            Debug.Log($"[GainPrio] Stopping autopass: reached phaseToPassTo={phaseToPassTo}, localPhase={localPhase}");
             passToMyMain = false;
             autoPass = false;
             PhaseButtonManager.DisableStopBorder();
@@ -734,18 +865,50 @@ public class GameManager : MonoBehaviour {
     }
 
     private bool ShouldAutoPass() {
-        if (passToMyMain && gameData.accountData.id != gameData.matchState.turnPlayerId) return true;
-        if (phaseToPassTo != gameData.matchState.currentPhase) return true;
+        // Don't auto-pass if there's a trigger on the stack we need to respond to
+        if (autopassPausedForStack) {
+            Debug.Log($"[ShouldAutoPass] Returning FALSE - autopass paused for stack");
+            return false;
+        }
+        // Don't auto-pass if a selection/targeting prompt is active
+        if (IsPromptActive()) {
+            Debug.Log($"[ShouldAutoPass] Returning FALSE - prompt is active");
+            return false;
+        }
+
+        Debug.Log($"[ShouldAutoPass] passToMyMain={passToMyMain}, myId={gameData.accountData.id}, turnPlayerId={gameData.matchState.turnPlayerId}, currentPhase={gameData.matchState.currentPhase}, phaseToPassTo={phaseToPassTo}");
+
+        // For passToMyMain: continue autopassing if it's not our turn yet
+        if (passToMyMain && gameData.accountData.id != gameData.matchState.turnPlayerId) {
+            Debug.Log($"[ShouldAutoPass] Returning TRUE - passToMyMain and not our turn");
+            return true;
+        }
+
+        // For passToMyMain: stop when we reach Main on our turn
+        if (passToMyMain && gameData.accountData.id == gameData.matchState.turnPlayerId && gameData.matchState.currentPhase == Phase.Main) {
+            Debug.Log($"[ShouldAutoPass] Returning FALSE - passToMyMain reached target (our Main phase)");
+            return false;
+        }
+
+        // Stop autopassing when we've reached OR passed the target phase
+        if (gameData.matchState.currentPhase < phaseToPassTo) {
+            Debug.Log($"[ShouldAutoPass] Returning TRUE - haven't reached target phase yet");
+            return true;
+        }
+
+        Debug.Log($"[ShouldAutoPass] Returning FALSE - reached or passed target phase");
         return false;
     }
     
 
     public void PassPrio() {
+        Debug.Log($"[PassPrio] localPhase={localPhase}, autoPass={autoPass}, phaseToPassTo={phaseToPassTo}, passToMyMain={passToMyMain}");
         LosePrio();
         int? passToPhaseValue = null;
         if (autoPass) {
             passToPhaseValue = passToMyMain ? 6 : (int)phaseToPassTo;
         }
+        Debug.Log($"[PassPrio] Sending passToPhaseValue={passToPhaseValue}");
         serverApi.PassPrio(gameData.accountData, gameData.matchState.matchId, passToPhaseValue);
         WaitForEvents();
     }
@@ -801,6 +964,9 @@ public class GameManager : MonoBehaviour {
 
     private void DisplayOrderingOptions() {
         Debug.Assert(currentGameEvent.triggerOrderingList != null, "there is no ordering list for order selection");
+        // Clear any stale ordering data from previous ordering events
+        finalOrderList.Clear();
+        ClearOrderingPanel();
         foreach (StackDisplayData stackObj in currentGameEvent.triggerOrderingList) {
             InstantiateStackObjectForOrdering(stackObj, currentGameEvent);
         }
@@ -867,15 +1033,23 @@ public class GameManager : MonoBehaviour {
     }
 
     private IEnumerator NextPhaseEvent() {
+        Phase beforePhase = localPhase;
         Animator phaseBtnBorderAnim = phaseBtnBorderObj.GetComponent<Animator>();
         phaseBtnBorderAnim.Play(gameData.phaseToAnimDict[localPhase], -1, 0f);
         IteratePhase();
+        Debug.Log($"[NextPhaseEvent] {beforePhase} -> {localPhase}, serverPhase={gameData.matchState.currentPhase}");
         yield return new WaitForSeconds(phaseBtnBorderAnim.GetCurrentAnimatorStateInfo(0).length);
         gEventIsInProgress = false;
     }
 
     private IEnumerator SkipToPhaseEvent(int phasesToSkip, Phase startPhase) {
         Debug.Log($"SkipToPhaseEvent: phasesToSkip={phasesToSkip}, startPhase={startPhase}, localPhase={localPhase}");
+
+        // Sync localPhase to startPhase in case they're out of sync
+        if (localPhase != startPhase) {
+            Debug.LogWarning($"SkipToPhaseEvent: localPhase ({localPhase}) != startPhase ({startPhase}), syncing to startPhase");
+            localPhase = startPhase;
+        }
 
         Animator phaseBtnBorderAnim = phaseBtnBorderObj.GetComponent<Animator>();
         const float speedMultiplier = 4f;
@@ -902,6 +1076,26 @@ public class GameManager : MonoBehaviour {
         // Reset animator speed back to normal
         phaseBtnBorderAnim.speed = 1f;
         Debug.Log($"SkipToPhaseEvent complete, localPhase now={localPhase}");
+        gEventIsInProgress = false;
+    }
+
+    private IEnumerator GoToPhaseEvent(Phase targetPhase) {
+        Debug.Log($"GoToPhaseEvent: jumping from {localPhase} to {targetPhase}");
+
+        // Set localPhase directly to target
+        localPhase = targetPhase;
+
+        // Get the animation that ENDS at the target phase
+        // e.g., for Draw phase, we want EndToDraw to be at 100%
+        Phase previousPhase = targetPhase == Phase.Draw ? Phase.End : targetPhase - 1;
+        string animName = gameData.phaseToAnimDict[previousPhase];
+
+        Animator phaseBtnBorderAnim = phaseBtnBorderObj.GetComponent<Animator>();
+
+        // Play the animation and immediately skip to the end (normalizedTime = 1)
+        phaseBtnBorderAnim.Play(animName, -1, 1f);
+
+        yield return null; // Wait one frame to apply
         gEventIsInProgress = false;
     }
 
@@ -1044,11 +1238,14 @@ public class GameManager : MonoBehaviour {
         }
         Animator handCardAnimator = handCardDisplay.GetComponent<Animator>();
         handCardAnimator.enabled = true;
+        // Speed up animation when discarding multiple cards (e.g., Hand Refresh)
+        float animSpeed = gEvent.amount > 1 ? 2f : 1f;
+        handCardAnimator.speed = animSpeed;
         string animName = gEvent.isOpponent ? "DiscardOpp" : "Discard";
         handCardAnimator.Play(animName, -1, 0f);
         // Wait a frame for animator to update, then get the actual clip length
         yield return null;
-        yield return new WaitForSeconds(handCardAnimator.GetCurrentAnimatorStateInfo(0).length);
+        yield return new WaitForSeconds(handCardAnimator.GetCurrentAnimatorStateInfo(0).length / animSpeed);
         // finalize event
         gEventIsInProgress = false;
     }
@@ -1059,6 +1256,11 @@ public class GameManager : MonoBehaviour {
         // Remove card from play zone UI if it exists
         if (UidToObj.ContainsKey(gEvent.focusCard.uid)) {
             GameObject cardInPlay = UidToObj[gEvent.focusCard.uid];
+            // Clean up attack visuals if this unit was attacking
+            if (attackUids.ContainsKey(gEvent.focusCard.uid)) {
+                bool isOppAttack = cardInPlay.transform.IsChildOf(opponent.playZoneObj.transform);
+                UnDisplayAttack(gEvent.focusCard.uid, isOppAttack);
+            }
             UidToObj.Remove(gEvent.focusCard.uid);
             // Destroy the card slot (which contains the card)
             Transform cardSlot = cardInPlay.transform.parent;
@@ -1217,17 +1419,41 @@ public class GameManager : MonoBehaviour {
     }
 
     private IEnumerator CastEvent(GameEvent gEvent) {
-        CardDisplay handCardDisplay;
+        CardDisplay castingCardDisplay;
         Debug.Assert(gEvent.focusStackObj != null, "there was no focusStackObj for this cast event");
+        int cardUid = gEvent.focusStackObj.cardDisplayData.uid;
+        Zone sourceZone = gEvent.sourceZone ?? Zone.Hand;
+
+        // Handle casting from graveyard (or other non-hand zones)
+        if (sourceZone == Zone.Graveyard) {
+            // Remove and destroy the card from graveyard, create fresh for animation
+            if (UidToObj.TryGetValue(cardUid, out GameObject existingObj)) {
+                UidToObj.Remove(cardUid);
+                Destroy(existingObj);
+            }
+            // Create new display for animation
+            castingCardDisplay = CreateAndInitializeNewCardDisplay(gEvent.focusStackObj.cardDisplayData,
+                displayCanvas.transform).GetComponent<CardDisplay>();
+            castingCardDisplay.tempStackDisplayData = gEvent.focusStackObj;
+
+            // For graveyard casts, just play ToStack directly
+            Animator castingAnimator = castingCardDisplay.GetComponent<Animator>();
+            castingAnimator.enabled = true;
+            castingAnimator.Play("ToStack", -1, 0f);
+            yield return new WaitForSeconds(castingAnimator.GetCurrentAnimatorStateInfo(0).length);
+            gEventIsInProgress = false;
+            yield break;
+        }
+
+        // Handle casting from hand (original logic)
         if (gEvent.isOpponent) {
-            int cardUid = gEvent.focusStackObj.cardDisplayData.uid;
             Opponent opp = opponent as Opponent;
             if (UidToObj.ContainsKey(cardUid)) {
                 // Revealed card - found in UidToObj
-                handCardDisplay = UidToObj[cardUid].GetComponent<CardDisplay>();
-                handCardDisplay.RemoveFromHand();
+                castingCardDisplay = UidToObj[cardUid].GetComponent<CardDisplay>();
+                castingCardDisplay.RemoveFromHand();
                 // Also remove from opponent's hand tracking
-                opp?.handCards.Remove(handCardDisplay);
+                opp?.handCards.Remove(castingCardDisplay);
             } else if (opp != null) {
                 // Unrevealed card - use tracking to remove
                 CardDisplay removedCard = opp.RemoveCardFromHand(cardUid);
@@ -1236,27 +1462,34 @@ public class GameManager : MonoBehaviour {
                     Destroy(cardSlot);
                 }
                 // Create new display for animation
-                handCardDisplay = CreateAndInitializeNewCardDisplay(gEvent.focusStackObj.cardDisplayData,
+                castingCardDisplay = CreateAndInitializeNewCardDisplay(gEvent.focusStackObj.cardDisplayData,
                     displayCanvas.transform).GetComponent<CardDisplay>();
             } else {
                 // Fallback - shouldn't happen
-                handCardDisplay = CreateAndInitializeNewCardDisplay(gEvent.focusStackObj.cardDisplayData,
+                castingCardDisplay = CreateAndInitializeNewCardDisplay(gEvent.focusStackObj.cardDisplayData,
                     displayCanvas.transform).GetComponent<CardDisplay>();
             }
         } else {
-            handCardDisplay = UidToObj[gEvent.focusStackObj.cardDisplayData.uid].GetComponent<CardDisplay>();
-            // Update with fresh server data (includes chosenIndices for highlighting choices)
-            handCardDisplay.UpdateCardDisplayData(gEvent.focusStackObj.cardDisplayData);
-            handCardDisplay.RemoveFromHand();
+            // Check if card exists in UidToObj (might not if cast from deck top)
+            if (UidToObj.TryGetValue(gEvent.focusStackObj.cardDisplayData.uid, out GameObject cardObj)) {
+                castingCardDisplay = cardObj.GetComponent<CardDisplay>();
+                // Update with fresh server data (includes chosenIndices for highlighting choices)
+                castingCardDisplay.UpdateCardDisplayData(gEvent.focusStackObj.cardDisplayData);
+                castingCardDisplay.RemoveFromHand();
+            } else {
+                // Card not in UidToObj (e.g., cast from deck top) - create new display
+                castingCardDisplay = CreateAndInitializeNewCardDisplay(gEvent.focusStackObj.cardDisplayData,
+                    displayCanvas.transform).GetComponent<CardDisplay>();
+            }
         }
-        handCardDisplay.tempStackDisplayData = gEvent.focusStackObj;
-        Animator castingAnimator = handCardDisplay.GetComponent<Animator>();
-        castingAnimator.enabled = true;
+        castingCardDisplay.tempStackDisplayData = gEvent.focusStackObj;
+        Animator handCastAnimator = castingCardDisplay.GetComponent<Animator>();
+        handCastAnimator.enabled = true;
         string animName = gEvent.isOpponent ? "FromHandOpp" : "FromHand";
-        castingAnimator.Play(animName, -1, 0f);
-        yield return new WaitForSeconds(castingAnimator.GetCurrentAnimatorStateInfo(0).length);
-        castingAnimator.Play("ToStack", -1, 0f);
-        yield return new WaitForSeconds(castingAnimator.GetCurrentAnimatorStateInfo(0).length);
+        handCastAnimator.Play(animName, -1, 0f);
+        yield return new WaitForSeconds(handCastAnimator.GetCurrentAnimatorStateInfo(0).length);
+        handCastAnimator.Play("ToStack", -1, 0f);
+        yield return new WaitForSeconds(handCastAnimator.GetCurrentAnimatorStateInfo(0).length);
         // The ToStack animation event calls CardDisplay.AddToStack() which reparents the card
         // to the stack (keeping UidToObj tracking intact for counter spell targeting)
         gEventIsInProgress = false;
@@ -1287,7 +1520,10 @@ public class GameManager : MonoBehaviour {
             SelectAttackCapable(summonCardDisplay.dynamicReferencer.attackCapable, false);
         }
 
-        yield return new WaitForSeconds((float)summonCardDisplay.summonVideoPlayer.clip.length);
+        float clipLength = summonCardDisplay.summonVideoPlayer.clip != null
+            ? (float)summonCardDisplay.summonVideoPlayer.clip.length
+            : 0f;
+        yield return new WaitForSeconds(clipLength);
         gEventIsInProgress = false;
     }
 
@@ -1374,6 +1610,11 @@ public class GameManager : MonoBehaviour {
                 if (existingCardObj != null) {
                     switch (gEvent.sourceZone) {
                         case Zone.Play:
+                            // Clean up attack visuals if this unit was attacking
+                            if (attackUids.ContainsKey(gEvent.focusCard.uid)) {
+                                bool isOppAttack = existingCardObj.transform.IsChildOf(opponent.playZoneObj.transform);
+                                UnDisplayAttack(gEvent.focusCard.uid, isOppAttack);
+                            }
                             Transform cardSlot = existingCardObj.transform.parent;
                             Destroy(cardSlot.parent.name == "PlayZone" ? cardSlot.gameObject : existingCardObj);
                             existingCardObj = null; // Card was destroyed, don't reuse
@@ -1518,15 +1759,32 @@ public class GameManager : MonoBehaviour {
     }
 
     // -------
+    // Flag to skip the first CheckForMatchStateChanges when coming from lobby
+    // (because we already fetched the MatchState with events in InitializeGame)
+    private bool skipFirstMatchStateCheck = false;
+
     private void InitializeGame() {
         gameData = GameObject.Find("GameData").GetComponent<GameData>();
         gameData.accountData = GameObject.Find("AccountData").GetComponent<AccountDataGO>().accountData;
+
+        // If coming from lobby, matchState is null but lobbyMatchId is set
+        // Fetch the initial matchState here (this is the first fetch, so events will be included)
+        if (gameData.matchState == null && gameData.lobbyMatchId.HasValue) {
+            gameData.matchState = serverApi.GetMatchState(gameData.accountData, gameData.lobbyMatchId.Value);
+            gameData.lobbyMatchId = null;  // Clear after use
+            // Skip the first CheckForMatchStateChanges since we just fetched and it would overwrite our events
+            skipFirstMatchStateCheck = true;
+        }
+
         localPhase = Phase.Draw;
     }
     
     private void InitializePlayers() {
         player.Initialize(gameData.matchState.playerState);
         opponent.Initialize(gameData.matchState.opponentState);
+
+        // Update revealed top card (from TopCardRevealed passive) - only for player, not opponent
+        player.UpdateRevealedTopCard(gameData.matchState.playerState.revealedTopCard);
     }
     
     public void QuitGame() {
@@ -1564,9 +1822,14 @@ public class GameManager : MonoBehaviour {
     }
     
     public void DisplayActivationVerification(CardDisplay cardDisplay) {
+        // Close card group panel if open (e.g., activating from graveyard inspection)
+        CloseCardGroupPanel();
         currentActivatedAbilityCdd = cardDisplay;
         currentActivatedTokenUid = null;
         currentActivatedTokenDisplay = null;
+        if (activationVerificationText != null) {
+            activationVerificationText.text = "Activate this card's ability?";
+        }
         activationVerificationPanel.SetActive(true);
     }
 
@@ -1574,6 +1837,9 @@ public class GameManager : MonoBehaviour {
         currentActivatedAbilityCdd = null;
         currentActivatedTokenUid = tokenUid;
         currentActivatedTokenDisplay = tokenDisplay;
+        if (activationVerificationText != null) {
+            activationVerificationText.text = "Activate this card's ability?";
+        }
         activationVerificationPanel.SetActive(true);
     }
 
@@ -1581,10 +1847,17 @@ public class GameManager : MonoBehaviour {
         currentActivatedAbilityCdd = null;
         currentActivatedTokenUid = null;
         currentActivatedTokenDisplay = null;
+        currentDeckTopCastCard = null;
         activationVerificationPanel.SetActive(false);
     }
 
     public void AttemptToActivate() {
+        // Handle deck top casting (Sky Scryer)
+        if (currentDeckTopCastCard != null) {
+            AttemptToCastDeckTop();
+            return;
+        }
+
         LosePrio();
         // Determine which UID to use - card or token
         int uidToActivate = currentActivatedAbilityCdd != null
@@ -1597,7 +1870,27 @@ public class GameManager : MonoBehaviour {
         currentActivatedTokenDisplay = null;
         WaitForEvents();
     }
-    
+
+    public void DisplayDeckTopCastVerification(CardDisplay cardDisplay) {
+        currentDeckTopCastCard = cardDisplay;
+        currentActivatedAbilityCdd = null;
+        currentActivatedTokenUid = null;
+        currentActivatedTokenDisplay = null;
+        if (activationVerificationText != null) {
+            activationVerificationText.text = $"Cast {cardDisplay.card.name}?";
+        }
+        activationVerificationPanel.SetActive(true);
+    }
+
+    private void AttemptToCastDeckTop() {
+        LosePrio();
+        int cardUid = currentDeckTopCastCard.card.uid;
+        serverApi.AttemptToCast(gameData.accountData, gameData.matchState.matchId, cardUid);
+        activationVerificationPanel.SetActive(false);
+        currentDeckTopCastCard = null;
+        WaitForEvents();
+    }
+
     public void SendCardSelection(List<List<int>> destinationCardUids) {
         cardSelectionDialogue.SetActive(false);
         serverApi.SendCardSelection(gameData.accountData, gameData.matchState.matchId, destinationCardUids);
@@ -1700,6 +1993,7 @@ public class GameManager : MonoBehaviour {
         attackingAttackCapable = null;
         attackCapableUids.Clear();
         attackableDRefs.Clear();
+        isGroundTacticsMode = false;
     }
 
     public void SelectAttackCapable(AttackCapable attackCapable, bool selectedByPlayer = true) {
@@ -1724,7 +2018,15 @@ public class GameManager : MonoBehaviour {
         attackingAttackCapable = null;
         targetingArrow.SetActive(false);
         if(attackUids.Count < 1) actionButton.SetButtonType(ActionButtonType.Pass);
-        actionButtonComponent.interactable = true;
+
+        // In Ground Tactics mode, disable pass until all attackers are assigned
+        if (isGroundTacticsMode) {
+            int unassignedCount = attackCapableUids.Count(uid => !attackUids.ContainsKey(uid));
+            actionButtonComponent.interactable = unassignedCount == 0;
+        } else {
+            actionButtonComponent.interactable = true;
+        }
+
         DeactivateAttackables();
         // activate attackCapables
         ActivateAttackCapables();
@@ -1738,13 +2040,22 @@ public class GameManager : MonoBehaviour {
         // disable mouse targeting arrow
         targetingArrow.SetActive(false);
         // display the attack and add attack references
-        DisplayAttack((attackingCardDisplay.card.uid, attackable.dynamicReferencer.uid), false);
+        DisplayAttack((attackingCardDisplay.card.uid, attackable.dynamicReferencer.uid), isGroundTacticsMode);
         // normal combat attack
         var assigningUids = (attackingAttackCapable.cardDisplay.card.uid, attackable.dynamicReferencer.uid);
         if (!isSecondaryAttack) {
             serverApi.AssignAttack(gameData.accountData, gameData.matchState.matchId, assigningUids);
             actionButton.SetButtonType(ActionButtonType.Attack);
-            actionButtonComponent.interactable = true;
+
+            // In Ground Tactics mode, only enable button when all attackers are assigned
+            if (isGroundTacticsMode) {
+                // After this assignment, check if all attackers are now assigned
+                // Note: attackUids is updated by DisplayAttack before this
+                int unassignedCount = attackCapableUids.Count(uid => !attackUids.ContainsKey(uid));
+                actionButtonComponent.interactable = unassignedCount == 0;
+            } else {
+                actionButtonComponent.interactable = true;
+            }
         } else {
             // secondary combat (attacking tokens summoned)
             serverApi.AddSecondaryAttacker(gameData.accountData, gameData.matchState.matchId, 
@@ -1758,7 +2069,7 @@ public class GameManager : MonoBehaviour {
 
     public void UnAssignAttack(AttackCapable attackCapable) {
         serverApi.UnAssignAttack(gameData.accountData, gameData.matchState.matchId, attackCapable.cardDisplay.card.uid);
-        UnDisplayAttack(attackCapable.cardDisplay.card.uid);
+        UnDisplayAttack(attackCapable.cardDisplay.card.uid, isGroundTacticsMode);
         // deselect attackable
         attackCapable.Deselect();
     }
@@ -1810,6 +2121,12 @@ public class GameManager : MonoBehaviour {
 
 
     public void SetCurrentPassToPhase(int phaseIndex) {
+        // Block if a selection/targeting prompt is active
+        if (IsPromptActive()) {
+            Debug.Log("[SetCurrentPassToPhase] Blocked - a selection/targeting prompt is active");
+            return;
+        }
+
         // pass to my main
         if (phaseIndex == 6) {
             passToMyMain = true;
@@ -1819,10 +2136,23 @@ public class GameManager : MonoBehaviour {
             phaseToPassTo = (Phase)phaseIndex;
         }
         autoPass = true;
+        // User explicitly clicked a phase button - clear the pause flag to resume autopass
+        autopassPausedForStack = false;
+        Debug.Log($"[SetCurrentPassToPhase] phaseIndex={phaseIndex}, phaseToPassTo={phaseToPassTo}, passToMyMain={passToMyMain}, autoPass={autoPass}");
         if (actionButtonComponent.interactable) {
             PassPrio();
         }
         PhaseButtonManager.SetStopBorder(phaseIndex);
+    }
+
+    private bool IsPromptActive() {
+        // Check if any selection/targeting prompt is active
+        if (currentSelectionType != ActionButtonType.Pass) return true;
+        if (possibleSelectables.Count > 0) return true;
+        if (cardSelectionDialogue.activeSelf) return true;
+        if (amountSelectionPanel.activeSelf) return true;
+        if (activationVerificationPanel.activeSelf) return true;
+        return false;
     }
 
     private List<DynamicReferencer> GetAllDynamicReferencers() {
@@ -1905,6 +2235,26 @@ public class GameManager : MonoBehaviour {
         gEventIsInProgress = false;
     }
 
+    public void SendRitualChoice(int summonUid) {
+        Debug.Log($"[RitualOfDarkness] SendRitualChoice called with uid: {summonUid}");
+        // Reset selection state
+        possibleSelectables.Clear();
+        selectedUids.Clear();
+        currentSelectionType = 0;
+        currentSelectionMax = 0;
+        selectTextObj.SetActive(false);
+        // Send to server
+        serverApi.SendRitualChoice(gameData.accountData, gameData.matchState.matchId, summonUid);
+        // Disable interactables and wait
+        LosePrio();
+        gEventIsInProgress = false;
+    }
+
+    public int GetSelectedRitualSummonUid() {
+        // Return the first selected UID (there should only be one for ritual selection)
+        return selectedUids.Count > 0 ? selectedUids[0] : -1;
+    }
+
     public void DisableUnselectedSelectables() {
         foreach (DynamicReferencer dRef in GetAllDynamicReferencers()) {
             // disable all unselected selectables
@@ -1913,6 +2263,40 @@ public class GameManager : MonoBehaviour {
         }
         // Also disable selectables in card group view (graveyard/exile inspection)
         DisableUnselectedSelectablesInCardGroup();
+    }
+
+    /// <summary>
+    /// Disable selectables from a specific list of UIDs (used for requireOneFromEach targeting)
+    /// </summary>
+    public void DisableSelectablesFromList(List<int> uidsToDisable) {
+        foreach (DynamicReferencer dRef in GetAllDynamicReferencers()) {
+            if (isSelected(dRef)) continue;
+            // Check if this dRef's uid is in the list to disable
+            if (dRef.tokenDisplay != null) {
+                if (dRef.tokenDisplay.tokenUids.Any(uid => uidsToDisable.Contains(uid))) {
+                    dRef.DisableAllInteractable();
+                }
+            } else if (uidsToDisable.Contains(dRef.uid)) {
+                dRef.DisableAllInteractable();
+            }
+        }
+    }
+
+    /// <summary>
+    /// Enable selectables from a specific list of UIDs (used for requireOneFromEach targeting)
+    /// </summary>
+    public void EnableSelectablesFromList(List<int> uidsToEnable) {
+        foreach (DynamicReferencer dRef in GetAllDynamicReferencers()) {
+            if (isSelected(dRef)) continue;
+            // Check if this dRef's uid is in the list to enable
+            if (dRef.tokenDisplay != null) {
+                if (dRef.tokenDisplay.tokenUids.Any(uid => uidsToEnable.Contains(uid))) {
+                    dRef.EnableSelectable();
+                }
+            } else if (uidsToEnable.Contains(dRef.uid)) {
+                dRef.EnableSelectable();
+            }
+        }
     }
 
     private bool isSelected(DynamicReferencer dRef) {
@@ -1968,6 +2352,7 @@ public class GameManager : MonoBehaviour {
 
     public void DisplayCardDetails(CardDisplayData cdd) {
         detailsPanel.SetActive(true);
+        detailsPanel.transform.SetAsLastSibling(); // Ensure it renders on top of other panels
         detailCardDisplay.UpdateCardDisplayData(cdd);
     }
 
@@ -1976,6 +2361,13 @@ public class GameManager : MonoBehaviour {
             Destroy(cardObj);
         }
         cardGroupPanel.SetActive(true);
+
+        // Get list of activatable UIDs for checking
+        HashSet<int> activatableUids = new HashSet<int>();
+        foreach (CardDisplayData card in gameData.matchState.playerState.activatables) {
+            activatableUids.Add(card.uid);
+        }
+        Debug.Log($"[DisplayCardGroup] activatableUids count: {activatableUids.Count}, prioPlayerId: {gameData.matchState.prioPlayerId}, myId: {gameData.accountData.id}");
 
         foreach (GameObject cardObj in containerObj.GetChildObjects()) {
             CardDisplayData cardData = cardObj.GetComponent<CardDisplay>().card;
@@ -2000,20 +2392,35 @@ public class GameManager : MonoBehaviour {
                     dRef.EnableSelectable();
                 }
             }
+
+            // Check if this card is activatable (e.g., Ghostly Looter in graveyard)
+            // Only enable if we have priority and are not auto-passing
+            bool hasPriority = gameData.matchState.prioPlayerId == gameData.accountData.id;
+            if (hasPriority && !autoPass && activatableUids.Contains(cardData.uid)) {
+                CardDisplay cardDisplay = newCardObj.GetComponent<CardDisplay>();
+                if (cardDisplay != null) {
+                    cardDisplay.EnableActivatable();
+                    Debug.Log($"[DisplayCardGroup] Enabled activatable for {cardData.name} (uid={cardData.uid})");
+                }
+            }
         }
     }
 
     private bool IsSelectionComplete() {
         if (possibleSelectables.Count == 0) return false;
 
-        int selectionMax = currentSelectionType == ActionButtonType.Target
-            ? currentTargetMax
-            : currentSelectionMax;
+        // For targets, check against minimum required (enables "any number" selection when min is 0)
+        if (currentSelectionType == ActionButtonType.Target) {
+            bool complete = selectedUids.Count >= currentTargetMin;
+            Debug.Log($"[IsSelectionComplete] Target: selectedUids.Count={selectedUids.Count}, currentTargetMin={currentTargetMin}, complete={complete}");
+            return complete;
+        }
 
         if (currentSelectionType == ActionButtonType.Tribute) {
-            return currentTributeValue >= selectionMax;
+            return currentTributeValue >= currentSelectionMax;
         }
-        return selectedUids.Count >= selectionMax;
+
+        return selectedUids.Count >= currentSelectionMax;
     }
 
     public void CloseCardGroupPanel() {
@@ -2043,6 +2450,73 @@ public class GameManager : MonoBehaviour {
             if (dRef == null) continue;
             if (selectedUids.Contains(dRef.uid)) continue;
             dRef.DisableAllInteractable();
+        }
+    }
+
+    // Game Over handling
+    private void HandleGameOver(GameEvent gEvent) {
+        if (gameOverPanel == null) {
+            Debug.LogWarning("GameOver panel not assigned!");
+            return;
+        }
+
+        var matchState = gameData.matchState;
+        int myPlayerId = player.uid;
+        bool iWon = matchState.winnerId == myPlayerId;
+
+        // Set result text
+        if (gameOverResultText != null) {
+            gameOverResultText.text = iWon ? "VICTORY" : "DEFEAT";
+            gameOverResultText.color = iWon ? Color.green : Color.red;
+        }
+
+        // Set series score
+        if (gameOverSeriesScoreText != null) {
+            gameOverSeriesScoreText.text = $"{matchState.playerSeriesWins} - {matchState.opponentSeriesWins}";
+        }
+
+        // Determine message and button text based on series state
+        bool seriesOver = matchState.isSeriesOver;
+        bool iWonSeries = matchState.seriesWinnerId == myPlayerId;
+        int bestOf = matchState.bestOf;
+
+        if (gameOverMessageText != null) {
+            if (bestOf == 1) {
+                // Single game, no series
+                gameOverMessageText.text = iWon ? "You win!" : "You lose!";
+            } else if (seriesOver) {
+                // Series is over
+                gameOverMessageText.text = iWonSeries ? "You win the series!" : "You lose the series.";
+            } else {
+                // Series continues
+                gameOverMessageText.text = $"Best of {bestOf}";
+            }
+        }
+
+        // Show the panel
+        gameOverPanel.SetActive(true);
+
+        Debug.Log($"Game Over - Winner: {matchState.winnerId}, I Won: {iWon}, Series: {matchState.playerSeriesWins}-{matchState.opponentSeriesWins}, Series Over: {seriesOver}");
+    }
+
+    public void OnGameOverContinueClicked() {
+        var matchState = gameData.matchState;
+        bool seriesOver = matchState.isSeriesOver;
+        int bestOf = matchState.bestOf;
+
+        if (bestOf == 1 || seriesOver) {
+            // Return to main menu
+            UnityEngine.SceneManagement.SceneManager.LoadScene("Main Menu");
+        } else {
+            // Go to deck editor for next game in series
+            // Store the current deck for editing
+            gameData.isDraftDeckBuilding = false;  // Not draft mode, just between-game editing
+            gameData.isSeriesDeckEditing = true;   // Flag for series deck editing
+            gameData.seriesMatchId = matchState.matchId;  // Keep track of which match series
+            gameData.seriesPlayerWins = matchState.playerSeriesWins;
+            gameData.seriesOpponentWins = matchState.opponentSeriesWins;
+            gameData.seriesBestOf = matchState.bestOf;
+            UnityEngine.SceneManagement.SceneManager.LoadScene("Deck Editor");
         }
     }
 }

@@ -8,7 +8,7 @@ public class StatModifier {
     public OperatorType operatorType;
     public int amount;
     public AmountBasedOn? amountBasedOn;
-    public int? amountMulitplier;
+    public int? amountMultiplier;
     public bool xAmount;
     [JsonConverter(typeof(StringEnumConverter))]
     public Scope scope = Scope.All;  // For counting: All=include self, OthersOnly=exclude self
@@ -28,7 +28,7 @@ public class StatModifier {
             operatorType = operatorType,
             amount = amount,
             amountBasedOn = amountBasedOn,
-            amountMulitplier = amountMulitplier,
+            amountMultiplier = amountMultiplier,
             xAmount = xAmount,
             scope = scope
         };

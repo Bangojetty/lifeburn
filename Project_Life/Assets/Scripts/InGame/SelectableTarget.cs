@@ -68,20 +68,48 @@ namespace InGame {
             if (gameManager.currentSelectionType == ActionButtonType.Tribute) {
                 gameManager.currentTributeValue += gameManager.GetTributeValue(dRef.uid);
             }
+            // For requireOneFromEach, disable other summons from the same player
+            if (gameManager.currentSelectionType == ActionButtonType.Target && gameManager.currentTargetRequireOneFromEach) {
+                if (gameManager.currentTargetPlayerUids.Contains(dRef.uid)) {
+                    // Selected a player's summon - disable other player summons
+                    gameManager.DisableSelectablesFromList(gameManager.currentTargetPlayerUids);
+                } else if (gameManager.currentTargetOpponentUids.Contains(dRef.uid)) {
+                    // Selected an opponent's summon - disable other opponent summons
+                    gameManager.DisableSelectablesFromList(gameManager.currentTargetOpponentUids);
+                }
+            }
         }
 
         private void Deselect() {
+            int deselectedUid = dRef.uid;
             gameManager.selectedUids.Remove(dRef.uid);
             dRef.highlightSelected.SetActive(false);
             // Track tribute value if in tribute selection mode
             if (gameManager.currentSelectionType == ActionButtonType.Tribute) {
                 gameManager.currentTributeValue -= gameManager.GetTributeValue(dRef.uid);
             }
-            gameManager.EnableUnselectedSelectables();
+            // For requireOneFromEach, re-enable summons from the same player
+            if (gameManager.currentSelectionType == ActionButtonType.Target && gameManager.currentTargetRequireOneFromEach) {
+                if (gameManager.currentTargetPlayerUids.Contains(deselectedUid)) {
+                    // Deselected a player's summon - re-enable player summons
+                    gameManager.EnableSelectablesFromList(gameManager.currentTargetPlayerUids);
+                } else if (gameManager.currentTargetOpponentUids.Contains(deselectedUid)) {
+                    // Deselected an opponent's summon - re-enable opponent summons
+                    gameManager.EnableSelectablesFromList(gameManager.currentTargetOpponentUids);
+                }
+            } else {
+                gameManager.EnableUnselectedSelectables();
+            }
             // For variable selection, button stays enabled (can confirm with any amount)
             if (!gameManager.variableSelection) {
-                gameManager.actionButtonComponent.interactable = false;
-                gameManager.actionButton.SetButtonType(ActionButtonType.Pass);
+                // For Ritual selection, go back to RitualPass (enabled) instead of Pass (disabled)
+                if (gameManager.currentSelectionType == ActionButtonType.RitualSummon) {
+                    gameManager.actionButtonComponent.interactable = true;
+                    gameManager.actionButton.SetButtonType(ActionButtonType.RitualPass);
+                } else {
+                    gameManager.actionButtonComponent.interactable = false;
+                    gameManager.actionButton.SetButtonType(ActionButtonType.Pass);
+                }
             }
         }
 
@@ -141,6 +169,17 @@ namespace InGame {
                 // For other selection types, check count
                 if (gameManager.selectedUids.Count < selectionMax) return;
             }
+
+            // For requireOneFromEach, verify at least 1 from each player is selected
+            if (gameManager.currentSelectionType == ActionButtonType.Target && gameManager.currentTargetRequireOneFromEach) {
+                bool hasPlayerTarget = gameManager.selectedUids.Any(uid => gameManager.currentTargetPlayerUids.Contains(uid));
+                bool hasOpponentTarget = gameManager.selectedUids.Any(uid => gameManager.currentTargetOpponentUids.Contains(uid));
+                if (!hasPlayerTarget || !hasOpponentTarget) {
+                    // Don't enable button yet - need one from each
+                    return;
+                }
+            }
+
             gameManager.DisableUnselectedSelectables();
             gameManager.actionButtonComponent.interactable = true;
             gameManager.actionButton.SetButtonType(gameManager.currentSelectionType);

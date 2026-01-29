@@ -21,6 +21,7 @@ public class CardDisplayData {
 
     public bool hasXCost { get; set; }
     public int? xValue { get; set; }
+    public int hauntCounters { get; set; }
 
     // public CardDisplayData(int uid, int id, string name, int cost, CardType type, int attack, int defense, List<Keyword?> keywords, Tribe tribe, Rarity rarity, string description) {
     //     this.uid = uid;
@@ -63,6 +64,28 @@ public class CardDisplayData {
         }
         hasXCost = card.HasXCost();
         xValue = card.x;
+        hauntCounters = card.hauntCounters;
+        // Add haunt counter info to additional description if present
+        if (card.hauntCounters > 0) {
+            string hauntText = $"<color=#9700e5>Haunt counters: {card.hauntCounters}</color>";
+            additionalDescription = string.IsNullOrEmpty(additionalDescription)
+                ? hauntText
+                : additionalDescription + "\n" + hauntText;
+        }
+        // Add +1/+1 counter info to additional description if present
+        if (card.plusOnePlusOneCounters > 0) {
+            string counterText = $"<color=#00ab17>+1/+1 counters: {card.plusOnePlusOneCounters}</color>";
+            additionalDescription = string.IsNullOrEmpty(additionalDescription)
+                ? counterText
+                : additionalDescription + "\n" + counterText;
+        }
+        // Add -1/-1 counter info to additional description if present
+        if (card.minusOneMinusOneCounters > 0) {
+            string counterText = $"<color=#ff0000>-1/-1 counters: {card.minusOneMinusOneCounters}</color>";
+            additionalDescription = string.IsNullOrEmpty(additionalDescription)
+                ? counterText
+                : additionalDescription + "\n" + counterText;
+        }
         // Replace {X} tag in description with actual value if X was chosen
         if (card.x != null && description != null) {
             description = description.Replace("{X}", card.x.ToString());

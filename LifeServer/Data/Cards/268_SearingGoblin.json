@@ -1,0 +1,30 @@
+{
+  "id": 268,
+  "name": "Searing Goblin",
+  "cost": 0,
+  "type": "summon",
+  "attack": 1,
+  "defense": 1,
+  "tribe": "goblin",
+  "rarity": "common",
+  "description": "At the beginning of your draw phase, take 2 damage. Enter play effects don't trigger.",
+  "triggeredEffects": [
+    {
+      "trigger": "phase",
+      "phase": "draw",
+      "phaseOfPlayer": "player",
+      "effects": [
+        {
+          "effect": "loseLife",
+          "amount": 2,
+          "description": "Take 2 damage."
+        }
+      ]
+    }
+  ],
+  "passiveEffects": [
+    {
+      "passive": "disableEnterPlayEffects"
+    }
+  ]
+}

@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using DeckEditor;
@@ -5,6 +6,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
 using Unity.VisualScripting;
+using UnityEngine.UI;
 using UnityEngine.Serialization;
 using GameObject = UnityEngine.GameObject;
 
@@ -22,22 +24,22 @@ public class DeckEditManager : MonoBehaviour {
     public Dictionary<int, GameObject> collectionCardsToObj = new();
 
     public GameObject simpleCardDisplayPfb;
-    
+
     // card detail display
     public DetailPanel detailPanel;
     public GameObject bigCardDisplayContainer;
     public CardDisplaySimple bigCardDisplay;
-    
+
     // filters
     private int costMinFilter;
     private int costMaxFilter;
     private List<Tribe> tribesFilter = new();
     private List<CardType> cardTypesFilter = new();
     public string searchFilter;
-    
+
     // !NOTICE: this list is to prevent multi-tribe searches, it may be removed later if multi-tribe cards exist
     private List<GameObject> currentlyActiveBorders = new();
-    
+
     // functioning filter
     public GameObject functioningBorderObj;
     public GameObject mouseCardDisplayContainer;
@@ -52,18 +54,184 @@ public class DeckEditManager : MonoBehaviour {
     public List<CardDisplayData> editorSideboardList = new();
     public TMP_Text deckCardCount;
 
+    [Header("Draft Mode UI")]
+    public TMP_Text titleText;
+    public Button saveButton;
+    public TMP_Text saveButtonText;
+    public GameObject sideboardButton;
+    public GameObject newDeckButton;
+    public GameObject waitingOverlay;           // Full-screen overlay shown while waiting for opponent
+
     private ServerApi serverApi = new ServerApi();
-    
+    private bool isDraftMode;
+    private bool isSeriesMode;
+    private Coroutine draftPollCoroutine;
+    private Coroutine seriesPollCoroutine;
+
 
     void Start() {
         accountDataGO = GameObject.Find("AccountData").GetComponent<AccountDataGO>();
         gameData = GameObject.Find("GameData").GetComponent<GameData>();
+
+        // Check if we're in draft deck building mode
+        isDraftMode = gameData.isDraftDeckBuilding;
+        isSeriesMode = gameData.isSeriesDeckEditing;
+        Debug.Log($"[DeckEditManager] Start - isDraftMode: {isDraftMode}, isSeriesMode: {isSeriesMode}");
+
+        if (isDraftMode) {
+            SetupDraftMode();
+        } else if (isSeriesMode) {
+            SetupSeriesMode();
+        } else {
+            // Normal deck editing mode - hide draft UI
+            if (waitingOverlay != null) waitingOverlay.SetActive(false);
+
+            if (gameData.currentDeck != null) {
+                editorDeckName.text = gameData.currentDeck.deckName;
+                DisplayDeckList();
+            }
+            InitializeStaticCardDisplays();
+            DisplayCollection();
+        }
+    }
+
+    void OnDestroy() {
+        if (draftPollCoroutine != null) StopCoroutine(draftPollCoroutine);
+        if (seriesPollCoroutine != null) StopCoroutine(seriesPollCoroutine);
+
+        // Clear mode flags when leaving
+        if (gameData != null) {
+            gameData.isDraftDeckBuilding = false;
+            gameData.isSeriesDeckEditing = false;
+        }
+    }
+
+    private void SetupDraftMode() {
+        Debug.Log("[DeckEditManager] SetupDraftMode called");
+
+        // Update title
+        if (titleText != null) {
+            titleText.text = "Build Your Draft Deck (40 cards)";
+        }
+
+        // Update save button text
+        if (saveButtonText != null) {
+            saveButtonText.text = "Submit Deck";
+            Debug.Log("[DeckEditManager] Changed save button text to 'Submit Deck'");
+        } else {
+            Debug.LogWarning("[DeckEditManager] saveButtonText is null!");
+        }
+
+        // Hide unnecessary UI
+        if (sideboardButton != null) sideboardButton.SetActive(false);
+        if (newDeckButton != null) newDeckButton.SetActive(false);
+        if (editorDeckName != null) {
+            editorDeckName.text = "Draft Deck";
+            editorDeckName.interactable = false;
+        }
+
+        // Hide waiting overlay initially
+        if (waitingOverlay != null) {
+            waitingOverlay.SetActive(false);
+        }
+
+        InitializeStaticCardDisplays();
+        DisplayDraftCollection();
+
+        // Start polling for opponent status
+        draftPollCoroutine = StartCoroutine(PollDraftStatus());
+    }
+
+    private void SetupSeriesMode() {
+        Debug.Log("[DeckEditManager] SetupSeriesMode called");
+        Debug.Log($"[DeckEditManager] Series: {gameData.seriesPlayerWins}-{gameData.seriesOpponentWins}, Best of {gameData.seriesBestOf}");
+
+        // Update title with series score
+        if (titleText != null) {
+            titleText.text = $"Edit Deck for Next Game ({gameData.seriesPlayerWins}-{gameData.seriesOpponentWins})";
+        }
+
+        // Update save button text
+        if (saveButtonText != null) {
+            saveButtonText.text = "Ready for Next Game";
+        }
+
+        // Hide unnecessary UI for series mode
+        if (sideboardButton != null) sideboardButton.SetActive(false);
+        if (newDeckButton != null) newDeckButton.SetActive(false);
+        if (editorDeckName != null) {
+            editorDeckName.text = "Series Deck";
+            editorDeckName.interactable = false;
+        }
+
+        // Hide waiting overlay initially
+        if (waitingOverlay != null) {
+            waitingOverlay.SetActive(false);
+        }
+
+        InitializeStaticCardDisplays();
+
+        // Load the deck from the previous game
+        // For series mode, we use the current deck that was used in the previous game
         if (gameData.currentDeck != null) {
-            editorDeckName.text = gameData.currentDeck.deckName;
             DisplayDeckList();
         }
-        InitializeStaticCardDisplays();
         DisplayCollection();
+
+        // TODO: Start polling for opponent ready status
+        // seriesPollCoroutine = StartCoroutine(PollSeriesStatus());
+    }
+
+    private void DisplayDraftCollection() {
+        // Display only the drafted cards (one copy each)
+        foreach (int cardId in gameData.draftedCardPool) {
+            if (!gameData.allCardsDict.TryGetValue(cardId, out var cardData)) continue;
+
+            if (collectionCardsToObj.ContainsKey(cardId)) {
+                // Card already displayed, add another copy
+                var cardDisplay = collectionCardsToObj[cardId].GetComponent<DeckEditorCardDisplay>();
+                if (cardDisplay != null) {
+                    cardDisplay.AddCopy();
+                }
+            } else {
+                // Create new card display
+                GameObject newCardDisplay = Instantiate(cardPrefab, new Vector3(0, 0, 0), Quaternion.identity,
+                    collection.transform);
+                DeckEditorCardDisplay newDECDisplay = newCardDisplay.GetComponent<DeckEditorCardDisplay>();
+                newDECDisplay.Initialize(cardData);
+                collectionCardsToObj.Add(cardId, newCardDisplay);
+                newCardDisplay.name = cardData.name;
+                newDECDisplay.AddCopy();
+            }
+        }
+    }
+
+    private IEnumerator PollDraftStatus() {
+        while (true) {
+            yield return new WaitForSeconds(2f);
+
+            if (accountDataGO?.accountData == null || gameData?.draftId == null) continue;
+
+            var draftState = serverApi.GetDraftState(accountDataGO.accountData, gameData.draftId.Value);
+            if (draftState == null) continue;
+
+            // Check if both decks ready and match started
+            if (draftState.status == "ready" && draftState.matchId.HasValue) {
+                TransitionToGame(draftState.matchId.Value);
+                yield break;
+            }
+        }
+    }
+
+    private void TransitionToGame(int matchId) {
+        if (draftPollCoroutine != null) StopCoroutine(draftPollCoroutine);
+
+        // Clear draft mode flags
+        gameData.isDraftDeckBuilding = false;
+        gameData.lobbyMatchId = matchId;
+
+        Debug.Log("[DeckEditManager] Transitioning to game from draft");
+        SceneManager.LoadScene("Game Scene");
     }
 
     private void InitializeStaticCardDisplays() {
@@ -215,6 +383,18 @@ public class DeckEditManager : MonoBehaviour {
     }
 
     public void SaveDeck() {
+        Debug.Log($"[DeckEditManager] SaveDeck called - isDraftMode: {isDraftMode}, isSeriesMode: {isSeriesMode}");
+        if (isDraftMode) {
+            SubmitDraftDeck();
+            return;
+        }
+
+        if (isSeriesMode) {
+            SubmitSeriesDeck();
+            return;
+        }
+
+        // Normal deck editing - save and return to main menu
         Debug.Log("Deck list is saved with card ids: ");
         foreach (int cardId in editorDeckList) {
             Debug.Log(cardId);
@@ -223,6 +403,69 @@ public class DeckEditManager : MonoBehaviour {
         DeckData deckData = new DeckData(gameData.currentDeck?.id ?? 0, editorDeckName.text, editorDeckList);
         var response = serverApi.CreateOrUpdateDeck(deckData, accountDataGO.accountData);
         Debug.Log(response);
+
+        LoadMainMenu();
+    }
+
+    private void SubmitSeriesDeck() {
+        if (editorDeckList.Count != 40) {
+            Debug.Log($"Series deck must have exactly 40 cards. Current: {editorDeckList.Count}");
+            return;
+        }
+
+        Debug.Log("Submitting series deck...");
+        // TODO: Call server endpoint to submit series deck and wait for opponent
+        // For now, just show waiting overlay
+        // The server will need a new endpoint to track series deck submissions
+        // and create the next match when both players are ready
+
+        // Store the updated deck
+        gameData.currentDeck = new DeckData(0, "Series Deck", editorDeckList);
+
+        // Show waiting overlay
+        if (waitingOverlay != null) {
+            waitingOverlay.SetActive(true);
+        }
+
+        // TODO: Implement proper series flow with server
+        Debug.Log("[DeckEditManager] Series deck submitted - waiting for server implementation");
+    }
+
+    private void SubmitDraftDeck() {
+        if (editorDeckList.Count != 40) {
+            Debug.Log($"Draft deck must have exactly 40 cards. Current: {editorDeckList.Count}");
+            return;
+        }
+
+        if (accountDataGO?.accountData == null || gameData?.draftId == null) {
+            Debug.Log("Missing account or draft data");
+            return;
+        }
+
+        Debug.Log("Submitting draft deck...");
+        var (statusCode, draftState) = serverApi.SubmitDraftDeck(
+            accountDataGO.accountData,
+            gameData.draftId.Value,
+            editorDeckList
+        );
+
+        if (statusCode == 200 && draftState != null) {
+            Debug.Log("Draft deck submitted successfully");
+            gameData.draftState = draftState;
+
+            // Check if match is ready immediately
+            if (draftState.status == "ready" && draftState.matchId.HasValue) {
+                TransitionToGame(draftState.matchId.Value);
+                return;
+            }
+
+            // Show waiting overlay
+            if (waitingOverlay != null) {
+                waitingOverlay.SetActive(true);
+            }
+        } else {
+            Debug.Log($"Failed to submit draft deck: {statusCode}");
+        }
     }
 
     public void UpdateSearchFilter() {

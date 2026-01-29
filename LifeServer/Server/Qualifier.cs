@@ -18,10 +18,11 @@ public class Qualifier {
 
 
     public Qualifier(Effect e, Player sourcePlayer) {
-        tribe = e.tribe;
-        cardType = e.cardType;
+        // Check effect-level fields first, then fall back to select object
+        tribe = e.tribe ?? e.select?.tribe;
+        cardType = e.cardType ?? e.select?.cardType;
         tokenType = e.tokenType;
-        targetType = e.targetType;
+        targetType = e.GetTargetType();  // Use helper to support both new target object and legacy field
         if (e.restrictions != null) restrictions = e.restrictions.ToList();
         if (e.conditions != null) conditions = e.conditions.ToList();
         sourceCard = e.sourceCard;
@@ -67,6 +68,10 @@ public class Qualifier {
         tokenType = cost.tokenType;
         this.sourcePlayer = sourcePlayer;
     }
-    
-    
+
+    public Qualifier(DeckDestination dd, Player sourcePlayer) {
+        tribe = dd.GetTribe();
+        cardType = dd.GetCardType();
+        this.sourcePlayer = sourcePlayer;
+    }
 }

@@ -1,0 +1,32 @@
+{
+  "id": 119,
+  "name": "Hand Refresh",
+  "cost": 1,
+  "type": "spell",
+  "tribe": "shadow",
+  "rarity": "common",
+  "description": "Each player discards their hand and draws that many cards.",
+  "stackEffects": [
+  {
+    "effect": "discard",
+    "all": true,
+    "additionalEffects": [  
+      {
+        "effect": "draw",
+        "amountBasedOn": "rootAmount"
+      }
+    ]
+  },
+  {
+    "effect": "discard",
+    "all": true,
+    "sourcePlayer": "opponent",
+    "additionalEffects": [
+      {
+        "effect": "draw",
+        "amountBasedOn": "rootAmount"
+      }
+    ]
+  }
+  ]
+}

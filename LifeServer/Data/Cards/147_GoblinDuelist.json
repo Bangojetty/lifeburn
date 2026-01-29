@@ -1,0 +1,34 @@
+{
+  "id": 147,
+  "name": "Goblin Duelist",
+  "cost": 0,
+  "type": "summon",
+  "attack": 6,
+  "defense": 1,
+  "keywords": ["blitz"],
+  "tribe": "goblin",
+  "rarity": "common",
+  "description": "When Goblin Duelist attacks a summon, deal 3 damage to that summon's controller. Sacrifice Goblin Duelist after combat.",
+  "triggeredEffects": [
+    {
+      "trigger": "attackedSummon",
+      "effects": [
+        {
+          "effect": "dealDamage",
+          "targetBasedOn": "attackedPlayer",
+          "amount": 3
+        }
+      ]
+    },
+    {
+      "trigger": "survivedCombat",
+      "scope": "selfOnly",
+      "effects": [
+        {
+          "effect": "sacrifice",
+          "scope": "selfOnly"
+        }
+      ]
+    }
+  ]
+}

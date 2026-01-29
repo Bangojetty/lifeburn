@@ -8,7 +8,7 @@ namespace InGame {
         Discard,
         Exile,
         LoseLife,
-        DiscardOrSacrificeMerfolk,
-        Reveal
+        Reveal,
+        Life
     }
 }

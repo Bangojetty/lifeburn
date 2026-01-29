@@ -1,0 +1,24 @@
+{
+  "id": 196,
+  "name": "Tall Treefolk",
+  "cost": 0,
+  "type": "summon",
+  "attack": 0,
+  "defense": 3,
+  "keywords": ["sprout"],
+  "tribe": "treefolk",
+  "rarity": "common",
+  "description": "Tall Treefolk has Sprout 3 as long as you control an herb.",
+  "passiveEffects": [
+    {
+      "conditions": [
+        {
+          "condition": "control",
+          "tokenType": "herb"
+        }
+      ],
+      "passive": "modifyKeywordAmount",
+      "amount": 2
+    }
+  ]
+}

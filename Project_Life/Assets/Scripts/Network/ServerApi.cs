@@ -8,7 +8,11 @@ using UnityEngine;
 using UnityEngine.Networking;
 
 public class ServerApi {
-    private string baseAddress = "http://localhost:5239/life/";
+    // Server addresses - swap which one is used for baseAddress
+    private const string LOCAL_SERVER = "http://localhost:5239/life/";
+    private const string PUBLIC_SERVER = "http://157.230.138.62:5239/life/";
+
+    private string baseAddress = LOCAL_SERVER;
 
 
     private UnityWebRequest CreateRequest(string path, RequestType type = RequestType.GET, object data = null) {
@@ -325,6 +329,20 @@ public class ServerApi {
         Debug.Log("SendCostSelection returned code: " + postRequest.responseCode);
     }
 
+    public void SendRitualChoice(AccountData accountData, int matchId, int summonUid) {
+        Debug.Log("request: SendRitualChoice");
+        UnityWebRequest postRequest =
+            CreateRequest(baseAddress + $"match/{matchId}/ritual-choice/{summonUid}", RequestType.POST);
+        postRequest.SetRequestHeader("Authorization",
+            "Basic " + Base64Encode(accountData.username + ":" + accountData.hashedPassword));
+        postRequest.SendWebRequest();
+        while (!postRequest.isDone) Task.Delay(10);
+        if (postRequest.responseCode == 200) {
+            Debug.Log("SendRitualChoice successful");
+        }
+        Debug.Log("SendRitualChoice returned code: " + postRequest.responseCode);
+    }
+
     public void SetX(AccountData accountData, int matchId, int amount) {
         Debug.Log("request: SetX");
         UnityWebRequest postRequest =
@@ -539,6 +557,413 @@ public class ServerApi {
     }
     #endregion
 
+    #region Friends API
+
+    public List<FriendData> GetFriends(AccountData accountData) {
+        Debug.Log("request: GetFriends");
+        UnityWebRequest getRequest = CreateRequest(baseAddress + "friends");
+        getRequest.SetRequestHeader("Authorization",
+            "Basic " + Base64Encode(accountData.username + ":" + accountData.hashedPassword));
+        getRequest.SendWebRequest();
+        while (!getRequest.isDone) Task.Delay(10);
+        if (getRequest.responseCode == 200) {
+            return JsonConvert.DeserializeObject<List<FriendData>>(getRequest.downloadHandler.text);
+        }
+        Debug.Log("GetFriends returned: " + getRequest.responseCode);
+        return null;
+    }
+
+    public (long statusCode, string message) SendFriendRequest(AccountData accountData, string targetUsername) {
+        Debug.Log("request: SendFriendRequest");
+        UnityWebRequest postRequest = CreateRequest(baseAddress + $"friends/request/{targetUsername}", RequestType.POST);
+        postRequest.SetRequestHeader("Authorization",
+            "Basic " + Base64Encode(accountData.username + ":" + accountData.hashedPassword));
+        postRequest.SendWebRequest();
+        while (!postRequest.isDone) Task.Delay(10);
+        Debug.Log("SendFriendRequest returned: " + postRequest.responseCode);
+        return (postRequest.responseCode, postRequest.downloadHandler?.text ?? "");
+    }
+
+    public List<FriendRequestData> GetFriendRequests(AccountData accountData) {
+        Debug.Log("request: GetFriendRequests");
+        UnityWebRequest getRequest = CreateRequest(baseAddress + "friends/requests");
+        getRequest.SetRequestHeader("Authorization",
+            "Basic " + Base64Encode(accountData.username + ":" + accountData.hashedPassword));
+        getRequest.SendWebRequest();
+        while (!getRequest.isDone) Task.Delay(10);
+        if (getRequest.responseCode == 200) {
+            return JsonConvert.DeserializeObject<List<FriendRequestData>>(getRequest.downloadHandler.text);
+        }
+        Debug.Log("GetFriendRequests returned: " + getRequest.responseCode);
+        return null;
+    }
+
+    public List<FriendRequestData> GetOutboundFriendRequests(AccountData accountData) {
+        Debug.Log("request: GetOutboundFriendRequests");
+        UnityWebRequest getRequest = CreateRequest(baseAddress + "friends/requests/outbound");
+        getRequest.SetRequestHeader("Authorization",
+            "Basic " + Base64Encode(accountData.username + ":" + accountData.hashedPassword));
+        getRequest.SendWebRequest();
+        while (!getRequest.isDone) Task.Delay(10);
+        if (getRequest.responseCode == 200) {
+            return JsonConvert.DeserializeObject<List<FriendRequestData>>(getRequest.downloadHandler.text);
+        }
+        Debug.Log("GetOutboundFriendRequests returned: " + getRequest.responseCode);
+        return null;
+    }
+
+    public long AcceptFriendRequest(AccountData accountData, int requestId) {
+        Debug.Log("request: AcceptFriendRequest");
+        UnityWebRequest postRequest = CreateRequest(baseAddress + $"friends/requests/{requestId}/accept", RequestType.POST);
+        postRequest.SetRequestHeader("Authorization",
+            "Basic " + Base64Encode(accountData.username + ":" + accountData.hashedPassword));
+        postRequest.SendWebRequest();
+        while (!postRequest.isDone) Task.Delay(10);
+        Debug.Log("AcceptFriendRequest returned: " + postRequest.responseCode);
+        return postRequest.responseCode;
+    }
+
+    public long DeclineFriendRequest(AccountData accountData, int requestId) {
+        Debug.Log("request: DeclineFriendRequest");
+        UnityWebRequest deleteRequest = CreateRequest(baseAddress + $"friends/requests/{requestId}", RequestType.DELETE);
+        deleteRequest.SetRequestHeader("Authorization",
+            "Basic " + Base64Encode(accountData.username + ":" + accountData.hashedPassword));
+        deleteRequest.SendWebRequest();
+        while (!deleteRequest.isDone) Task.Delay(10);
+        Debug.Log("DeclineFriendRequest returned: " + deleteRequest.responseCode);
+        return deleteRequest.responseCode;
+    }
+
+    public long RemoveFriend(AccountData accountData, int friendId) {
+        Debug.Log("request: RemoveFriend");
+        UnityWebRequest deleteRequest = CreateRequest(baseAddress + $"friends/{friendId}", RequestType.DELETE);
+        deleteRequest.SetRequestHeader("Authorization",
+            "Basic " + Base64Encode(accountData.username + ":" + accountData.hashedPassword));
+        deleteRequest.SendWebRequest();
+        while (!deleteRequest.isDone) Task.Delay(10);
+        Debug.Log("RemoveFriend returned: " + deleteRequest.responseCode);
+        return deleteRequest.responseCode;
+    }
+
+    public long BlockPlayer(AccountData accountData, int userId) {
+        Debug.Log("request: BlockPlayer");
+        UnityWebRequest postRequest = CreateRequest(baseAddress + $"blocks/{userId}", RequestType.POST);
+        postRequest.SetRequestHeader("Authorization",
+            "Basic " + Base64Encode(accountData.username + ":" + accountData.hashedPassword));
+        postRequest.SendWebRequest();
+        while (!postRequest.isDone) Task.Delay(10);
+        Debug.Log("BlockPlayer returned: " + postRequest.responseCode);
+        return postRequest.responseCode;
+    }
+
+    public long UnblockPlayer(AccountData accountData, int userId) {
+        Debug.Log("request: UnblockPlayer");
+        UnityWebRequest deleteRequest = CreateRequest(baseAddress + $"blocks/{userId}", RequestType.DELETE);
+        deleteRequest.SetRequestHeader("Authorization",
+            "Basic " + Base64Encode(accountData.username + ":" + accountData.hashedPassword));
+        deleteRequest.SendWebRequest();
+        while (!deleteRequest.isDone) Task.Delay(10);
+        Debug.Log("UnblockPlayer returned: " + deleteRequest.responseCode);
+        return deleteRequest.responseCode;
+    }
+
+    public List<BlockedPlayerData> GetBlockedPlayers(AccountData accountData) {
+        Debug.Log("request: GetBlockedPlayers");
+        UnityWebRequest getRequest = CreateRequest(baseAddress + "blocks");
+        getRequest.SetRequestHeader("Authorization",
+            "Basic " + Base64Encode(accountData.username + ":" + accountData.hashedPassword));
+        getRequest.SendWebRequest();
+        while (!getRequest.isDone) Task.Delay(10);
+        if (getRequest.responseCode == 200) {
+            return JsonConvert.DeserializeObject<List<BlockedPlayerData>>(getRequest.downloadHandler.text);
+        }
+        Debug.Log("GetBlockedPlayers returned: " + getRequest.responseCode);
+        return null;
+    }
+
+    public List<RecentOpponentData> GetRecentOpponents(AccountData accountData) {
+        Debug.Log("request: GetRecentOpponents");
+        UnityWebRequest getRequest = CreateRequest(baseAddress + "opponents/recent");
+        getRequest.SetRequestHeader("Authorization",
+            "Basic " + Base64Encode(accountData.username + ":" + accountData.hashedPassword));
+        getRequest.SendWebRequest();
+        while (!getRequest.isDone) Task.Delay(10);
+        if (getRequest.responseCode == 200) {
+            return JsonConvert.DeserializeObject<List<RecentOpponentData>>(getRequest.downloadHandler.text);
+        }
+        Debug.Log("GetRecentOpponents returned: " + getRequest.responseCode);
+        return null;
+    }
+
+    public void SendHeartbeat(AccountData accountData) {
+        // Fire and forget - don't wait for response
+        UnityWebRequest postRequest = CreateRequest(baseAddress + "heartbeat", RequestType.POST);
+        postRequest.SetRequestHeader("Authorization",
+            "Basic " + Base64Encode(accountData.username + ":" + accountData.hashedPassword));
+        postRequest.SendWebRequest();
+    }
+
+    #endregion
+
+    #region Lobby API
+
+    public (long statusCode, LobbyData lobby) CreateLobby(AccountData accountData, string lobbyType, int maxPlayers = 2) {
+        Debug.Log("request: CreateLobby");
+        var payload = new { lobbyType, maxPlayers };
+        UnityWebRequest postRequest = CreateRequest(baseAddress + "lobbies", RequestType.POST, payload);
+        postRequest.SetRequestHeader("Authorization",
+            "Basic " + Base64Encode(accountData.username + ":" + accountData.hashedPassword));
+        postRequest.SendWebRequest();
+        while (!postRequest.isDone) Task.Delay(10);
+        Debug.Log("CreateLobby returned: " + postRequest.responseCode);
+        if (postRequest.responseCode == 201) {
+            return (postRequest.responseCode, JsonConvert.DeserializeObject<LobbyData>(postRequest.downloadHandler.text));
+        }
+        return (postRequest.responseCode, null);
+    }
+
+    public LobbyData GetLobby(AccountData accountData, int lobbyId) {
+        Debug.Log("request: GetLobby");
+        UnityWebRequest getRequest = CreateRequest(baseAddress + $"lobbies/{lobbyId}");
+        getRequest.SetRequestHeader("Authorization",
+            "Basic " + Base64Encode(accountData.username + ":" + accountData.hashedPassword));
+        getRequest.SendWebRequest();
+        while (!getRequest.isDone) Task.Delay(10);
+        if (getRequest.responseCode == 200) {
+            return JsonConvert.DeserializeObject<LobbyData>(getRequest.downloadHandler.text);
+        }
+        Debug.Log("GetLobby returned: " + getRequest.responseCode);
+        return null;
+    }
+
+    public long LeaveLobby(AccountData accountData, int lobbyId) {
+        Debug.Log("request: LeaveLobby");
+        UnityWebRequest deleteRequest = CreateRequest(baseAddress + $"lobbies/{lobbyId}", RequestType.DELETE);
+        deleteRequest.SetRequestHeader("Authorization",
+            "Basic " + Base64Encode(accountData.username + ":" + accountData.hashedPassword));
+        deleteRequest.SendWebRequest();
+        while (!deleteRequest.isDone) Task.Delay(10);
+        Debug.Log("LeaveLobby returned: " + deleteRequest.responseCode);
+        return deleteRequest.responseCode;
+    }
+
+    public long KickPlayer(AccountData accountData, int lobbyId, int playerId) {
+        Debug.Log("request: KickPlayer");
+        UnityWebRequest postRequest = CreateRequest(baseAddress + $"lobbies/{lobbyId}/kick/{playerId}", RequestType.POST);
+        postRequest.SetRequestHeader("Authorization",
+            "Basic " + Base64Encode(accountData.username + ":" + accountData.hashedPassword));
+        postRequest.SendWebRequest();
+        while (!postRequest.isDone) Task.Delay(10);
+        Debug.Log("KickPlayer returned: " + postRequest.responseCode);
+        return postRequest.responseCode;
+    }
+
+    public long SendLobbyInvite(AccountData accountData, int lobbyId, int friendId) {
+        Debug.Log("request: SendLobbyInvite");
+        UnityWebRequest postRequest = CreateRequest(baseAddress + $"lobbies/{lobbyId}/invite/{friendId}", RequestType.POST);
+        postRequest.SetRequestHeader("Authorization",
+            "Basic " + Base64Encode(accountData.username + ":" + accountData.hashedPassword));
+        postRequest.SendWebRequest();
+        while (!postRequest.isDone) Task.Delay(10);
+        Debug.Log("SendLobbyInvite returned: " + postRequest.responseCode);
+        return postRequest.responseCode;
+    }
+
+    public List<LobbyInviteData> GetLobbyInvites(AccountData accountData) {
+        Debug.Log("request: GetLobbyInvites");
+        UnityWebRequest getRequest = CreateRequest(baseAddress + "lobby-invites");
+        getRequest.SetRequestHeader("Authorization",
+            "Basic " + Base64Encode(accountData.username + ":" + accountData.hashedPassword));
+        getRequest.SendWebRequest();
+        while (!getRequest.isDone) Task.Delay(10);
+        if (getRequest.responseCode == 200) {
+            return JsonConvert.DeserializeObject<List<LobbyInviteData>>(getRequest.downloadHandler.text);
+        }
+        Debug.Log("GetLobbyInvites returned: " + getRequest.responseCode);
+        return null;
+    }
+
+    public (long statusCode, LobbyData lobby) AcceptLobbyInvite(AccountData accountData, int inviteId) {
+        Debug.Log("request: AcceptLobbyInvite");
+        UnityWebRequest postRequest = CreateRequest(baseAddress + $"lobby-invites/{inviteId}/accept", RequestType.POST);
+        postRequest.SetRequestHeader("Authorization",
+            "Basic " + Base64Encode(accountData.username + ":" + accountData.hashedPassword));
+        postRequest.SendWebRequest();
+        while (!postRequest.isDone) Task.Delay(10);
+        Debug.Log("AcceptLobbyInvite returned: " + postRequest.responseCode);
+        if (postRequest.responseCode == 200) {
+            return (postRequest.responseCode, JsonConvert.DeserializeObject<LobbyData>(postRequest.downloadHandler.text));
+        }
+        return (postRequest.responseCode, null);
+    }
+
+    public long DeclineLobbyInvite(AccountData accountData, int inviteId) {
+        Debug.Log("request: DeclineLobbyInvite");
+        UnityWebRequest deleteRequest = CreateRequest(baseAddress + $"lobby-invites/{inviteId}", RequestType.DELETE);
+        deleteRequest.SetRequestHeader("Authorization",
+            "Basic " + Base64Encode(accountData.username + ":" + accountData.hashedPassword));
+        deleteRequest.SendWebRequest();
+        while (!deleteRequest.isDone) Task.Delay(10);
+        Debug.Log("DeclineLobbyInvite returned: " + deleteRequest.responseCode);
+        return deleteRequest.responseCode;
+    }
+
+    public long SelectLobbyDeck(AccountData accountData, int lobbyId, int deckId) {
+        Debug.Log("request: SelectLobbyDeck");
+        UnityWebRequest postRequest = CreateRequest(baseAddress + $"lobbies/{lobbyId}/deck/{deckId}", RequestType.POST);
+        postRequest.SetRequestHeader("Authorization",
+            "Basic " + Base64Encode(accountData.username + ":" + accountData.hashedPassword));
+        postRequest.SendWebRequest();
+        while (!postRequest.isDone) Task.Delay(10);
+        Debug.Log("SelectLobbyDeck returned: " + postRequest.responseCode);
+        return postRequest.responseCode;
+    }
+
+    public (long statusCode, LobbyData lobby) ToggleLobbyReady(AccountData accountData, int lobbyId) {
+        Debug.Log("request: ToggleLobbyReady");
+        UnityWebRequest postRequest = CreateRequest(baseAddress + $"lobbies/{lobbyId}/ready", RequestType.POST);
+        postRequest.SetRequestHeader("Authorization",
+            "Basic " + Base64Encode(accountData.username + ":" + accountData.hashedPassword));
+        postRequest.SendWebRequest();
+        while (!postRequest.isDone) Task.Delay(10);
+        Debug.Log("ToggleLobbyReady returned: " + postRequest.responseCode);
+        if (postRequest.responseCode == 200) {
+            return (postRequest.responseCode, JsonConvert.DeserializeObject<LobbyData>(postRequest.downloadHandler.text));
+        }
+        return (postRequest.responseCode, null);
+    }
+
+    public (long statusCode, int? matchId) StartLobbyGame(AccountData accountData, int lobbyId) {
+        Debug.Log("request: StartLobbyGame");
+        UnityWebRequest postRequest = CreateRequest(baseAddress + $"lobbies/{lobbyId}/start", RequestType.POST);
+        postRequest.SetRequestHeader("Authorization",
+            "Basic " + Base64Encode(accountData.username + ":" + accountData.hashedPassword));
+        postRequest.SendWebRequest();
+        while (!postRequest.isDone) Task.Delay(10);
+        Debug.Log("StartLobbyGame returned: " + postRequest.responseCode);
+        if (postRequest.responseCode == 200) {
+            var result = JsonConvert.DeserializeAnonymousType(postRequest.downloadHandler.text, new { matchId = 0 });
+            return (postRequest.responseCode, result?.matchId);
+        }
+        return (postRequest.responseCode, null);
+    }
+
+    public long UpdateLobbySettings(AccountData accountData, int lobbyId, string lobbyType, string lobbySubtype) {
+        Debug.Log("request: UpdateLobbySettings");
+        var payload = new { lobbyType, lobbySubtype };
+        UnityWebRequest postRequest = CreateRequest(baseAddress + $"lobbies/{lobbyId}/settings", RequestType.POST, payload);
+        postRequest.SetRequestHeader("Authorization",
+            "Basic " + Base64Encode(accountData.username + ":" + accountData.hashedPassword));
+        postRequest.SendWebRequest();
+        while (!postRequest.isDone) Task.Delay(10);
+        Debug.Log("UpdateLobbySettings returned: " + postRequest.responseCode);
+        return postRequest.responseCode;
+    }
+
+    public long UpdateLobbyBestOf(AccountData accountData, int lobbyId, int bestOf) {
+        Debug.Log("request: UpdateLobbyBestOf");
+        var payload = new { bestOf };
+        UnityWebRequest postRequest = CreateRequest(baseAddress + $"lobbies/{lobbyId}/best-of", RequestType.POST, payload);
+        postRequest.SetRequestHeader("Authorization",
+            "Basic " + Base64Encode(accountData.username + ":" + accountData.hashedPassword));
+        postRequest.SendWebRequest();
+        while (!postRequest.isDone) Task.Delay(10);
+        Debug.Log("UpdateLobbyBestOf returned: " + postRequest.responseCode);
+        return postRequest.responseCode;
+    }
+
+    #endregion
+
+    #region Draft API
+
+    public (long statusCode, DraftDisplayState draft) StartDraft(AccountData accountData, int lobbyId) {
+        Debug.Log("request: StartDraft");
+        UnityWebRequest postRequest = CreateRequest(baseAddress + $"lobbies/{lobbyId}/start-draft", RequestType.POST);
+        postRequest.SetRequestHeader("Authorization",
+            "Basic " + Base64Encode(accountData.username + ":" + accountData.hashedPassword));
+        postRequest.SendWebRequest();
+        while (!postRequest.isDone) Task.Delay(10);
+        Debug.Log("StartDraft returned: " + postRequest.responseCode);
+        if (postRequest.responseCode == 201) {
+            return (postRequest.responseCode, JsonConvert.DeserializeObject<DraftDisplayState>(postRequest.downloadHandler.text));
+        }
+        return (postRequest.responseCode, null);
+    }
+
+    public DraftDisplayState GetDraftState(AccountData accountData, int draftId) {
+        Debug.Log("request: GetDraftState");
+        UnityWebRequest getRequest = CreateRequest(baseAddress + $"draft/{draftId}");
+        getRequest.SetRequestHeader("Authorization",
+            "Basic " + Base64Encode(accountData.username + ":" + accountData.hashedPassword));
+        getRequest.SendWebRequest();
+        while (!getRequest.isDone) Task.Delay(10);
+        if (getRequest.responseCode == 200) {
+            return JsonConvert.DeserializeObject<DraftDisplayState>(getRequest.downloadHandler.text);
+        }
+        Debug.Log("GetDraftState returned: " + getRequest.responseCode);
+        return null;
+    }
+
+    public (long statusCode, DraftDisplayState draft) SubmitDraftPick(AccountData accountData, int draftId, int cardId) {
+        Debug.Log("request: SubmitDraftPick");
+        UnityWebRequest postRequest = CreateRequest(baseAddress + $"draft/{draftId}/pick/{cardId}", RequestType.POST);
+        postRequest.SetRequestHeader("Authorization",
+            "Basic " + Base64Encode(accountData.username + ":" + accountData.hashedPassword));
+        postRequest.SendWebRequest();
+        while (!postRequest.isDone) Task.Delay(10);
+        Debug.Log("SubmitDraftPick returned: " + postRequest.responseCode);
+        if (postRequest.responseCode == 200) {
+            return (postRequest.responseCode, JsonConvert.DeserializeObject<DraftDisplayState>(postRequest.downloadHandler.text));
+        }
+        return (postRequest.responseCode, null);
+    }
+
+    public (long statusCode, DraftDisplayState draft) SubmitDraftDeck(AccountData accountData, int draftId, List<int> deckCardIds) {
+        Debug.Log($"request: SubmitDraftDeck with {deckCardIds.Count} cards");
+        var requestBody = new { deck = deckCardIds };
+        UnityWebRequest postRequest = CreateRequest(baseAddress + $"draft/{draftId}/submit-deck", RequestType.POST, requestBody);
+        postRequest.SetRequestHeader("Authorization",
+            "Basic " + Base64Encode(accountData.username + ":" + accountData.hashedPassword));
+        postRequest.SendWebRequest();
+        while (!postRequest.isDone) Task.Delay(10);
+        Debug.Log("SubmitDraftDeck returned: " + postRequest.responseCode);
+        if (postRequest.responseCode == 200) {
+            return (postRequest.responseCode, JsonConvert.DeserializeObject<DraftDisplayState>(postRequest.downloadHandler.text));
+        }
+        Debug.LogError($"SubmitDraftDeck error: {postRequest.downloadHandler.text}");
+        return (postRequest.responseCode, null);
+    }
+
+    public (long statusCode, DraftDisplayState draft) SkipToDeckBuilding(AccountData accountData, int draftId) {
+        Debug.Log("request: SkipToDeckBuilding (DEBUG)");
+        UnityWebRequest postRequest = CreateRequest(baseAddress + $"draft/{draftId}/skip-to-deckbuilding", RequestType.POST);
+        postRequest.SetRequestHeader("Authorization",
+            "Basic " + Base64Encode(accountData.username + ":" + accountData.hashedPassword));
+        postRequest.SendWebRequest();
+        while (!postRequest.isDone) Task.Delay(10);
+        Debug.Log("SkipToDeckBuilding returned: " + postRequest.responseCode);
+        if (postRequest.responseCode == 200) {
+            return (postRequest.responseCode, JsonConvert.DeserializeObject<DraftDisplayState>(postRequest.downloadHandler.text));
+        }
+        return (postRequest.responseCode, null);
+    }
+
+    public (long statusCode, int? matchId) StartDraftMatch(AccountData accountData, int draftId) {
+        Debug.Log("request: StartDraftMatch");
+        UnityWebRequest postRequest = CreateRequest(baseAddress + $"draft/{draftId}/start-match", RequestType.POST);
+        postRequest.SetRequestHeader("Authorization",
+            "Basic " + Base64Encode(accountData.username + ":" + accountData.hashedPassword));
+        postRequest.SendWebRequest();
+        while (!postRequest.isDone) Task.Delay(10);
+        Debug.Log("StartDraftMatch returned: " + postRequest.responseCode);
+        if (postRequest.responseCode == 200) {
+            var result = JsonConvert.DeserializeAnonymousType(postRequest.downloadHandler.text, new { matchId = 0 });
+            return (postRequest.responseCode, result?.matchId);
+        }
+        return (postRequest.responseCode, null);
+    }
+
+    #endregion
 }
 
 public class CreateAccountResponse {

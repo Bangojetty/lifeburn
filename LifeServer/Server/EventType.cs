@@ -37,5 +37,9 @@ public enum EventType {
     Peek,
     ReturnToHand,
     Counter,
-    GainControl
+    GainControl,
+    RitualOfDarknessChoice,  // Special event for Ritual of Darkness summon selection
+    GoToPhase,  // Jump directly to a specific phase (for Rewind)
+    RepeatChoice,  // Special event for repeat effects - ask if player wants to pay to repeat
+    RepeatAmountSelection  // Select how many times to repeat upfront (0 to max)
 }

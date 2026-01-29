@@ -4,6 +4,7 @@ public enum Restriction {
     CreatesStones,
     Attacking,
     NotFirst,
+    Summon,
     NonSummon,
     NonToken,
     NonMerfolk,

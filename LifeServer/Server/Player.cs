@@ -35,9 +35,13 @@ public class Player {
     public int turnSummonLimitBonus;  // extra summons allowed this turn (from Refresh, etc.)
     public int turnDrawCount;  // tracks draws this turn for "not first draw" triggers
     public int turnHerbSacrificeCount;  // tracks consecutive herb sacrifices for diminishing life gain
+    public bool bypassHerbLifeReduction;  // when true, herbs always give 2 LP (ignores turnHerbSacrificeCount)
     public bool scorched;
     public List<TriggeredEffect> eventTriggers = new();
     public bool cantAttackThisTurn;
+    public bool attackedThisTurn;  // tracks if this player attacked this turn (for Attacked condition)
+    public List<Token> tokensCreatedThisTurn = new();  // tracks tokens created this turn (for EnteredZoneThisTurn condition)
+    public bool autopassPausedForStack;  // when true, player must manually pass even if passToPhase is set (paused when new stack item added)
     public bool isBot;
     public Phase? passToPhase;
     public bool passToMyMain;  // special case: pass until it's my turn and we're on Main phase
@@ -46,6 +50,7 @@ public class Player {
     public int maxHandSize;  // maximum hand size (default 5)
     public int extraTurns;  // number of extra turns queued for this player
     public bool nextSpellFree;  // next non-summon spell costs 0 LP
+    public CopySpellInfo? copyNextSpell;  // info about copying the next spell
 
     public Player(string playerName, int playerId, bool isBot = false) {
         this.isBot = isBot;

@@ -1,0 +1,63 @@
+{
+  "id": 274,
+  "name": "Endless Garden",
+  "cost": 0,
+  "type": "summon",
+  "attack": 1,
+  "defense": 2,
+  "keywords": ["sprout"],
+  "tribe": "treefolk",
+  "rarity": "common",
+  "description": "When Endless Garden is discarded or exiled, return it to hand at the beginning of your next end phase.",
+  "triggeredEffects": [
+    {
+      "trigger": "discard",
+      "scope": "selfOnly",
+      "immediate": true,
+      "effects": [
+        {
+          "effect": "eventTriggers",
+          "triggeredEffects": [
+            {
+              "trigger": "phase",
+              "phase": "end",
+              "phaseOfPlayer": "player",
+              "description": "Return Endless Garden to hand.",
+              "effects": [
+                {
+                  "effect": "sendToZone",
+                  "destination": "hand"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "trigger": "enteredZone",
+      "zone": "exile",
+      "scope": "selfOnly",
+      "immediate": true,
+      "effects": [
+        {
+          "effect": "eventTriggers",
+          "triggeredEffects": [
+            {
+              "trigger": "phase",
+              "phase": "end",
+              "phaseOfPlayer": "player",
+              "description": "Return Endless Garden to hand.",
+              "effects": [
+                {
+                  "effect": "sendToZone",
+                  "destination": "hand"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

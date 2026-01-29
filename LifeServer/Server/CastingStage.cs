@@ -5,9 +5,9 @@ public enum CastingStage {
     AdditionalCosts,
     AmountSelection,
     Choices,
-    SpellAlternateCost,
+    AlternateCost,
     TargetSelection,
     AdditionalChoices,
-    AlternateCostSelection,
+    RepeatSelection,
     TributeSelection
 }

@@ -1,0 +1,47 @@
+{
+  "id": 217,
+  "name": "Fertilize",
+  "cost": 3,
+  "type": "spell",
+  "tribe": "treefolk",
+  "rarity": "common",
+  "description": "Non-herb tokens you control have sprout 1 this turn. The next Treefolk you cast this turn has sprout 2. Discard Fertilize: Put a +1/+1 counter on target treefolk.",
+  "stackEffects": [
+    {
+      "effect": "grantKeyword",
+      "all": true,
+      "isToken": true,
+      "notTokenType": "herb",
+      "keyword": "sprout",
+      "keywordAmount": 1,
+      "thisTurn": true,
+      "futureProof": true
+    },
+    {
+      "effect": "grantKeyword",
+      "targetBasedOn": "nextSummon",
+      "tribe": "treefolk",
+      "keyword": "sprout",
+      "keywordAmount": 2,
+      "thisTurn": true
+    }
+  ],
+  "activatedEffects": [
+    {
+      "costType": "discard",
+      "scope": "selfOnly",
+      "activateFromHand": true,
+      "targetType": "summon",
+      "tribe": "treefolk",
+      "description": "Discard: Put a +1/+1 counter on target treefolk",
+      "effects": [
+        {
+          "effect": "addCounter",
+          "targetType": "summon",
+          "tribe": "treefolk",
+          "counterType": "oneOne"
+        }
+      ]
+    }
+  ]
+}

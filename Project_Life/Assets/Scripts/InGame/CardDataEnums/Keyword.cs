@@ -8,5 +8,6 @@ public enum Keyword {
     Dive,
     Scorch,
     Exhaust,
-    Spectral
+    Spectral,
+    Finale
 }

@@ -11,5 +11,8 @@ namespace InGame {
         public int spellCounter { get; set; }
         public int deckAmount { get; set; }
         public int handAmount { get; set; }
+
+        // Revealed top card (from TopCardRevealed passive)
+        public CardDisplayData revealedTopCard { get; set; }
     }
 }

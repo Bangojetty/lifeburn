@@ -1,0 +1,47 @@
+{
+  "id": 275,
+  "name": "Unending Sundew",
+  "cost": 0,
+  "type": "summon",
+  "attack": 1,
+  "defense": 1,
+  "tribe": "treefolk",
+  "rarity": "common",
+  "description": "When Unending Sundew is tributed, exile it instead of sacrificing it. \n Exile Unending Sundew from your graveyard: return it to play at the beginning of your next Draw phase.",
+  "passiveEffects": [
+    {
+      "passive": "exileInsteadOfGraveyardOnTribute"
+    }
+  ],
+  "activatedEffects": [
+    {
+      "conditions": [
+        {
+          "condition": "inZone",
+          "zone": "graveyard"
+        }
+      ],
+      "costType": "exile",
+      "scope": "selfOnly",
+      "immediate": true,
+      "effects": [
+        {
+          "effect": "eventTriggers",
+          "triggeredEffects": [
+            {
+              "trigger": "phase",
+              "phase": "draw",
+              "phaseOfPlayer": "player",
+              "effects": [
+                {
+                  "effect": "sendToZone",
+                  "destination": "play"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

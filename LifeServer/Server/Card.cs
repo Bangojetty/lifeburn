@@ -39,12 +39,15 @@ public class Card {
     public Player? playerHandOf;
     public int damageTaken;
     public bool tookSpellDamage;  // tracks if card took spell damage (for DeathBySpell triggers)
+    public bool isBeingTributed;  // tracks if card is being tributed (for Tribute triggers)
     public int attackTargetUid;
     public int? x = null;
+    public int redCardsDiscardedForCost = 0;  // tracks goblin cards discarded as additional cost
 
     // counters
     public int plusOnePlusOneCounters;
     public int minusOneMinusOneCounters;
+    public int hauntCounters;
 
     public Dictionary<int, List<int>> chosenIndices = new();
 
@@ -259,6 +262,30 @@ public void Reveal() {
         return tempPassives;
     }
 
+    /// <summary>
+    /// Checks if this card is immune to a specific keyword (e.g., Dive, Trample, Haunt).
+    /// </summary>
+    public bool IsImmuneToKeyword(Keyword keyword) {
+        foreach (PassiveEffect pEffect in GetPassives()) {
+            if (pEffect.passive == Passive.ImmuneToKeyword && pEffect.keyword == keyword) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// Checks if this card has a specific passive (e.g., CantAttack).
+    /// </summary>
+    public bool HasPassive(Passive passive) {
+        foreach (PassiveEffect pEffect in GetPassives()) {
+            if (pEffect.passive == passive) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public List<ActivatedEffect> GetActivatedEffects() {
         List<ActivatedEffect> tempActives = new();
         if (activatedEffects != null) tempActives.AddRange(activatedEffects);
@@ -295,7 +322,7 @@ public void Reveal() {
                 if (statMod.statType != StatType.Attack) continue;
                 if (statMod.amountBasedOn != null) {
                     // you must set the stat modifiers amount before applying it if it has an amountBasedOn
-                    statMod.amount = ResolveAmount(statMod.amountBasedOn.Value, statMod.scope) * (statMod.amountMulitplier ?? 1);
+                    statMod.amount = ResolveAmount(statMod.amountBasedOn.Value, statMod.scope) * (statMod.amountMultiplier ?? 1);
                 }
 
                 tempAttack = statMod.Apply(tempAttack);
@@ -321,7 +348,7 @@ public void Reveal() {
                 if (statMod.statType != StatType.Defense) continue;
                 if (statMod.amountBasedOn != null) {
                     // you must set the stat modifiers amount before applying it if it has an amountBasedOn
-                    statMod.amount = ResolveAmount(statMod.amountBasedOn.Value, statMod.scope) * (statMod.amountMulitplier ?? 1);
+                    statMod.amount = ResolveAmount(statMod.amountBasedOn.Value, statMod.scope) * (statMod.amountMultiplier ?? 1);
                 }
 
                 tempDefense = statMod.Apply(tempDefense);
@@ -336,12 +363,46 @@ public void Reveal() {
         // Cards like Stone Toss use x for additional costs/effects but have a fixed mana cost
         int finalCost = HasXCost() && x != null ? x.Value : cost;
         if (currentGameMatch == null) return finalCost;
+
+        // Handle cost modifiers
+        if (costModifiers != null) {
+            foreach (var costMod in costModifiers) {
+                if (costMod.modifier == ModifierType.DynamicAdd && costMod.xBasedOn != null) {
+                    Player? owner = playerHandOf ?? currentGameMatch.GetOwnerOf(this);
+                    if (owner != null) {
+                        int dynamicAmount = currentGameMatch.GetAmountBasedOn(costMod.xBasedOn.Value, Scope.All, owner, null, null, null, this);
+                        // Apply additional modifier (e.g., "*3")
+                        if (costMod.additionalModifier != null) {
+                            switch (costMod.additionalModifier) {
+                                case "*2": dynamicAmount *= 2; break;
+                                case "*3": dynamicAmount *= 3; break;
+                                case "/2": dynamicAmount /= 2; break;
+                            }
+                        }
+                        finalCost += dynamicAmount;
+                    }
+                }
+                // FirstSpell modifier - if this is the first spell the player has cast, apply modifier
+                if (costMod.modifier == ModifierType.FirstSpell) {
+                    Player? owner = playerHandOf ?? currentGameMatch.GetOwnerOf(this);
+                    if (owner != null && owner.totalSpells == 0) {
+                        // Apply the modifier (e.g., "=0" sets cost to 0)
+                        if (costMod.additionalModifier != null) {
+                            if (costMod.additionalModifier.StartsWith("=")) {
+                                finalCost = int.Parse(costMod.additionalModifier.Substring(1));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         foreach (PassiveEffect pEffect in GetVerifiedPassives()) {
             if(pEffect.passive != Passive.ModifyCost) continue;
             Debug.Assert(pEffect.cost != null, "Passive Effect has no cost value to modify to");
             finalCost = pEffect.cost.Value;
         }
-        if (type == CardType.Spell && playerHandOf != null && playerHandOf.spellBurnt) finalCost += cost;
+        if (type == CardType.Spell && playerHandOf != null && playerHandOf.spellBurnt) finalCost *= 2;
         // Next spell free - reduces non-summon cost to 0
         if (type != CardType.Summon && playerHandOf != null && playerHandOf.nextSpellFree) finalCost = 0;
         finalCost += grantedPassives.Sum(pEffect => pEffect.costModifier);
@@ -409,6 +470,43 @@ public void Reveal() {
 
     public bool HasKeyword(Keyword keyword) {
         return GetKeywords() != null &&  GetKeywords()!.Contains(keyword);
+    }
+
+    /// <summary>
+    /// Gets the Sprout amount for this card (base 1 + modifyKeywordAmount passives)
+    /// </summary>
+    public int GetSproutAmount() {
+        if (!HasKeyword(Keyword.Sprout)) return 0;
+        int amount = 1; // Base sprout amount
+        // Check for modifyKeywordAmount passives (add their amount)
+        List<PassiveEffect> passivesToCheck = currentGameMatch != null ? GetVerifiedPassives() : GetPassives();
+        foreach (PassiveEffect pEffect in passivesToCheck) {
+            if (pEffect.passive == Passive.ModifyKeywordAmount && pEffect.amount != null) {
+                amount += pEffect.amount.Value;
+            }
+        }
+        return amount;
+    }
+
+    /// <summary>
+    /// Gets the Haunt amount for this card. Returns 0 if no Haunt keyword.
+    /// Haunt amount comes from keywordAmount on GrantKeyword passives, or defaults to 1 for innate Haunt.
+    /// </summary>
+    public int GetHauntAmount() {
+        if (!HasKeyword(Keyword.Haunt)) return 0;
+        int amount = 0;
+        // Check for GrantKeyword passives that grant Haunt with an amount
+        List<PassiveEffect> passivesToCheck = currentGameMatch != null ? GetVerifiedPassives() : GetPassives();
+        foreach (PassiveEffect pEffect in passivesToCheck) {
+            if (pEffect.passive == Passive.GrantKeyword && pEffect.keyword == Keyword.Haunt) {
+                amount = Math.Max(amount, pEffect.keywordAmount ?? 1);
+            }
+        }
+        // If Haunt is innate (in keywords list), use base amount of 1 if no passive overrides
+        if (amount == 0 && keywords != null && keywords.Contains(Keyword.Haunt)) {
+            amount = 1;
+        }
+        return amount;
     }
 
     public bool HasEffect(EffectType effectType) {

@@ -12,5 +12,6 @@ public enum TargetType {
     Any,
     CardInHand,
     OpponentHand,
-    CardInHandOrGraveyard
+    CardInHandOrGraveyard,
+    CardInGraveyard
 }

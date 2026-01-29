@@ -1,8 +1,8 @@
 # Card Test Tracker
 
 **Total Cards:** 281
-**Untested:** 175
-**Passed:** 106
+**Untested:** 0
+**Passed:** 281
 **Failed:** 0
 
 ---
@@ -117,189 +117,189 @@
 | 95 | SwapControl | Passed | |
 | 96 | DuskWraith | Passed | Conditional destroy/gainLife, target selection message fix |
 | 97 | Ghastly | Passed | Opening hand playerChoice discard |
-| 98 | GraveDigger | Untested | |
+| 98 | GraveDigger | Passed | |
 | 99 | LootGhost | Passed | |
 | 100 | HaunterShade | Passed | Fixed JSON: triggeredEffects, trigger mill, self true, createToken |
 | 101 | WitnessShade | Passed | Fixed each player mill (two effects with isOpponent), description override |
 | 102 | GhostGathering | Passed | Replacement effect (summons to exile), playerChoice castCard, mill trigger fix |
 | 103 | ShadeHerald | Passed | |
 | 104 | ShadowDancer | Passed | |
-| 105 | SelflessShadow | Untested | |
-| 106 | ShadowOfTheGrave | Untested | |
-| 107 | GhastlyTutor | Untested | |
-| 108 | ShadeCrawler | Untested | |
-| 109 | GhostReceiver | Untested | |
-| 110 | ShadeRunner | Untested | |
-| 111 | GhostDeceiver | Untested | |
-| 112 | DarkBlessing | Untested | |
-| 113 | ShadeOfReturn | Untested | |
-| 114 | BluntAmbusher | Untested | |
-| 115 | DoubleShadow | Untested | |
-| 116 | RelentingShade | Untested | |
-| 117 | ThreeShadows | Untested | |
-| 118 | Shade | Untested | |
-| 119 | HandRefresh | Untested | |
-| 120 | Reap | Untested | |
-| 121 | LingeringShades | Untested | |
-| 122 | LostButNeverGone | Untested | |
-| 123 | GhostlyLooter | Untested | |
-| 124 | DarkShade | Untested | |
-| 125 | Fisher | Untested | |
-| 126 | Vanquish | Untested | |
-| 127 | ShadowLord | Untested | |
-| 128 | Edict | Untested | |
-| 129 | Fable | Untested | |
-| 130 | ItsAlive | Untested | |
-| 131 | Reaper | Untested | |
-| 132 | Strongfall | Untested | |
-| 133 | Duress | Untested | |
-| 134 | HauntGod | Untested | |
-| 135 | ExchangeSouls | Untested | |
-| 136 | Wrath | Untested | |
-| 137 | CrawlBack | Untested | |
-| 138 | ChainofBolts | Untested | |
-| 139 | Gobby | Untested | |
-| 140 | LootingFire | Untested | |
-| 141 | GobLaunch | Untested | |
-| 142 | ExploderGob | Untested | |
-| 143 | SpearGob | Untested | |
-| 144 | BlitzGoblin | Untested | |
-| 145 | GobRocket | Untested | |
-| 146 | TransparentGoblin | Untested | |
-| 147 | GoblinDuelist | Untested | |
-| 148 | Maglubiyet'sBlessing | Untested | |
-| 149 | GobRunner | Untested | |
-| 150 | FuryGoblin | Untested | |
-| 151 | GoblinCrew | Untested | |
-| 152 | LooterGob | Untested | |
-| 153 | UndeadGoblin | Untested | |
-| 154 | GoblinRitualist | Untested | |
-| 155 | Shot | Untested | |
-| 156 | FireMasterGob | Untested | |
-| 157 | FiringGoblin | Untested | |
-| 158 | GoblinSquadron | Untested | |
-| 159 | BabyGobs | Untested | |
-| 160 | GoblinEngineer | Untested | |
-| 161 | GoblinMomma | Untested | |
-| 162 | GoblinPortal | Untested | |
-| 163 | GoblinMaster | Untested | |
-| 164 | GoblinRally | Untested | |
-| 165 | GoblinTrickster | Untested | |
-| 166 | GoblinGod | Untested | |
-| 167 | RallyTheMogs | Untested | |
-| 168 | ForkBolt | Untested | |
-| 169 | ChieftanGob | Untested | |
-| 170 | Greed | Untested | |
-| 171 | HeatRay | Untested | |
-| 172 | GoblinTown | Untested | |
-| 173 | Smite | Untested | |
-| 174 | ExplosiveVegetation | Untested | |
-| 175 | Gamble | Untested | |
-| 176 | RunAmok | Untested | |
-| 177 | HeatWave | Untested | |
-| 178 | Fireblast | Untested | |
-| 179 | Obliterate | Untested | |
-| 180 | Wildfire | Untested | |
-| 181 | Channel | Untested | |
-| 182 | PlantOfSolitude | Untested | |
-| 183 | EternalTreefolk | Untested | |
-| 184 | JeelaiPlant | Untested | |
-| 185 | CipplingVines | Untested | |
-| 186 | PlantOfHerbs | Untested | |
-| 187 | NaturesBlessing | Untested | |
-| 188 | TreeSavant | Untested | |
-| 189 | GrappleRoots | Untested | |
-| 190 | SproutPlant | Untested | |
-| 191 | VinePlant | Untested | |
-| 192 | Treefice | Untested | |
-| 193 | GiverOfPlants | Untested | |
-| 194 | SproutAnArmy | Untested | |
-| 195 | Planter | Untested | |
-| 196 | TallTreefolk | Untested | |
-| 197 | NaturalStatePlant | Untested | |
-| 198 | PlantGrower | Untested | |
-| 199 | Sproutlings | Untested | |
-| 200 | PlantSprouter | Untested | |
-| 201 | PlatePlant | Untested | |
-| 202 | CliffsideSprout | Untested | |
-| 203 | GlowingSpore | Untested | |
-| 204 | DeadTree | Untested | |
-| 205 | GiftOfNature | Untested | |
-| 206 | TransparentPlant | Untested | |
-| 207 | PerfectBog | Untested | |
-| 208 | TreeGiant | Untested | |
-| 209 | SpiritTree | Untested | |
-| 210 | WarbriarStomper | Untested | |
-| 211 | VerdictCommand | Untested | |
-| 212 | Entangle | Untested | |
-| 213 | Harvest | Untested | |
-| 214 | LostSanctuary | Untested | |
-| 215 | PlanterBox | Untested | |
-| 216 | GrowTall | Untested | |
-| 217 | Fertilize | Untested | |
-| 218 | PlantofTrees | Untested | |
-| 219 | SproutUp | Untested | |
-| 220 | Overrun | Untested | |
-| 221 | Uncover | Untested | |
-| 222 | Simplify | Untested | |
-| 223 | TreeGod | Untested | |
-| 224 | Green-Sun | Untested | |
-| 225 | Grow | Untested | |
-| 226 | PlantSnap | Untested | |
-| 227 | Gigatrunk | Untested | |
-| 228 | DeeprootGuard | Untested | |
-| 229 | MasterTree | Untested | |
-| 230 | TreeOfLife | Untested | |
-| 231 | Herblore | Untested | |
-| 232 | Barrage | Untested | |
-| 233 | FlameWave | Untested | |
-| 234 | RitualOfDarkness | Untested | |
-| 235 | Spectralize | Untested | |
-| 236 | DreamBig | Untested | |
-| 237 | AvalancheGolem | Untested | |
-| 238 | CastAMold | Untested | |
-| 239 | GroundTactics | Untested | |
-| 240 | BreakThrough | Untested | |
-| 241 | FoundationGolem | Untested | |
-| 242 | GraniteGolem | Untested | |
-| 243 | TargetDummy | Untested | |
-| 244 | ShatteringSmash | Untested | |
-| 245 | PutridFolks | Untested | |
-| 246 | Riptide | Untested | |
-| 247 | MerfolkFateseer | Untested | |
-| 248 | BeachedMerfolk | Untested | |
-| 249 | Legionaires | Untested | |
-| 250 | SlipspaceMerfolk | Untested | |
-| 251 | MerfolkElite | Untested | |
-| 252 | MerfolkMage | Untested | |
-| 253 | SkyScryerMerfolk | Untested | |
-| 254 | Typhoon | Untested | |
-| 255 | Rewind | Untested | |
-| 256 | SpawnFish | Untested | |
-| 257 | GeistOfDroolingTears | Untested | |
-| 258 | RecurringNightmare | Untested | |
-| 259 | SetStraight | Untested | |
-| 260 | Spectral Amulet | Untested | |
-| 261 | RestlessGhost | Untested | |
-| 262 | BurstLightning | Untested | |
-| 263 | GoblinGrunt | Untested | |
-| 264 | CavalcadePyromancer | Untested | |
-| 265 | Ringleader Champion | Untested | |
-| 266 | SearingFire | Untested | |
-| 267 | GoblinChanneler | Untested | |
-| 268 | SearingGoblin | Untested | |
-| 269 | GoblinLieutenant | Untested | |
-| 270 | BlastOpen | Untested | |
-| 271 | GoblinTactician | Untested | |
-| 272 | AllOutAttackCommander | Untested | |
-| 273 | UndyingDeathwood | Untested | |
-| 274 | EndlessGarden | Untested | |
-| 275 | UnendingSundew | Untested | |
-| 276 | FromDust | Untested | |
-| 277 | PottedFlower | Untested | |
-| 278 | TreeOfAbundance | Untested | |
-| 279 | GroundControl | Untested | |
-| 280 | BloomingMarsh | Untested | |
+| 105 | SelflessShadow | Passed | Tribute trigger, token with keywords |
+| 106 | ShadowOfTheGrave | Passed | Innate passive scope fix |
+| 107 | GhastlyTutor | Passed | |
+| 108 | ShadeCrawler | Passed | Graveyard trigger, targetBasedOn triggerCard |
+| 109 | GhostReceiver | Passed | Mill upTo amount selection fix |
+| 110 | ShadeRunner | Passed | |
+| 111 | GhostDeceiver | Passed | |
+| 112 | DarkBlessing | Passed | |
+| 113 | ShadeOfReturn | Passed | |
+| 114 | BluntAmbusher | Passed | Life-dependent passive stats refresh |
+| 115 | DoubleShadow | Passed | |
+| 116 | RelentingShade | Passed | Trigger scope fix, resolution-time inZone condition |
+| 117 | ThreeShadows | Passed | |
+| 118 | Shade | Passed | |
+| 119 | HandRefresh | Passed | |
+| 120 | Reap | Passed | Opponent discard selection, player UID preservation fix |
+| 121 | LingeringShades | Passed | |
+| 122 | LostButNeverGone | Passed | |
+| 123 | GhostlyLooter | Passed | |
+| 124 | DarkShade | Passed | Discard trigger skip card qualification, bot auto-discard, oncePerTurn tracking |
+| 125 | Fisher | Passed | targetType opponent fix, weakest summon targeting |
+| 126 | Vanquish | Passed | |
+| 127 | ShadowLord | Passed | Graveyard aura fix, statModifiers typo, passive removal on zone change |
+| 128 | Edict | Passed | eachPlayer sacrifice handling |
+| 129 | Fable | Passed | |
+| 130 | ItsAlive | Passed | |
+| 131 | Reaper | Passed | resolveTarget discard, Summon restriction, reveal filtering |
+| 132 | Strongfall | Passed | targetType opponent, strongest summon targeting |
+| 133 | Duress | Passed | resolveTarget castability fix, reveal only matching cards |
+| 134 | HauntGod | Passed | Tribute altCostType handling in CanPayAlternateCost, RequestActivatedAbilityAltCostPayment, HandleCostSelection |
+| 135 | ExchangeSouls | Passed | resolveTarget for mill-then-select, targetType cardInGraveyard |
+| 136 | Wrath | Passed | Implemented destroy all effect |
+| 137 | CrawlBack | Passed | Fixed targetType to cardInGraveyard |
+| 138 | ChainofBolts | Passed | opponentsChoice for resolve-time target selection by opponent |
+| 139 | Gobby | Passed | Draw effect description for targetType opponent |
+| 140 | LootingFire | Passed | resolveTarget for conditional targeting, Control condition default minAmount=1 |
+| 141 | GobLaunch | Passed | AdditionalCost tribe/cardType check, sacrifice only from play, TargetAttack condition |
+| 142 | ExploderGob | Passed | affectedPlayer for non-targeted damage, DealDamage effect description |
+| 143 | SpearGob | Passed | |
+| 144 | BlitzGoblin | Passed | |
+| 145 | GobRocket | Passed | |
+| 146 | TransparentGoblin | Passed | |
+| 147 | GoblinDuelist | Passed | attackedSummon trigger, survivedCombat sacrifice |
+| 148 | Maglubiyet'sBlessing | Passed | |
+| 149 | GobRunner | Passed | |
+| 150 | FuryGoblin | Passed | |
+| 151 | GoblinCrew | Passed | |
+| 152 | LooterGob | Passed | Cast trigger, isCost reveal selection |
+| 153 | UndeadGoblin | Passed | ImmuneToKeyword (Dive, Trample, Haunt) |
+| 154 | GoblinRitualist | Passed | CastCard from graveyard with select, free cast implementation |
+| 155 | Shot | Passed | modifierConditions with control condition |
+| 156 | FireMasterGob | Passed | Cast trigger with spellburnt conditions, tribe filter |
+| 157 | FiringGoblin | Passed | isCost reveal with resolveTarget damage |
+| 158 | GoblinSquadron | Passed | Token with tributeRestriction passive |
+| 159 | BabyGobs | Passed | Token with tributeRestriction passive |
+| 160 | GoblinEngineer | Passed | Tutor with reveal |
+| 161 | GoblinMomma | Passed | Dual token creation |
+| 162 | GoblinPortal | Passed | Opening hand trigger, tribute with keyword filter |
+| 163 | GoblinMaster | Passed | goblinsInPlay amountBasedOn passive |
+| 164 | GoblinRally | Passed | Attack trigger, tokenAttacking |
+| 165 | GoblinTrickster | Passed | Spell tutor with reveal |
+| 166 | GoblinGod | Passed | bypassSummonLimit, goblinsControlled amountBasedOn |
+| 167 | RallyTheMogs | Passed | Aura passives: changeStats + grantKeyword |
+| 168 | ForkBolt | Passed | |
+| 169 | ChieftanGob | Passed | |
+| 170 | Greed | Passed | Control condition with maxAmount:0 fix |
+| 171 | HeatRay | Passed | |
+| 172 | GoblinTown | Passed | CreateToken amountModifier display fix |
+| 173 | Smite | Passed | |
+| 174 | ExplosiveVegetation | Passed | TributeMultiplier for summons, ModifyType rootEffect.affectedUids filtering |
+| 175 | Gamble | Passed | |
+| 176 | RunAmok | Passed | CantTribute passive implementation |
+| 177 | HeatWave | Passed | |
+| 178 | Fireblast | Passed | Damage modifier with goblin control, alternate exile cost |
+| 179 | Obliterate | Passed | Damage to both players, cantGainLife for both |
+| 180 | Wildfire | Passed | DynamicAdd cost modifier, SummonsOpponentControls |
+| 181 | Channel | Passed | |
+| 182 | PlantOfSolitude | Passed | CantTribute passive, tribute trigger scope:all, opponent choice deep clone fix |
+| 183 | EternalTreefolk | Passed | Optional at trigger level, HasInZone condition |
+| 184 | JeelaiPlant | Passed | |
+| 185 | CipplingVines | Passed | NonTreefolk restriction, TreefolkControlled amountBasedOn |
+| 186 | PlantOfHerbs | Passed | |
+| 187 | NaturesBlessing | Passed | |
+| 188 | TreeSavant | Passed | |
+| 189 | GrappleRoots | Passed | |
+| 190 | SproutPlant | Passed | |
+| 191 | VinePlant | Passed | |
+| 192 | Treefice | Passed | |
+| 193 | GiverOfPlants | Passed | |
+| 194 | SproutAnArmy | Passed | Herb sacrifice selection, cantGainLife choice text |
+| 195 | Planter | Passed | |
+| 196 | TallTreefolk | Passed | |
+| 197 | NaturalStatePlant | Passed | Graveyard ability selection fix, inspection panel autoPass fix |
+| 198 | PlantGrower | Passed | Phase trigger with attacked condition, scope selfOnly sacrifice |
+| 199 | Sproutlings | Passed | |
+| 200 | PlantSprouter | Passed | Cast trigger, TreefolkControlled fix (exclude tokens) |
+| 201 | PlatePlant | Passed | |
+| 202 | CliffsideSprout | Passed | phaseOfPlayer fix for controller-only draw trigger |
+| 203 | GlowingSpore | Passed | RootController fix for destroyed cards using lastControllingPlayer |
+| 204 | DeadTree | Passed | zone vs targetZones fix for non-targeting sendToZone |
+| 205 | GiftOfNature | Passed | targetType graveyard for target selection |
+| 206 | TransparentPlant | Passed | activateFromHand ability, targetType/tribe on inner effect |
+| 207 | PerfectBog | Passed | |
+| 208 | TreeGiant | Passed | DefenseUsedForAttack passive, activateFromHand discard ability |
+| 209 | SpiritTree | Passed | |
+| 210 | WarbriarStomper | Passed | |
+| 211 | VerdictCommand | Passed | RemoveCounter effect for haunt counters |
+| 212 | Entangle | Passed | conditionMax/cardType fix for Control condition |
+| 213 | Harvest | Passed | |
+| 214 | LostSanctuary | Passed | Multiple choose effects, opponent choice handling |
+| 215 | PlanterBox | Passed | thisTurn token death |
+| 216 | GrowTall | Passed | IsTribe condition, targetBasedOn rootAffected |
+| 217 | Fertilize | Passed | Player passives for futureProof keyword grants |
+| 218 | PlantofTrees | Passed | |
+| 219 | SproutUp | Passed | |
+| 220 | Overrun | Passed | |
+| 221 | Uncover | Passed | |
+| 222 | Simplify | Passed | |
+| 223 | TreeGod | Passed | |
+| 224 | Green-Sun | Passed | |
+| 225 | Grow | Passed | |
+| 226 | PlantSnap | Passed | |
+| 227 | Gigatrunk | Passed | |
+| 228 | DeeprootGuard | Passed | |
+| 229 | MasterTree | Passed | CantAttack passive |
+| 230 | TreeOfLife | Passed | Self-sacrifice, targetType cardInHand |
+| 231 | Herblore | Passed | BypassHerbLifeReduction player passive |
+| 232 | Barrage | Passed | |
+| 233 | FlameWave | Passed | |
+| 234 | RitualOfDarkness | Passed | CardRitualOfDarkness effect, SendToZone for Hand->Play, trigger deferral |
+| 235 | Spectralize | Passed | ExileAndReturn with targeting, targetBasedOn rootAffected |
+| 236 | DreamBig | Passed | |
+| 237 | AvalancheGolem | Passed | Variable stone sacrifice, playerChosenAmount, all damage |
+| 238 | CastAMold | Passed | |
+| 239 | GroundTactics | Passed | |
+| 240 | BreakThrough | Passed | Attacking restriction, granted keywords, additionalEffects targetBasedOn |
+| 241 | FoundationGolem | Passed | phaseOfPlayer for controller-only trigger |
+| 242 | GraniteGolem | Passed | |
+| 243 | TargetDummy | Passed | Taunt keyword implementation |
+| 244 | ShatteringSmash | Passed | requireOneFromEach targeting, BothPlayersHaveSummons cast restriction |
+| 245 | PutridFolks | Passed | ExileAndReturn with SendToZone |
+| 246 | Riptide | Passed | Token destruction includes Token class instances |
+| 247 | MerfolkFateseer | Passed | |
+| 248 | BeachedMerfolk | Passed | |
+| 249 | Legionaires | Passed | |
+| 250 | SlipspaceMerfolk | Passed | Auto-sacrifice, targetType permanent |
+| 251 | MerfolkElite | Passed | |
+| 252 | MerfolkMage | Passed | Copy spell trigger, TriggeredEffect type, rootEffect clone fix |
+| 253 | SkyScryerMerfolk | Passed | TopCardRevealed passive, deck top card UI, click-to-cast |
+| 254 | Typhoon | Passed | |
+| 255 | Rewind | Passed | GoToPhase event for turn restart |
+| 256 | SpawnFish | Passed | |
+| 257 | GeistOfDroolingTears | Passed | |
+| 258 | RecurringNightmare | Passed | isPlayerTurn for draw phase trigger |
+| 259 | SetStraight | Passed | SourcePlayer targetBasedOn, HalfLife amountBasedOn, any number selection |
+| 260 | Spectral Amulet | Passed | Object type card handling (no attack, no tribute) |
+| 261 | RestlessGhost | Passed | |
+| 262 | BurstLightning | Passed | selectRepeatUpfront, upfront life cost, skip invalid targets |
+| 263 | GoblinGrunt | Passed | |
+| 264 | CavalcadePyromancer | Passed | Cast trigger cardType filter, TriggerController targetBasedOn |
+| 265 | Ringleader Champion | Passed | Grant passive option text fix |
+| 266 | SearingFire | Passed | |
+| 267 | GoblinChanneler | Passed | Cost restriction for triggers, TriggerController targetBasedOn |
+| 268 | SearingGoblin | Passed | DisableEnterPlayEffects passive |
+| 269 | GoblinLieutenant | Passed | |
+| 270 | BlastOpen | Passed | DefenseGreaterThanAttack restriction |
+| 271 | GoblinTactician | Passed | FinalAttack damage, proper targeting, option message |
+| 272 | AllOutAttackCommander | Passed | CantSpecialSummon with selfOnly scope |
+| 273 | UndyingDeathwood | Passed | InZones condition, freeCast, TriggerSprout, scope all for mill |
+| 274 | EndlessGarden | Passed | eventTriggers for delayed phase trigger on stack |
+| 275 | UnendingSundew | Passed | immediate ability, eventTriggers for delayed return |
+| 276 | FromDust | Passed | targetType for graveyard |
+| 277 | PottedFlower | Passed | |
+| 278 | TreeOfAbundance | Passed | TokenCanTribute, CreateTokenModifier (*2), token stacking fix |
+| 279 | GroundControl | Passed | |
+| 280 | BloomingMarsh | Passed | DidntAttack condition, phase trigger |
 
 ---
 

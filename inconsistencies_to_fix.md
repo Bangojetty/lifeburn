@@ -137,7 +137,7 @@ They handle similar cost types but:
 ## MEDIUM PRIORITY
 
 ### 4. CostType.DiscardOrSacrificeMerfolk - Hardcoded Composite Cost
-**Status:** Not Started
+**Status:** RESOLVED
 **Severity:** Medium (not extensible)
 
 Special cost type exists only for Eadro (card 66):
@@ -155,15 +155,21 @@ case CostType.DiscardOrSacrificeMerfolk:
 - CostType enum
 
 **Discussion Notes:**
--
+- Reused the existing AlternateCost system from card casting for activated abilities
+- Added `Discard` to AltCostType enum
+- Added `alternateCosts` property to ActivatedEffect class
 
 **Chosen Solution:**
--
+- Extended the AlternateCost system to work with activated abilities
+- ActivatedEffect now supports `alternateCosts: [{ altCostType, tribe, amount }, ...]`
+- When multiple cost options are available, player is presented with a choice
+- Removed hardcoded `DiscardOrSacrificeMerfolk` enum and all related logic
+- Eadro's JSON updated to: `"alternateCosts": [{ "altCostType": "discard", "tribe": "merfolk", "amount": 1 }, { "altCostType": "sacrifice", "tribe": "merfolk", "amount": 1 }]`
 
 ---
 
 ### 5. amount vs maxTargets vs upTo - Ambiguous Selection Counts
-**Status:** Not Started
+**Status:** ✅ RESOLVED
 **Severity:** Medium (confusing)
 
 Different fields control selection counts:
@@ -183,15 +189,24 @@ Different fields control selection counts:
 - Multiple card JSONs
 
 **Discussion Notes:**
--
+- Separated concepts: "targeting" (in-play objects subject to game mechanics like hexproof) vs "selecting" (cards from zones)
+- `amount` should only be effect magnitude (damage, cards drawn, tokens created)
+- Created unified objects for selection/targeting
 
 **Chosen Solution:**
--
+- Created `Target` class for in-play targeting: `target: { type: "summon", min: 2, max: 2 }`
+- Created `Select` class for zone selection: `select: { zone: "hand", max: 2 }` or `select: { zones: ["hand", "graveyard"] }`
+- Updated `DeckDestination` with `destination` (replaces `deckDestination`), `select` (replaces `amount`), and `remainder: true`
+- Added helper methods to Effect.cs: `GetTargetType()`, `HasTargeting()`, `GetTargetMin()`, `GetTargetMax()`, etc.
+- Updated GameMatch/StackObj/Utils/Qualifier to use new helper methods
+- System is fully backwards compatible - old fields (`targetType`, `maxTargets`, `minTargets`, `upTo`) still work
+- Migrated 17+ cards to new format, tests pass
+- Remaining cards can be migrated incrementally
 
 ---
 
 ### 6. effectsThatHaltEvents List Incomplete
-**Status:** Not Started
+**Status:** ✅ RESOLVED
 **Severity:** Medium (maintenance issue)
 
 In `StackObj.cs`:
@@ -211,17 +226,22 @@ if (currentEffect.effect == EffectType.LookAtDeck && currentEffect.deckDestinati
 - StackObj.cs
 
 **Discussion Notes:**
--
+- Identified two categories of halts: pre-resolve (before effect executes) and post-resolve (after effect executes)
+- Pre-resolve halts must stay inline because they each call different methods, halt at different indices (i vs i+1), and have unique conditions
+- Post-resolve halts are simpler - just a boolean check after the effect runs
 
 **Chosen Solution:**
--
+- Created `ShouldHaltAfterResolve(Effect effect)` helper method for post-resolve halts
+- Uses switch expression for clean, centralized logic
+- Removed the `effectsThatHaltEvents` list entirely
+- Added XML doc comment explaining why pre-resolve halts remain inline
 
 ---
 
 ## LOW PRIORITY
 
 ### 7. AlternateCost Enum Typo
-**Status:** Not Started
+**Status:** ✅ RESOLVED
 **Severity:** Low (compatibility cruft)
 
 In `AlternateCost.cs`:
@@ -240,15 +260,15 @@ public enum AltCostType {
 - Any JSON files using the typo
 
 **Discussion Notes:**
--
+- Searched codebase - no JSON files or code actually used the typo
 
 **Chosen Solution:**
--
+- Removed `TribueMultiplier` from enum (no usages found)
 
 ---
 
 ### 8. Player vs isOpponent for Effect Direction
-**Status:** Not Started
+**Status:** ✅ RESOLVED
 **Severity:** Low (two ways to do same thing)
 
 Some effects use `"isOpponent": true`:
@@ -271,15 +291,27 @@ Both accomplish similar goals but with different resolution paths.
 - Multiple card JSONs
 
 **Discussion Notes:**
--
+- Clarified the distinction between the two concepts:
+  - `isOpponent` = who performs the action (the "source player" or "actor")
+  - `player` = who is affected by the action (the "affected player" or "target")
+- Example: "Target opponent draws a card" → opponent is sourcePlayer (they draw)
+- Example: "Opponent loses 2 life" → opponent is affectedPlayer (they're affected)
 
 **Chosen Solution:**
--
+- Renamed `Effect.isOpponent` (bool) → `Effect.sourcePlayer` (string: "opponent" | null)
+- Renamed `Effect.player` → `Effect.affectedPlayer`
+- Updated Resolve method with clearer variable names: `resolvedSourcePlayer`, `resolvedAffectedPlayer`
+- Updated Clone method and EffectToString for new field names
+- Updated GameMatch references
+- Migrated 26 JSON files from `isOpponent: true` to `sourcePlayer: "opponent"`
+- Migrated 2 JSON files from `player: "opponent"` to `affectedPlayer: "opponent"`
+- Removed `isOpponent: false` entries (defaults to null/self)
+- Note: TriggeredEffect.player is a separate field (trigger condition filter) and was not renamed
 
 ---
 
 ### 9. Spell vs Summon Alternate Cost Stages
-**Status:** Not Started
+**Status:** ✅ RESOLVED
 **Severity:** Low (documented behavior)
 
 Alternate costs are handled at different stages:
@@ -290,17 +322,24 @@ This is intentional (BackSnap fix) but could be confusing.
 
 **Files Affected:**
 - GameMatch.cs (AttemptToCast method)
+- CastingStage.cs
 
 **Discussion Notes:**
--
+- The separate stages existed because spells need alternate cost choice before target selection (for BackSnap)
+- Summons don't have target selection during casting anyway, so the order doesn't matter for them
+- Having two separate stages for the same concept was unnecessary code duplication
 
 **Chosen Solution:**
--
+- Consolidated both stages into a single `CastingStage.AlternateCost` stage
+- Removed `SpellAlternateCost` and `AlternateCostSelection` from enum
+- Single stage now handles both spells (ExileFromHand) and summons (ExileFromHand, Sacrifice)
+- All alternate cost logic now runs before TargetSelection
+- Flow: Choices → AlternateCost → TargetSelection → AdditionalChoices → TributeSelection
 
 ---
 
 ### 10. self Field on TriggeredEffect vs Effect
-**Status:** Not Started
+**Status:** ✅ RESOLVED (as part of Issue #1)
 **Severity:** Low (works correctly but confusing)
 
 Both `TriggeredEffect` and `Effect` have a `self` field with different meanings:
@@ -322,13 +361,17 @@ Example from GolemBlinker (1):
 **Files Affected:**
 - TriggeredEffect.cs
 - Effect.cs
-- Documentation only
+- All card JSON files
 
 **Discussion Notes:**
--
+- This was already fixed when Issue #1 introduced the Scope enum
 
 **Chosen Solution:**
--
+- Both classes now use unified `Scope scope` field with enum values: `SelfOnly`, `OthersOnly`, `All`
+- TriggeredEffect defaults to `Scope.SelfOnly` (only fires for events involving this card)
+- Effect defaults to `Scope.All` (no self/other filter on targeting)
+- All JSON files migrated from `"self": true/false` to `"scope": "selfOnly"/"othersOnly"/"all"`
+- Example GolemBlinker now uses: `"scope": "othersOnly"` on trigger, `"scope": "selfOnly"` on effect
 
 ---
 
@@ -340,4 +383,11 @@ Example from GolemBlinker (1):
 | 2025-12-15 | #1 | Resolved - Replaced self/other with Scope enum |
 | 2025-12-15 | #2 | Resolved - Removed Zone.Token, tokens use Zone.Play |
 | 2025-12-15 | #3 | Resolved - Added isCost effect flag, migrated 6 cards |
+| 2025-12-18 | #4 | Resolved - Extended AlternateCost system to activated abilities, removed hardcoded merfolk logic |
+| 2025-12-20 | #5 | Resolved - Created Target/Select classes for unified targeting/selection |
+| 2025-12-21 | #6 | Resolved - Created ShouldHaltAfterResolve helper method, removed effectsThatHaltEvents list |
+| 2025-12-21 | #7 | Resolved - Removed TribueMultiplier typo from enum (no usages found) |
+| 2025-12-21 | #8 | Resolved - Renamed isOpponent→sourcePlayer, player→affectedPlayer, updated 28 JSON files |
+| 2025-12-21 | #9 | Resolved - Consolidated SpellAlternateCost and AlternateCostSelection into single AlternateCost stage |
+| 2025-12-21 | #10 | Resolved - Already fixed as part of Issue #1 (Scope enum replaced self field) |
 

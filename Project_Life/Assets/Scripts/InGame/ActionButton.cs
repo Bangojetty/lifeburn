@@ -25,6 +25,13 @@ public class ActionButton : MonoBehaviour {
                 gameManager.DisablesSelectables();
                 gameManager.SendSelection();
                 break;
+            case ActionButtonType.RitualPass:
+                gameManager.SendRitualChoice(-1);  // -1 means pass
+                break;
+            case ActionButtonType.RitualSummon:
+                gameManager.DisablesSelectables();
+                gameManager.SendRitualChoice(gameManager.GetSelectedRitualSummonUid());
+                break;
             default:
                 Debug.Log("ActionButtonType not implemented");
                 break;
@@ -63,6 +70,16 @@ public class ActionButton : MonoBehaviour {
                 btnText.text = "Submit";
                 btnText.fontSize = 44;
                 break;
+            case ActionButtonType.RitualPass:
+                SetColor(green);
+                btnText.text = "Pass";
+                btnText.fontSize = 47;
+                break;
+            case ActionButtonType.RitualSummon:
+                SetColor(blue);
+                btnText.text = "Summon";
+                btnText.fontSize = 42;
+                break;
             default:
                 Debug.Log("ActionButtonType not implemented");
                 break;
@@ -85,5 +102,7 @@ public enum ActionButtonType {
     Tribute,
     Submit,
     Target,
-    Cost
+    Cost,
+    RitualPass,
+    RitualSummon
 }

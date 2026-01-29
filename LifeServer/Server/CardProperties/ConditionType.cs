@@ -23,5 +23,7 @@ public enum ConditionType {
     EnteredZoneThisTurn,
     Attacked,
     SummonsInPlay,      // Any summons exist in play (either player)
-    NoSummonsInPlay     // No summons exist in play
+    NoSummonsInPlay,    // No summons exist in play
+    HasInZone,          // Has cards matching criteria in specified zone (e.g., treefolk in graveyard)
+    InZones             // Source card is in one of the specified zones (for triggers that fire from multiple zones)
 }

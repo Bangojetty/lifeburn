@@ -1,3 +1,4 @@
+using Server;
 using Server.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,7 +8,15 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers().AddNewtonsoftJson();
 builder.Services.AddScoped<DatabaseService>();
 
+// Add background service for match cleanup (disconnect detection)
+builder.Services.AddHostedService<MatchCleanupService>();
+
 var app = builder.Build();
+
+// Run database migrations
+using (var conn = SqlFunctions.CreateConnection()) {
+    SqlFunctions.RunMigrations(conn);
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment()) {

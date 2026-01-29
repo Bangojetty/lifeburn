@@ -5,130 +5,75 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c3a3f846-8e48-4ac1-92b9-c6080125a5fc" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/App.config" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Data/Cards/001_GolemBlinker.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/001_GolemBlinker.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Data/Cards/013_ReconfigureGolem.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/013_ReconfigureGolem.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Data/Cards/004_GoldGolem.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/004_GoldGolem.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Data/Cards/017_Smash.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/017_Smash.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Data/Cards/018_GolemBlesser.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/018_GolemBlesser.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Data/Cards/019_MoltenGravel.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/019_MoltenGravel.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Data/Cards/022_LordGolem.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/022_LordGolem.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Data/Cards/021_EarthquakeGolem.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/021_EarthquakeGolem.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Data/Cards/023_RockToss.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/023_RockToss.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Data/Cards/027_TreeOfBurningFire.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/027_TreeOfBurningFire.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Data/Cards/029_Quarry.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/029_Quarry.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Data/Cards/034_MasterGolem.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/034_MasterGolem.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Data/Cards/041_StoneWall.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/041_StoneWall.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Data/Cards/045_Calculate.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/045_Calculate.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Data/Cards/048_EidolonOfTheTides.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/048_EidolonOfTheTides.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Data/Cards/042_GamePlan.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/042_GamePlan.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Data/Cards/047_RiverSiren.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/047_RiverSiren.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Data/Cards/050_Fishies.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/050_Fishies.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Data/Cards/053_MerfolkRusher.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/053_MerfolkRusher.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Data/Cards/055_MerfolkKeeper.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/055_MerfolkKeeper.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Data/Cards/051_MerfolkGazer.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/051_MerfolkGazer.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Data/Cards/052_DiverMerfolk.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/052_DiverMerfolk.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Data/Cards/056_MerfolkRevealer.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/056_MerfolkRevealer.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Data/Cards/057_MerfolkScrollkeeper.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/057_MerfolkScrollkeeper.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Data/Cards/058_TreeOfSafeguard.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/058_TreeOfSafeguard.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Data/Cards/059_MerfolkGang.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/059_MerfolkGang.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Data/Cards/063_Denial.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/063_Denial.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Data/Cards/067_MerfolkScoper.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/067_MerfolkScoper.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Data/Cards/066_EadroMerfolkGod.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/066_EadroMerfolkGod.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Data/Cards/068_MerfolkSummoner.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/068_MerfolkSummoner.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Data/Cards/069_SpreadingThornbush.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/069_SpreadingThornbush.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Data/Cards/073_MerfolkMaster.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/073_MerfolkMaster.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Data/Cards/074_Consider.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/074_Consider.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Data/Cards/075_SiftRubble.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/075_SiftRubble.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Data/Cards/079_Dispell.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/079_Dispell.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Data/Cards/077_BackSnap.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/077_BackSnap.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Data/Cards/081_Opt.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/081_Opt.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Data/Cards/082_Brainstorm.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/082_Brainstorm.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Data/Cards/083_CounterBalance.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/083_CounterBalance.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Data/Cards/084_Return.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/084_Return.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Data/Cards/085_GodMerfolk.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/085_GodMerfolk.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Data/Cards/093_TurnTime.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/093_TurnTime.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Data/Cards/097_Ghastly.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/097_Ghastly.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Data/Cards/101_WitnessShade.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/101_WitnessShade.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Data/Cards/106_ShadowOfTheGrave.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/106_ShadowOfTheGrave.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Data/Cards/114_BluntAmbusher.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/114_BluntAmbusher.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Data/Cards/149_GobRunner.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/149_GobRunner.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Data/Cards/102_GhostGathering.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/102_GhostGathering.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Data/Cards/109_GhostReceiver.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/109_GhostReceiver.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Data/Cards/110_ShadeRunner.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/110_ShadeRunner.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Data/Cards/116_RelentingShade.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/116_RelentingShade.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Data/Cards/119_HandRefresh.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/119_HandRefresh.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Data/Cards/124_DarkShade.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/124_DarkShade.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Data/Cards/125_Fisher.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/125_Fisher.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Data/Cards/128_Edict.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/128_Edict.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Data/Cards/129_Fable.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/129_Fable.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Data/Cards/132_Strongfall.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/132_Strongfall.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Data/Cards/133_Duress.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/133_Duress.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Data/Cards/138_ChainofBolts.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/138_ChainofBolts.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Data/Cards/150_FuryGoblin.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/150_FuryGoblin.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Data/Cards/162_GoblinPortal.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/162_GoblinPortal.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Data/Cards/168_ForkBolt.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/168_ForkBolt.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Data/Cards/171_HeatRay.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/171_HeatRay.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Data/Cards/173_Smite.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/173_Smite.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Data/Cards/180_Wildfire.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/180_Wildfire.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Data/Cards/181_Channel.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/181_Channel.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Data/Cards/245_PutridFolks.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/245_PutridFolks.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Data/Cards/252_MerfolkMage.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/252_MerfolkMage.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Data/Cards/261_RestlessGhost.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/261_RestlessGhost.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Data/Cards/265_Ringleader Champion.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/265_Ringleader Champion.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Data/Cards/279_GroundControl.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/279_GroundControl.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../LifeServer/Server/Card.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../LifeServer/Server/Card.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../LifeServer/Server/CardDisplayData.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../LifeServer/Server/CardDisplayData.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../LifeServer/Server/CardDto.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../LifeServer/Server/CardDto.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Data/Cards/175_Gamble.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/175_Gamble.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Data/Cards/182_PlantOfSolitude.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/182_PlantOfSolitude.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Data/Cards/185_CipplingVines.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/185_CipplingVines.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Data/Cards/188_TreeSavant.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/188_TreeSavant.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Data/Cards/194_SproutAnArmy.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/194_SproutAnArmy.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Data/Cards/199_Sproutlings.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/199_Sproutlings.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Data/Cards/207_PerfectBog.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/207_PerfectBog.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Data/Cards/214_LostSanctuary.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/214_LostSanctuary.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Data/Cards/229_MasterTree.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/229_MasterTree.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Data/Cards/241_FoundationGolem.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/241_FoundationGolem.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Data/Cards/244_ShatteringSmash.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/244_ShatteringSmash.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Data/Cards/255_Rewind.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Data/Cards/255_Rewind.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../LifeServer/Server/CardProperties/ActivatedEffect.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../LifeServer/Server/CardProperties/ActivatedEffect.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../LifeServer/Server/CardProperties/AdditionalCost.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../LifeServer/Server/CardProperties/AdditionalCost.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../LifeServer/Server/CardProperties/AmountBasedOn.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../LifeServer/Server/CardProperties/AmountBasedOn.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../LifeServer/Server/CardProperties/Condition.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../LifeServer/Server/CardProperties/Condition.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../LifeServer/Server/CardProperties/ConditionType.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../LifeServer/Server/CardProperties/ConditionType.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../LifeServer/Server/CardProperties/AlternateCost.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../LifeServer/Server/CardProperties/AlternateCost.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../LifeServer/Server/CardProperties/CostType.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../LifeServer/Server/CardProperties/CostType.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../LifeServer/Server/CardProperties/DeckDestination.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../LifeServer/Server/CardProperties/DeckDestination.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../LifeServer/Server/CardProperties/Effect.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../LifeServer/Server/CardProperties/Effect.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../LifeServer/Server/CardProperties/Passive.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../LifeServer/Server/CardProperties/Passive.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../LifeServer/Server/CardProperties/PassiveEffect.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../LifeServer/Server/CardProperties/PassiveEffect.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../LifeServer/Server/CardProperties/StatModifier.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../LifeServer/Server/CardProperties/StatModifier.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../LifeServer/Server/CardProperties/TargetType.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../LifeServer/Server/CardProperties/TargetType.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../LifeServer/Server/CardProperties/TriggeredEffect.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../LifeServer/Server/CardProperties/TriggeredEffect.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../LifeServer/Server/CardProperties/Zone.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../LifeServer/Server/CardProperties/Zone.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../LifeServer/Server/CastingStage.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../LifeServer/Server/CastingStage.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../LifeServer/Server/Controllers/LifeController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../LifeServer/Server/Controllers/LifeController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../LifeServer/Server/CostContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../LifeServer/Server/CostContext.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../LifeServer/Server/EffectTypeConverter.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../LifeServer/Server/EffectTypeConverter.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../LifeServer/Server/EventType.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../LifeServer/Server/EventType.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../LifeServer/Server/GameEvent.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../LifeServer/Server/GameEvent.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../LifeServer/Server/GameMatch.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../LifeServer/Server/GameMatch.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../LifeServer/Server/OpponentState.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../LifeServer/Server/OpponentState.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../LifeServer/Server/Player.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../LifeServer/Server/Player.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../LifeServer/Server/PlayerState.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../LifeServer/Server/PlayerState.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../LifeServer/Server/Qualifier.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../LifeServer/Server/Qualifier.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../LifeServer/Server/StackObj.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../LifeServer/Server/StackObj.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../LifeServer/Server/TargetSelection.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../LifeServer/Server/TargetSelection.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../LifeServer/Server/Token.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../LifeServer/Server/Token.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../LifeServer/Server/TriggerContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../LifeServer/Server/TriggerContext.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../LifeServer/Server/Utils.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../LifeServer/Server/Utils.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../LifeServer/Tests/UnitTest1.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../LifeServer/Tests/UnitTest1.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../LifeServer/life.sqlite" beforeDir="false" afterPath="$PROJECT_DIR$/../LifeServer/life.sqlite" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Project_Life/.idea/projectSettingsUpdater.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Project_Life/.idea/projectSettingsUpdater.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Project_Life/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Project_Life/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Animations/CardTemplate1.controller" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Animations/CardTemplate1.controller" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Animations/Draw.anim" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Animations/Draw.anim" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Animations/FromStack.anim" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Animations/FromStack.anim" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Animations/ToGraveOpp.anim.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Animations/ToGraveOpp.anim.meta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Animations/ToStack.anim" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Animations/ToStack.anim" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Prefabs/CardTemplate1.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Prefabs/CardTemplate1.prefab" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Prefabs/PlaySlot.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Prefabs/PlaySlot.prefab" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Prefabs/StackObjContainer.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Prefabs/StackObjContainer.prefab" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Prefabs/StackObjTemplate(Ability).prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Prefabs/StackObjTemplate(Ability).prefab" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Prefabs/StackObjTemplate.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Prefabs/StackObjTemplate.prefab" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Prefabs/TokenTemplate.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Prefabs/TokenTemplate.prefab" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/RenderTextures/BloodDrip1.renderTexture" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/RenderTextures/BloodDrip1.renderTexture" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scenes/Game Scene.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/Game Scene.unity" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scenes/Main Menu.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/Main Menu.unity" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/CardDisplay.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/CardDisplay.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/CardDisplayData.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/CardDisplayData.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/CardDisplaySimple.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/CardDisplaySimple.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/GameManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/GameManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/InGame/AmountSelector.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/InGame/AmountSelector.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/InGame/CardDataEnums/Zone.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/InGame/CardDataEnums/Zone.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/InGame/CardSelectionManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/InGame/CardSelectionManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/InGame/CardSlot.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/InGame/CardSlot.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/InGame/DynamicReferencer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/InGame/DynamicReferencer.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/InGame/EventType.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/InGame/EventType.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/InGame/GameEvent.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/InGame/GameEvent.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/InGame/Participant.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/InGame/Participant.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/InGame/PlayerState.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/InGame/PlayerState.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/InGame/SelectableCard.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/InGame/SelectableCard.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/InGame/SelectableTarget.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/InGame/SelectableTarget.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/InGame/StackObjDisplay.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/InGame/StackObjDisplay.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/InGame/TargetSelection.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/InGame/TargetSelection.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/InGame/ZoneScaler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/InGame/ZoneScaler.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Inspectable.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Inspectable.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/MainMenu/MenuManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/MainMenu/MenuManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Network/ServerApi.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Network/ServerApi.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/TokenDisplay.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/TokenDisplay.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/TextMesh Pro/Resources/Fonts &amp; Materials/LiberationSans SDF - Fallback.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/TextMesh Pro/Resources/Fonts &amp; Materials/LiberationSans SDF - Fallback.asset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Packages/manifest.json" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/manifest.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Packages/packages-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/packages-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProjectSettings/ProjectVersion.txt" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/ProjectVersion.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProjectSettings/boot.config" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/InGame/CostType.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/InGame/CostType.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../inconsistencies_to_fix.md" beforeDir="false" afterPath="$PROJECT_DIR$/../inconsistencies_to_fix.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -244,30 +189,33 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Attach to Unity Editor.Attach to Unity Editor.executor&quot;: &quot;Debug&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;ShowUsagesActions.previewPropertyKey&quot;: &quot;true&quot;,
-    &quot;XThreadsFramesViewSplitterKey&quot;: &quot;0.3800623&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Attach to Unity Editor.Attach to Unity Editor.executor": "Debug",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "ShowUsagesActions.previewPropertyKey": "true",
+    "XThreadsFramesViewSplitterKey": "0.3800623",
+    "git-widget-placeholder": "master",
+    "ignore.virus.scanning.warn.message": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RunManager" selected="Attach to Unity Editor.Attach to Unity Editor">
     <configuration name="Standalone Player" type="RunUnityExe" factoryName="Unity Executable">
       <option name="EXE_PATH" value="$PROJECT_DIR$/../../UNITY/Builds/Lifeburn/Lifeburn 0.9.1/Project Life.exe" />
       <option name="PROGRAM_PARAMETERS" value="" />
       <option name="WORKING_DIRECTORY" value="C:\Users\bango\OneDrive\Desktop\UNITY\Builds\Lifeburn\Lifeburn 0.8.5" />
       <option name="PASS_PARENT_ENVS" value="1" />
-      <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      <option name="ENV_FILE_PATHS" value="" />
+      <option name="REDIRECT_INPUT_PATH" value="" />
+      <option name="MIXED_MODE_DEBUG" value="0" />
       <method v="2" />
     </configuration>
     <configuration name="Start Unity" type="RunUnityExe" factoryName="Unity Executable">
@@ -275,7 +223,9 @@
       <option name="PROGRAM_PARAMETERS" value="-projectPath C:\Users\bango\OneDrive\Desktop\UNITY\Project_Life -debugCodeOptimization" />
       <option name="WORKING_DIRECTORY" value="C:\Users\bango\OneDrive\Desktop\UNITY\Project_Life" />
       <option name="PASS_PARENT_ENVS" value="1" />
-      <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      <option name="ENV_FILE_PATHS" value="" />
+      <option name="REDIRECT_INPUT_PATH" value="" />
+      <option name="MIXED_MODE_DEBUG" value="0" />
       <method v="2" />
     </configuration>
     <configuration name="Unit Tests (batch mode)" type="RunUnityExe" factoryName="Unity Executable">
@@ -283,7 +233,9 @@
       <option name="PROGRAM_PARAMETERS" value="-runTests -batchmode -projectPath C:\Users\bango\OneDrive\Desktop\UNITY\Project_Life -testResults Logs/results.xml -logFile Logs/Editor.log -testPlatform EditMode -debugCodeOptimization" />
       <option name="WORKING_DIRECTORY" value="C:\Users\bango\OneDrive\Desktop\UNITY\Project_Life" />
       <option name="PASS_PARENT_ENVS" value="1" />
-      <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      <option name="ENV_FILE_PATHS" value="" />
+      <option name="REDIRECT_INPUT_PATH" value="" />
+      <option name="MIXED_MODE_DEBUG" value="0" />
       <method v="2" />
     </configuration>
     <configuration name="Attach to Unity Editor &amp; Play" type="UNITY_DEBUG_RUN_CONFIGURATION" factoryName="UNITY_ATTACH_AND_PLAY" show_console_on_std_err="false" show_console_on_std_out="false" port="50000" address="localhost">
@@ -297,6 +249,7 @@
       <option name="selectedOptions">
         <list />
       </option>
+      <option name="useMixedMode" value="false" />
       <method v="2" />
     </configuration>
     <configuration name="Attach to Unity Editor" type="UNITY_DEBUG_RUN_CONFIGURATION" factoryName="Unity Debug" show_console_on_std_err="false" show_console_on_std_out="false" port="50000" address="localhost">
@@ -310,6 +263,10 @@
       <option name="selectedOptions">
         <list />
       </option>
+      <option name="useMixedMode" value="false" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Attach to" type="UnityDevicePlayer" factoryName="UnityAttachToDevicePlayer">
       <method v="2" />
     </configuration>
   </component>
@@ -343,6 +300,7 @@
       <workItem from="1765515542581" duration="527000" />
       <workItem from="1765536539911" duration="26000" />
       <workItem from="1765602768207" duration="595000" />
+      <workItem from="1766357993496" duration="1604000" />
     </task>
     <servers />
   </component>
@@ -369,5 +327,23 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <breakpoint enabled="true" type="DotNet_Exception_Breakpoints">
+          <properties exception="System.OperationCanceledException" breakIfHandledByOtherCode="false" displayValue="System.OperationCanceledException" />
+          <option name="timeStamp" value="1" />
+        </breakpoint>
+        <breakpoint enabled="true" type="DotNet_Exception_Breakpoints">
+          <properties exception="System.Threading.Tasks.TaskCanceledException" breakIfHandledByOtherCode="false" displayValue="System.Threading.Tasks.TaskCanceledException" />
+          <option name="timeStamp" value="2" />
+        </breakpoint>
+        <breakpoint enabled="true" type="DotNet_Exception_Breakpoints">
+          <properties exception="System.Threading.ThreadAbortException" breakIfHandledByOtherCode="false" displayValue="System.Threading.ThreadAbortException" />
+          <option name="timeStamp" value="3" />
+        </breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

@@ -42,6 +42,7 @@ public class CardDisplay : MonoBehaviour {
 
     public bool isPlayable;
     public bool isDragDisplay;
+    public bool isDeckTopCard;  // True when this card is displayed on top of the deck (for Sky Scryer)
 
     public GameObject castingAnimation;
     public VideoPlayer videoPlayer;
@@ -81,7 +82,7 @@ public class CardDisplay : MonoBehaviour {
     public GameObject attackTarget;
     
     void Awake() {
-        summonVideoPlayer.Stop();
+        if (summonVideoPlayer != null) summonVideoPlayer.Stop();
         if (SceneManager.GetActiveScene().name == "Game Scene") {
             gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
             attackCapableObj.GetComponent<AttackCapable>().gameManager = gameManager;
@@ -93,7 +94,8 @@ public class CardDisplay : MonoBehaviour {
             opponent = gameManager.opponent;
             player = gameManager.player;
         }
-        gameData = GameObject.Find("GameData").GetComponent<GameData>();
+        var gameDataObj = GameObject.Find("GameData");
+        if (gameDataObj != null) gameData = gameDataObj.GetComponent<GameData>();
     }
     private void SetBaseCard() {
         if (card == null) return;
@@ -104,6 +106,11 @@ public class CardDisplay : MonoBehaviour {
                 defense = card.baseDefense ?? card.defense,
                 cost = card.cost
             };
+            return;
+        }
+        // If no gameManager (e.g., draft scene), use current card as base
+        if (gameManager == null) {
+            baseCard = card;
             return;
         }
         baseCard = gameManager.serverApi.GetCard(gameData.accountData, card.id);
@@ -152,17 +159,21 @@ public class CardDisplay : MonoBehaviour {
     public void DisplayCardData(CardDisplayData cdd = null) {
         if (cdd != null) card = cdd;
         if (card == null) {
-            backgroundImg.sprite = gameData.faceDownTemplate;
-            cardInfo.SetActive(false);
+            if (backgroundImg != null && gameData != null) {
+                backgroundImg.sprite = gameData.faceDownTemplate;
+            }
+            if (cardInfo != null) cardInfo.SetActive(false);
             return;
         }
-        cardInfo.SetActive(true);
-        nameText.text = card.name;
+        if (cardInfo != null) cardInfo.SetActive(true);
+        if (nameText != null) nameText.text = card.name;
         // set CardTypeText depending on type
-        cardTypeText.text = card.type switch {
-            CardType.Summon => card.type + " - " + card.tribe,
-            _ => card.type.ToString()
-        };
+        if (cardTypeText != null) {
+            cardTypeText.text = card.type switch {
+                CardType.Summon => card.type + " - " + card.tribe,
+                _ => card.type.ToString()
+            };
+        }
         // set description and add additional text (added passives/actives etc.)
         // Util function sets the color of any chosen "choose" effects to cyan
         string tempDescription = Utils.GetStringWithChosenText(card.description);
@@ -170,36 +181,48 @@ public class CardDisplay : MonoBehaviour {
         if (!string.IsNullOrEmpty(card.additionalDescription)) {
             tempDescription += "\n" + Utils.colorCyan + card.additionalDescription + "</color>";
         }
-        descriptionText.text = tempDescription;
-        if (card.type != CardType.Summon) {
+        if (descriptionText != null) descriptionText.text = tempDescription;
+        if (card.type != CardType.Summon && atkDef != null) {
             atkDef.SetActive(false);
-        } 
+        }
         UpdateStats();
         // remove old keywords
-        foreach (Transform child in keywordsObj.transform) {
-            Destroy(child.gameObject);
-        }
-        // re-add current keywords
-        if (card.keywords != null) {
-            foreach (Keyword keyword in card.keywords) {
-                GameObject newKeyword = Instantiate(keywordsPfb, keywordsObj.transform);
-                newKeyword.GetComponent<Image>().sprite = gameData.keywordImgDict[keyword];
+        if (keywordsObj != null) {
+            foreach (Transform child in keywordsObj.transform) {
+                Destroy(child.gameObject);
             }
         }
-        // Tokens have negative IDs - use tokenArtById with safety check, regular cards use allArtworks
-        if (card.id >= 0) {
-            artworkImg.sprite = card.id < gameData.allArtworks.Count ? gameData.allArtworks[card.id] : null;
-        } else {
-            artworkImg.sprite = gameData.tokenArtById.ContainsKey(card.id) ? gameData.tokenArtById[card.id] : null;
+        // re-add current keywords
+        if (card.keywords != null && gameData != null && gameData.keywordImgDict != null && keywordsPfb != null) {
+            foreach (Keyword keyword in card.keywords) {
+                if (gameData.keywordImgDict.TryGetValue(keyword, out var sprite)) {
+                    GameObject newKeyword = Instantiate(keywordsPfb, keywordsObj.transform);
+                    newKeyword.GetComponent<Image>().sprite = sprite;
+                }
+            }
+        }
+        // Tokens have negative IDs - use tokenArtById, regular cards use allArtworks
+        if (gameData != null && artworkImg != null) {
+            if (card.id >= 0) {
+                artworkImg.sprite = card.id < gameData.allArtworks.Count ? gameData.allArtworks[card.id] : null;
+            } else {
+                artworkImg.sprite = gameData.tokenArtById.ContainsKey(card.id) ? gameData.tokenArtById[card.id] : null;
+            }
         }
     }
 
     private void DisplayDebugData() {
-        debugUidText.text = card.uid.ToString();
+        if (debugUidText == null || card == null) return;
+        string debugText = card.uid.ToString();
+        if (card.hauntCounters > 0) {
+            debugText += $" [H:{card.hauntCounters}]";
+        }
+        debugUidText.text = debugText;
     }
 
     private void UpdateStats() {
-        if (card.type == CardType.Summon) {
+        if (card == null || baseCard == null) return;
+        if (card.type == CardType.Summon && atkDefText != null) {
             atkDefText.text = GetModColoredText(card.attack, baseCard.attack) + "/" +
                               GetModColoredText(card.defense, baseCard.defense);
         }
@@ -207,8 +230,10 @@ public class CardDisplay : MonoBehaviour {
     }
 
     private void SetCostText() {
+        if (lifeCostText == null || card == null || baseCard == null) return;
         if (card.hasXCost) {
-            lifeCostText.text = player.isSpellburnt ? "<color=red>X</color>" : "X";
+            bool isSpellburnt = player != null && player.isSpellburnt;
+            lifeCostText.text = isSpellburnt ? "<color=red>X</color>" : "X";
             return;
         }
         lifeCostText.text = GetModColoredText(card.cost, baseCard.cost, true);
@@ -233,20 +258,25 @@ public class CardDisplay : MonoBehaviour {
     }
     
     private void SetType() {
+        if (card == null || gameData == null || backgroundImg == null) return;
+
         switch (card.type) {
             case CardType.Spell:
-                backgroundImg.sprite = gameData.spellToColor[card.tribe];
-                atkDef.SetActive(false);
+                if (gameData.spellToColor.TryGetValue(card.tribe, out var spellSprite)) {
+                    backgroundImg.sprite = spellSprite;
+                }
+                if (atkDef != null) atkDef.SetActive(false);
                 break;
             case CardType.Summon:
-                backgroundImg.sprite = gameData.creatureToColor[card.tribe];
+                if (gameData.creatureToColor.TryGetValue(card.tribe, out var creatureSprite)) {
+                    backgroundImg.sprite = creatureSprite;
+                }
                 break;
             case CardType.Object:
-                objectIcon.SetActive(true);
-                backgroundImg.sprite = gameData.spellToColor[card.tribe];
-                break;
-            default: 
-                Debug.Log("No CardType");
+                if (objectIcon != null) objectIcon.SetActive(true);
+                if (gameData.spellToColor.TryGetValue(card.tribe, out var objectSprite)) {
+                    backgroundImg.sprite = objectSprite;
+                }
                 break;
         }
     }
@@ -435,16 +465,20 @@ public class CardDisplay : MonoBehaviour {
 
     public void PlaySummonAnim() {
         summonAnimation.SetActive(true);
-        summonVideoPlayer.Play();
-        StartCoroutine(DisableSummonEffectWhenDone());
+        if (summonVideoPlayer.clip != null) {
+            summonVideoPlayer.Play();
+            StartCoroutine(DisableSummonEffectWhenDone());
+        }
     }
 
     private void AddToUidMap(bool trackInUidToObj = true) {
-        // Always set the DynamicReferencer uid (needed for selection)
-        dynamicReferencer.uid = card.uid;
+        // Set the DynamicReferencer uid if available (needed for selection in-game)
+        if (dynamicReferencer != null) {
+            dynamicReferencer.uid = card.uid;
+        }
 
-        // Only track in UidToObj if requested (skip for temp display cards)
-        if (!trackInUidToObj) return;
+        // Only track in UidToObj if requested and gameManager exists (skip for draft/deck editor)
+        if (!trackInUidToObj || gameManager == null) return;
 
         if (!gameManager.UidToObj.ContainsKey(card.uid)) {
             gameManager.UidToObj[card.uid] = gameObject;
@@ -455,7 +489,8 @@ public class CardDisplay : MonoBehaviour {
     }
 
     private IEnumerator DisableSummonEffectWhenDone() {
-        yield return new WaitForSeconds((float)summonVideoPlayer.clip.length);
+        float duration = summonVideoPlayer.clip != null ? (float)summonVideoPlayer.clip.length : 0f;
+        yield return new WaitForSeconds(duration);
         summonAnimation.SetActive(false);
     }
 

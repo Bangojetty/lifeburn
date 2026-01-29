@@ -14,4 +14,16 @@ public class MatchState {
     public Stack<StackDisplayData> stack { get; set; }
     public bool secondPass { get; set; }
     public bool allAttackersAssigned { get; set; }
+
+    // Game over tracking
+    public bool isGameOver { get; set; }
+    public int? winnerId { get; set; }
+    public int? loserId { get; set; }
+
+    // Series tracking
+    public int bestOf { get; set; }
+    public int playerSeriesWins { get; set; }
+    public int opponentSeriesWins { get; set; }
+    public bool isSeriesOver { get; set; }
+    public int? seriesWinnerId { get; set; }
 }

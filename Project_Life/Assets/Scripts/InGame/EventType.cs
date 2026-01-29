@@ -36,6 +36,10 @@ namespace InGame {
         Peek,
         ReturnToHand,
         Counter,
-        GainControl
+        GainControl,
+        RitualOfDarknessChoice,
+        GoToPhase,  // Jump directly to a specific phase (for Rewind)
+        RepeatChoice,  // Post-resolution repeat choice (old style)
+        RepeatAmountSelection  // Select how many times to repeat upfront (0 to max)
     }
 }

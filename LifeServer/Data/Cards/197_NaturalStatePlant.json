@@ -1,0 +1,81 @@
+{
+  "id": 197,
+  "name": "Natural State Plant",
+  "cost": 0,
+  "type": "summon",
+  "attack": 1,
+  "defense": 1,
+  "tribe": "treefolk",
+  "rarity": "common",
+  "description": "Sacrifice from play or Exile Natural State Plant from graveyard, and choose one: \n {c0}-Exile 2 cards from a graveyard. \n {c1}-Return another Treefolk from your graveyard to hand.",
+  "activatedEffects": [
+    {
+      "costType": "sacrifice",
+      "scope": "selfOnly",
+      "effects": [
+        {
+          "effect": "choose",
+          "choiceIndex": 0,
+          "choices": [
+            [
+              {
+                "effect": "sendToZone",
+                "targetZones": ["graveyard"],
+                "destination": "exile",
+                "targetType": "cardInGraveyard",
+                "amount": 2
+              }
+            ],
+            [
+              {
+                "effect": "sendToZone",
+                "targetZones": ["graveyard"],
+                "destination": "hand",
+                "targetType": "cardInGraveyard",
+                "tribe": "treefolk",
+                "amount": 1
+              }
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "conditions": [
+        {
+          "condition": "inZone",
+          "zone": "graveyard"
+        }
+      ],
+      "costType": "exile",
+      "scope": "selfOnly",
+      "effects": [
+        {
+          "effect": "choose",
+          "choiceIndex": 0,
+          "choices": [
+            [
+              {
+                "effect": "sendToZone",
+                "targetZones": ["graveyard"],
+                "destination": "exile",
+                "targetType": "cardInGraveyard",
+                "amount": 2
+              }
+            ],
+            [
+              {
+                "effect": "sendToZone",
+                "targetZones": ["graveyard"],
+                "destination": "hand",
+                "targetType": "cardInGraveyard",
+                "tribe": "treefolk",
+                "amount": 1
+              }
+            ]
+          ]
+        }
+      ]
+    }
+  ]
+}

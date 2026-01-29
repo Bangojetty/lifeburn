@@ -74,6 +74,7 @@ public class GameData : MonoBehaviour
     public Sprite keywordBlitz;
     public Sprite keywordDive;
     public Sprite keywordExhaust;
+    public Sprite keywordFinale;
     public Sprite keywordHaunt;
     public Sprite keywordScorch;
     public Sprite keywordSpectral;
@@ -87,6 +88,21 @@ public class GameData : MonoBehaviour
     
     public DeckData currentDeck;
     public MatchState matchState;
+    public int? lobbyMatchId;  // Set when starting from lobby (matchState fetched by GameManager)
+
+    // Draft mode fields
+    public DraftDisplayState draftState;
+    public int? draftId;
+    public List<int> draftedCardPool = new();  // Cards drafted, for deck building
+    public bool isDraftDeckBuilding;  // Flag for deck editor to use draft mode
+
+    // Series mode fields (for best-of matches)
+    public bool isSeriesDeckEditing;  // True when editing deck between series games
+    public int seriesMatchId;         // Match ID for the series
+    public int seriesPlayerWins;      // Player's wins in the series
+    public int seriesOpponentWins;    // Opponent's wins in the series
+    public int seriesBestOf;          // Best-of setting (1, 3, or 5)
+
     public Dictionary<Keyword, Sprite> keywordImgDict = new();
 
 
@@ -177,6 +193,7 @@ public class GameData : MonoBehaviour
         keywordImgDict.Add(Keyword.Blitz, keywordBlitz);
         keywordImgDict.Add(Keyword.Dive, keywordDive);
         keywordImgDict.Add(Keyword.Exhaust, keywordExhaust);
+        keywordImgDict.Add(Keyword.Finale, keywordFinale);
         keywordImgDict.Add(Keyword.Haunt, keywordHaunt);
         keywordImgDict.Add(Keyword.Scorch, keywordScorch);
         keywordImgDict.Add(Keyword.Spectral, keywordSpectral);

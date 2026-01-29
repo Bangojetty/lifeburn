@@ -19,6 +19,7 @@ public class CardDisplayData {
     public string additionalDescription { get; set; }
     public TokenType? tokenType { get; set; }
     public bool hasXCost { get; set; }
+    public int hauntCounters { get; set; }
 
     protected bool Equals(CardDisplayData other) {
         return uid == other.uid;

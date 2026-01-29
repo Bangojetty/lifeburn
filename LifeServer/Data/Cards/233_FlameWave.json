@@ -1,0 +1,31 @@
+{
+  "id": 233,
+  "name": "Flame Wave",
+  "cost": 4,
+  "type": "spell",
+  "tribe": "goblin",
+  "rarity": "common",
+  "description": "Discard any number of cards. Deal 4 damage to target summon. Repeat this for each card discarded. Gain 1 LP for each red card discarded.",
+  "additionalCosts": [
+    {
+      "costType": "discard",
+      "amountBasedOn": "x"
+    }
+  ],
+  "stackEffects": [
+    {
+      "effect": "dealDamage",
+      "targetType": "summon",
+      "amount": 4,
+      "maxTargets": 1
+    },
+    {
+      "effect": "repeatAllEffects",
+      "amountBasedOn": "x"
+    },
+    {
+      "effect": "gainLife",
+      "amountBasedOn": "redCardsDiscardedForCost"
+    }
+  ]
+}

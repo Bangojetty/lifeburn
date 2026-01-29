@@ -6,7 +6,10 @@ public class OpponentState : ParticipantState {
     // Only populated for bot opponents (test matches)
     public List<CardDisplayData>? hand { get; set; }
 
-    public OpponentState(Player player) {
+    // Revealed top card (from TopCardRevealed passive)
+    public CardDisplayData? revealedTopCard { get; set; }
+
+    public OpponentState(Player player, Card? topCardRevealed = null) {
         playerName = player.playerName;
         uid = player.uid;
         lifeTotal = player.lifeTotal;
@@ -20,5 +23,8 @@ public class OpponentState : ParticipantState {
         if (player.isBot) {
             hand = player.hand.Select(c => new CardDisplayData(c)).ToList();
         }
+
+        // Set revealed top card if applicable (from TopCardRevealed passive)
+        revealedTopCard = topCardRevealed != null ? new CardDisplayData(topCardRevealed) : null;
     }
 }

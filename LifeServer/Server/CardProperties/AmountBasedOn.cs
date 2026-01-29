@@ -26,6 +26,9 @@ public enum AmountBasedOn {
     LifeTotal,
     DeckSize,
     Attack,
+    FinalAttack,  // card's attack after all modifiers (counters, buffs, etc.)
     RootAffected,
-    HerbSacrificeLifeGain  // 2 for first herb, 1 for each subsequent herb sacrificed this turn
+    HerbSacrificeLifeGain,  // 2 for first herb, 1 for each subsequent herb sacrificed this turn
+    RedCardsDiscardedForCost,  // number of goblin (red) cards discarded as additional cost
+    HalfLife  // half of player's current life, rounded down
 }

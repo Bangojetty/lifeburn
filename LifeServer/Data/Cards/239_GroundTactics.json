@@ -1,0 +1,15 @@
+{
+  "id": 239,
+  "name": "Ground Tactics",
+  "cost": 5,
+  "type": "spell",
+  "tribe": "golem",
+  "rarity": "common",
+  "description": "Cast only on opponent's turn before combat. All opponent's summons must attack this turn. You choose their attack targets.",
+  "castRestrictions": ["opponentsTurnBeforeCombat"],
+  "stackEffects": [
+    {
+      "effect": "groundTactics"
+    }
+  ]
+}

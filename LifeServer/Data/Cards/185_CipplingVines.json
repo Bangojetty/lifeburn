@@ -1,0 +1,38 @@
+{
+  "id": 185,
+  "name": "Crippling Vines",
+  "cost": 0,
+  "type": "spell",
+  "tribe": "treefolk",
+  "rarity": "common",
+  "description": "Destroy all non-treefolk summons. Each opponent creates herb tokens for each summon they lost. Create a 0/1 plant token, then lose life equal to the amount of treefolk summons you control.",
+  "stackEffects": [
+    {
+      "effect": "destroy",
+      "cardType": "summon",
+      "all": true,
+      "restrictions": [
+        "nonTreefolk"
+      ],
+      "additionalEffects": [
+        {
+          "effect": "createToken",
+          "sourcePlayer": "opponent",
+          "tokenType": "herb",
+          "amountBasedOn": "rootAmount"
+        }
+      ]
+    },
+    {
+      "effect": "createToken",
+      "tokenType": "plant",
+      "attack": 0,
+      "defense": 1,
+      "amount": 1
+    },
+    {
+      "effect": "loseLife",
+      "amountBasedOn": "treefolkControlled"
+    }
+  ] 
+}

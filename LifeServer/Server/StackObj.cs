@@ -12,8 +12,7 @@ public class StackObj {
     
     // non-json
     public string? customDescription;
-    private List<EffectType> effectsThatHaltEvents = new();
-    
+
     public StackObj(Card sourceCard, StackObjType stackObjType, List<Effect> effects, Zone sourceZone, Player player, string? customDescription = null) {
         this.sourceCard = sourceCard;
         this.stackObjType = stackObjType;
@@ -21,9 +20,6 @@ public class StackObj {
         this.sourceZone = sourceZone;
         this.player = player;
         this.customDescription = customDescription;
-        // Note: LookAtDeck halts only if it has deckDestinations (selection needed)
-        // Peek (LookAtDeck without deckDestinations) doesn't halt
-        effectsThatHaltEvents.Add(EffectType.Tutor);
     }
 
     public StackObj(Card sourceCard, StackObjType stackObjType, Zone sourceZone, Player player) {
@@ -71,15 +67,29 @@ public class StackObj {
                 gameMatch.unresolvedEffectIndex = i + 1;
                 return;
             }
-            // Handle resolve-time target selection (e.g., Consider: select cards after drawing)
-            if (currentEffect.resolveTarget && currentEffect.targetType != null && currentEffect.targetUids.Count == 0) {
-                Console.WriteLine($"[ResolveStackObj] Effect {i} needs resolve-time targets, halting");
-                gameMatch.RequestResolveTimeTargets(player, currentEffect);
-                gameMatch.unresolvedStackObj = this;
-                gameMatch.unresolvedEffectIndex = i;  // Stay on this effect to resolve after targets selected
-                return;
-            } else if (currentEffect.resolveTarget && currentEffect.targetType != null) {
+            // Handle resolve-time target selection (e.g., ForkBolt: select targets after cast)
+            if (currentEffect.resolveTarget && currentEffect.HasTargeting() && currentEffect.targetUids.Count == 0) {
+                Console.WriteLine($"[ResolveStackObj] Effect {i} needs resolve-time targets");
+                bool needsInput = gameMatch.RequestResolveTimeTargets(player, currentEffect);
+                if (needsInput) {
+                    Console.WriteLine($"[ResolveStackObj] Halting for resolve-time target selection");
+                    gameMatch.unresolvedStackObj = this;
+                    gameMatch.unresolvedEffectIndex = i;  // Stay on this effect to resolve after targets selected
+                    return;
+                }
+                // No valid targets - effect fizzles this part, continue to next effect
+                Console.WriteLine($"[ResolveStackObj] No valid targets, skipping effect");
+                continue;
+            } else if (currentEffect.resolveTarget && currentEffect.HasTargeting()) {
                 Console.WriteLine($"[ResolveStackObj] Effect {i} has resolveTarget but already has {currentEffect.targetUids.Count} targets");
+            }
+            // Handle resolve-time selection from zone (e.g., Consider: select cards from hand after drawing)
+            if (currentEffect.resolveTarget && currentEffect.HasSelection() && currentEffect.targetUids.Count == 0) {
+                Console.WriteLine($"[ResolveStackObj] Effect {i} needs resolve-time zone selection, halting");
+                gameMatch.RequestResolveTimeSelection(player, currentEffect);
+                gameMatch.unresolvedStackObj = this;
+                gameMatch.unresolvedEffectIndex = i;  // Stay on this effect to resolve after selection
+                return;
             }
             // Handle "each player chooses" effects (e.g., Return - each player returns a summon)
             if (currentEffect.eachPlayer) {
@@ -94,8 +104,10 @@ public class StackObj {
             }
             // Handle playerChoice discard (e.g., Ghastly - discard any number of shadow summons)
             if (currentEffect.effect == EffectType.Discard &&
+                !currentEffect.all &&
                 currentEffect.amountBasedOn == AmountBasedOn.PlayerChoice &&
-                currentEffect.targetUids.Count == 0) {
+                currentEffect.targetUids.Count == 0 &&
+                currentEffect.ConditionsAreMet(gameMatch, player)) {
                 bool needsInput = gameMatch.RequestPlayerChoiceDiscard(player, currentEffect, variableAmount: true);
                 if (needsInput) {
                     gameMatch.unresolvedStackObj = this;
@@ -105,13 +117,46 @@ public class StackObj {
                 // If no input needed (no matching cards), set amount to 0 and continue
                 currentEffect.amount = 0;
             }
-            // Handle fixed-amount non-random discard (e.g., Loot Ghost - discard exactly 2)
+            // Handle select.upToAll discard (e.g., Shade Runner - discard any amount)
             if (currentEffect.effect == EffectType.Discard &&
+                !currentEffect.all &&
+                currentEffect.select?.upToAll == true &&
+                currentEffect.targetUids.Count == 0 &&
+                currentEffect.ConditionsAreMet(gameMatch, player)) {
+                bool needsInput = gameMatch.RequestPlayerChoiceDiscard(player, currentEffect, variableAmount: true);
+                if (needsInput) {
+                    gameMatch.unresolvedStackObj = this;
+                    gameMatch.unresolvedEffectIndex = i;  // Stay on this effect to resolve after selection
+                    return;
+                }
+                // If no input needed (no matching cards), set amount to 0 and continue
+                currentEffect.amount = 0;
+            }
+            // Handle fixed-amount non-random discard (e.g., Loot Ghost - discard exactly 2, Reap - opponent discards 2)
+            // Check if targetUids contains ONLY a player UID (opponent targeting) vs card UIDs (already selected cards)
+            // If count > 1 and first is player UID, we already have card selections after the player UID
+            bool targetUidsContainsOnlyPlayerUid = currentEffect.targetUids.Count == 1 && gameMatch.IsPlayerUid(currentEffect.targetUids[0]);
+            bool needsDiscardSelection = currentEffect.targetUids.Count == 0 || targetUidsContainsOnlyPlayerUid;
+            if (currentEffect.effect == EffectType.Discard &&
+                !currentEffect.all &&
                 currentEffect.amountBasedOn != AmountBasedOn.PlayerChoice &&
                 !currentEffect.random &&
                 currentEffect.amount > 0 &&
-                currentEffect.targetUids.Count == 0) {
-                bool needsInput = gameMatch.RequestPlayerChoiceDiscard(player, currentEffect, variableAmount: false);
+                needsDiscardSelection &&
+                currentEffect.ConditionsAreMet(gameMatch, player)) {
+                // Determine who is discarding - check targetType or if a player UID was targeted
+                Player discardingPlayer = player;
+                if (targetUidsContainsOnlyPlayerUid) {
+                    // Player was targeted directly (e.g., Reap targeting opponent)
+                    // Keep the player UID in targetUids[0] so Effect.Resolve can determine resolvedAffectedPlayer
+                    // The discard loop in Effect.Resolve will skip player UIDs
+                    discardingPlayer = gameMatch.PlayerByUid(currentEffect.targetUids[0]);
+                } else if (currentEffect.targetType == TargetType.Opponent) {
+                    discardingPlayer = gameMatch.GetOpponent(player);
+                } else if (currentEffect.affectedPlayer == "opponent") {
+                    discardingPlayer = gameMatch.GetOpponent(player);
+                }
+                bool needsInput = gameMatch.RequestPlayerChoiceDiscard(discardingPlayer, currentEffect, variableAmount: false);
                 if (needsInput) {
                     gameMatch.unresolvedStackObj = this;
                     gameMatch.unresolvedEffectIndex = i;  // Stay on this effect to resolve after selection
@@ -133,14 +178,69 @@ public class StackObj {
                 // If no input needed (no matching cards), skip this effect
                 continue;
             }
-            currentEffect.Resolve(gameMatch, player);
-            // Check if this effect needs to halt for player input
-            bool shouldHalt = effectsThatHaltEvents.Contains(currentEffect.effect);
-            // LookAtDeck only halts if it requires selection (has deckDestinations)
-            if (currentEffect.effect == EffectType.LookAtDeck && currentEffect.deckDestinations != null) {
-                shouldHalt = true;
+            // Handle fixed-amount CastCard from targetZones (e.g., Goblin Ritualist - cast 1 spell from graveyard)
+            if (currentEffect.effect == EffectType.CastCard &&
+                currentEffect.targetZones != null &&
+                currentEffect.select != null &&
+                currentEffect.targetUids.Count == 0) {
+                bool needsInput = gameMatch.RequestFixedCastFromZone(player, currentEffect);
+                if (needsInput) {
+                    gameMatch.unresolvedStackObj = this;
+                    gameMatch.unresolvedEffectIndex = i;  // Stay on this effect to resolve after selection
+                    return;
+                }
+                // If no input needed (no matching cards), skip this effect
+                continue;
             }
-            if (shouldHalt) {
+            // Handle mill/draw with upTo - need player to select amount
+            if ((currentEffect.effect == EffectType.Mill || currentEffect.effect == EffectType.Draw) &&
+                currentEffect.upTo != null && currentEffect.amount == null) {
+                Console.WriteLine($"[ResolveStackObj] Effect {i} ({currentEffect.effect}) needs amount selection (upTo={currentEffect.upTo}), deck.Count={player.deck.Count}");
+                int maxAmount = currentEffect.upTo.Value;
+                // For mill, cap at deck size
+                if (currentEffect.effect == EffectType.Mill) {
+                    maxAmount = Math.Min(maxAmount, player.deck.Count);
+                }
+                Console.WriteLine($"[ResolveStackObj] Requesting amount selection, maxAmount={maxAmount}");
+                gameMatch.RequestEffectAmount(player, currentEffect, maxAmount);
+                gameMatch.unresolvedStackObj = this;
+                gameMatch.unresolvedEffectIndex = i;  // Stay on this effect to resolve after amount selected
+                return;
+            }
+            currentEffect.Resolve(gameMatch, player);
+            // Check if this effect has upfront repeat count - execute additional times
+            if (currentEffect.selectRepeatUpfront && currentEffect.repeatCount > 0) {
+                Console.WriteLine($"[StackObj] Executing {currentEffect.repeatCount} upfront repeats");
+                for (int r = 0; r < currentEffect.repeatCount; r++) {
+                    // Check if targets are still valid (in play) before repeating
+                    bool hasValidTarget = false;
+                    foreach (int targetUid in currentEffect.targetUids) {
+                        if (gameMatch.cardByUid.TryGetValue(targetUid, out Card? targetCard)) {
+                            if (targetCard.currentZone == Zone.Play) {
+                                hasValidTarget = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (!hasValidTarget) {
+                        Console.WriteLine($"[StackObj] Skipping repeat {r + 1} - no valid targets remaining");
+                        continue;
+                    }
+                    // Clone the effect and execute it again with same targets
+                    Effect repeatEffect = currentEffect.Clone();
+                    repeatEffect.targetUids = currentEffect.targetUids.ToList();
+                    repeatEffect.Resolve(gameMatch, player);
+                }
+            }
+            // Check if this effect has a repeat cost (old-style) - start the repeat choice flow
+            else if (currentEffect.repeatCostType != null && currentEffect.repeatCostAmount != null && !currentEffect.selectRepeatUpfront) {
+                gameMatch.unresolvedStackObj = this;
+                gameMatch.unresolvedEffectIndex = i + 1;
+                gameMatch.StartRepeatChoice(currentEffect, player, currentEffect.targetUids);
+                return;
+            }
+            // Check if this effect needs to halt for player input (post-resolve halts)
+            if (ShouldHaltAfterResolve(currentEffect)) {
                 gameMatch.unresolvedStackObj = this;
                 gameMatch.unresolvedEffectIndex = i + 1;
                 return;
@@ -165,11 +265,6 @@ public class StackObj {
         if (stackObjType == StackObjType.Spell && sourceCard.type == CardType.Spell) spellCard = sourceCard;
         gameMatch.CreateAndAddResolveEvent(player, spellCard);
 
-        // Check for exhaust keyword on spells - prevents casting more spells this turn
-        if (stackObjType == StackObjType.Spell && sourceCard.type == CardType.Spell && sourceCard.HasKeyword(Keyword.Exhaust)) {
-            player.exhausted = true;
-        }
-
         // summon the spell if it's a summon spell
         if (stackObjType == StackObjType.Spell) {
             switch (sourceCard.type) {
@@ -185,5 +280,28 @@ public class StackObj {
         // client response
         if (gameMatch.requiredAttackTargets > 0) return;
         gameMatch.CheckForTriggersAndPassives(EventType.Resolve);
+    }
+
+    /// <summary>
+    /// Determines if an effect should halt resolution after executing to wait for player input.
+    /// These are effects that run but need player interaction to complete (e.g., selecting cards from deck).
+    /// Also halts after effects that used resolve-time selection to let the client process animations
+    /// before the next effect's prompts appear.
+    /// Note: Pre-resolve halts (resolveTarget, eachPlayer, playerChoice, etc.) are handled inline
+    /// because they each require different setup logic and halt at different effect indices.
+    /// </summary>
+    private bool ShouldHaltAfterResolve(Effect effect) {
+        return effect.effect switch {
+            // Tutor always halts - player must select a card from deck
+            EffectType.Tutor => true,
+            // LookAtDeck only halts if it has deckDestinations (player must assign cards)
+            // Peek (LookAtDeck without deckDestinations) doesn't halt
+            EffectType.LookAtDeck => effect.deckDestinations != null,
+            // SendToZone halts if it has deckDestinations (player must assign cards to destinations)
+            EffectType.SendToZone => effect.deckDestinations != null,
+            // CardRitualOfDarkness halts - players alternate putting summons until both pass
+            EffectType.CardRitualOfDarkness => true,
+            _ => false
+        };
     }
 }

@@ -1,0 +1,32 @@
+{
+  "id": 152,
+  "name": "Looter Gob",
+  "cost": 0,
+  "type": "summon",
+  "attack": 1,
+  "defense": 1,
+  "tribe": "goblin",
+  "rarity": "common",
+  "description": "When you cast Looter Gob, you may reveal a goblin summon from hand to draw 1.",
+  "triggeredEffects": [  
+    {
+      "trigger": "cast",
+	  "scope": "selfOnly",
+      "optional": true,
+	  "optionMessage": "Reveal a Goblin to draw 1?",
+	  "effects": [
+		  {
+			"effect": "reveal",
+			"targetType": "cardInHand",
+			"cardType": "summon",
+			"tribe": "goblin",
+			"isCost": true
+		  },
+		  {
+		  "effect": "draw",
+		  "amount": 1
+		  }
+	  ]
+    }
+  ]
+}

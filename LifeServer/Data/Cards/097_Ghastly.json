@@ -1,0 +1,42 @@
+{
+  "id": 97,
+  "name": "Ghastly",
+  "cost": 0,
+  "type": "summon",
+  "attack": 1,
+  "defense": 1,
+  "tribe": "shadow",
+  "rarity": "common",
+  "description": "If Ghastly is in your opening hand, you may reveal it and discard any number shadow summons. Draw cards and lose LPs equal the amount revealed.",
+  "triggeredEffects": [
+    {
+      "trigger": "openingHand",
+      "optional": true,
+      "optionMessage": "Discard any number of shadow summons to draw that many cards and lose that many LPs?",
+      "description": "Discard any number of shadow summons, draw that many cards, and lose that many LPs.",
+      "effects": [
+        {
+          "effect": "reveal",
+          "scope": "selfOnly",
+          "isCost": true
+        },
+        {
+          "effect": "discard",
+          "cardType": "summon",
+          "tribe": "shadow",
+          "select": { "upToAll": true },
+          "additionalEffects": [
+            {
+              "effect": "draw",
+              "amountBasedOn": "rootAmount"
+            },
+            {
+              "effect": "loseLife",
+              "amountBasedOn": "rootAmount"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

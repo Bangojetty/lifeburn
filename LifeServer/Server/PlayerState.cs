@@ -13,7 +13,10 @@ public class PlayerState : ParticipantState {
     // Debug: current deck contents (top of deck = first in list)
     public List<CardDisplayData> deckContents { get; set; }
 
-    public PlayerState(Player player) {
+    // Revealed top card (from TopCardRevealed passive)
+    public CardDisplayData? revealedTopCard { get; set; }
+
+    public PlayerState(Player player, Card? topCardRevealed = null) {
         playerName = player.playerName;
         uid = player.uid;
         lifeTotal = player.lifeTotal;
@@ -27,5 +30,7 @@ public class PlayerState : ParticipantState {
         activatables = player.activatables.Select(card => new CardDisplayData(card)).ToList();
         // Debug: include full deck contents
         deckContents = player.deck?.Select(card => new CardDisplayData(card)).ToList() ?? new List<CardDisplayData>();
+        // Set revealed top card if applicable (from TopCardRevealed passive)
+        revealedTopCard = topCardRevealed != null ? new CardDisplayData(topCardRevealed) : null;
     }
 }

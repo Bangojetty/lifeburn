@@ -9,9 +9,12 @@ public class PassiveEffect {
     public List<Condition>? conditions;
     public int? cost;
     public int? amount;
+    public string? amountModifier;  // For CreateTokenModifier (e.g., "*2" to double)
     public bool all;
     public string? description;
     public Keyword? keyword;
+    public int? keywordAmount;  // Amount for keywords like sprout (e.g., sprout 2)
+    public TokenType? notTokenType;  // Exclude this token type (for GrantKeywordToFutureTokens)
     public TargetBasedOn? targetBasedOn;
     public Zone? zone;
     public List<StatModifier>? statModifiers;
@@ -31,6 +34,7 @@ public class PassiveEffect {
     public int tempDefenseMod;
     public int costModifier;
     public int x;
+    public int? attackControllerPlayerId;  // For GroundTactics: player ID who controls attack assignments
 
     [Newtonsoft.Json.JsonConstructor]
     public PassiveEffect() {}
@@ -62,11 +66,13 @@ public class PassiveEffect {
                     int attackMod = 0;
                     int defenseMod = 0;
                     OperatorType? opType = null;
+                    AmountBasedOn? amountBasedOn = null;
                     foreach (StatModifier statMod in statModifiers) {
                         int value = statMod.xAmount && grantedBy?.x != null ? grantedBy.x.Value : statMod.amount;
                         if (statMod.statType == StatType.Attack) attackMod = value;
                         if (statMod.statType == StatType.Defense) defenseMod = value;
                         opType ??= statMod.operatorType;
+                        amountBasedOn ??= statMod.amountBasedOn;
                     }
                     if (opType == OperatorType.Multiply) {
                         // For multiply, show "x2/x2" format or "doubles" for x2
@@ -75,6 +81,22 @@ public class PassiveEffect {
                         } else {
                             tempDesc += $"gets x{attackMod}/x{defenseMod}";
                         }
+                    } else if (amountBasedOn != null) {
+                        // For amountBasedOn, show "+1/+1 for each X" format
+                        string basedOnDesc = amountBasedOn switch {
+                            AmountBasedOn.GoblinsInPlay => "for each goblin in play",
+                            AmountBasedOn.GoblinsControlled => "for each goblin you control",
+                            AmountBasedOn.StonesInPlay => "for each stone in play",
+                            AmountBasedOn.StonesControlled => "for each stone you control",
+                            AmountBasedOn.PlantsControlled => "for each plant you control",
+                            AmountBasedOn.TreefolkControlled => "for each treefolk you control",
+                            AmountBasedOn.HerbsControlled => "for each herb you control",
+                            AmountBasedOn.SummonsInGraveyard => "for each summon in graveyard",
+                            AmountBasedOn.MerfolkInGraveyard => "for each merfolk in graveyard",
+                            AmountBasedOn.SummonsOpponentControls => "for each summon opponent controls",
+                            _ => $"based on {amountBasedOn}"
+                        };
+                        tempDesc += $"gets +1/+1 {basedOnDesc}";
                     } else {
                         // For add (default), show "+X/+Y" format
                         string sign = attackMod >= 0 ? "+" : "";
@@ -105,9 +127,12 @@ public class PassiveEffect {
             conditions = conditions?.ToList(),
             cost = cost,
             amount = amount,
+            amountModifier = amountModifier,
             all = all,
             description = description,
             keyword = keyword,
+            keywordAmount = keywordAmount,
+            notTokenType = notTokenType,
             targetBasedOn = targetBasedOn,
             zone = zone,
             statModifiers = statModifiers?.Select(sm => sm.Clone()).ToList(),
@@ -123,7 +148,8 @@ public class PassiveEffect {
             tempAttackMod = tempAttackMod,
             tempDefenseMod = tempDefenseMod,
             costModifier = costModifier,
-            x = x
+            x = x,
+            attackControllerPlayerId = attackControllerPlayerId
         };
         return clone;
     }

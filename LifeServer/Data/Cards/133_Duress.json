@@ -1,0 +1,24 @@
+{
+  "id": 133,
+  "name": "Duress",
+  "cost": 3,
+  "type": "spell",
+  "tribe": "shadow",
+  "rarity": "common",
+  "description": "Target opponent reveals all non-summon spells from their hand. You choose one for them to discard. They Gain 1 LP.",
+  "stackEffects": [
+	  {
+		"effect": "discard",
+		"affectedPlayer": "opponent",
+		"targetType": "opponentHand",
+		"restrictions": ["nonSummon"],
+		"resolveTarget": true,
+		"amount": 1
+	  },
+	  {
+		  "effect": "gainLife",
+		  "sourcePlayer": "opponent",
+		  "amount": 1
+	  }
+  ]
+}

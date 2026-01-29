@@ -1,0 +1,22 @@
+{
+  "id": 137,
+  "name": "Crawl Back",
+  "cost": 3,
+  "type": "spell",
+  "tribe": "shadow",
+  "rarity": "common",
+  "description": "Return target shadow summon with cost 3 or less from your graveyard to play.",
+  "stackEffects": [
+    {
+      "effect": "sendToZone",
+      "targetType": "cardInGraveyard",
+      "cardType": "summon",
+      "tribe": "shadow",
+      "destination": "play",
+      "restrictions": [
+        "cost"
+      ],
+      "restrictionMax": 3   
+    }
+  ]
+}

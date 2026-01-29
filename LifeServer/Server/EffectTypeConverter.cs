@@ -37,10 +37,10 @@ public class EffectTypeConverter : JsonConverter {
                 return jo.ToObject<CantGainLifeEffect>(serializer);
             case "cantTribute":
                 return jo.ToObject<CantTributeEffect>(serializer);
+            case "onlySummonTribe":
+                return jo.ToObject<OnlySummonTribeEffect>(serializer);
             case "cardRitualOfDarkness":
                 return jo.ToObject<CardRitualOfDarknessEffect>(serializer);
-            case "cardSetStraight":
-                return jo.ToObject<CardSetStraightEffect>(serializer);
             case "castCard":
                 return jo.ToObject<CastCardEffect>(serializer);
             case "changeSource":
@@ -83,6 +83,8 @@ public class EffectTypeConverter : JsonConverter {
                 return jo.ToObject<GainLifeEffect>(serializer);
             case "goToPhase":
                 return jo.ToObject<GoToPhaseEffect>(serializer);
+            case "groundTactics":
+                return jo.ToObject<GroundTacticsEffect>(serializer);
             case "grantKeyword":
                 return jo.ToObject<GrantKeywordEffect>(serializer);
             case "grantPassive":
@@ -127,6 +129,8 @@ public class EffectTypeConverter : JsonConverter {
                 return jo.ToObject<EventTriggersEffect>(serializer);
             case "replacementEffect":
                 return jo.ToObject<ReplacementEffectEffect>(serializer);
+            case "triggerSprout":
+                return jo.ToObject<TriggerSproutEffect>(serializer);
             default:
                 throw new Exception("Unknown Effect: " + effect);
         }

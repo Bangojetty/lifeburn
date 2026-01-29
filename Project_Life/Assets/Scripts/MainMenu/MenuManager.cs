@@ -35,16 +35,24 @@ public class MenuManager : MonoBehaviour {
     public GameObject createdDecks;
     public GameObject createdDecksEditor;
     public GameObject gameModeDialogue;
+    public Button customGameButton;
     public GameObject areYouSureDialogue;
 
     public Button editBtn;
     public Button delBtn;
 
     public GameObject selectedDeckObj;
-    public TMP_Text displayNameText;
     public AccountDataGO accountDataGO;
 
     public GameObject accountScreen;
+    public Button logoutButton;
+
+    [Header("Friends")]
+    public FriendsManager friendsManager;
+    public GameObject friendsSidebar;  // The entire sidebar panel to disable during match loading
+
+    [Header("Lobby")]
+    public LobbyManager lobbyManager;
 
     public Button deckSelectPlayBtn;
     public GameObject matchMakingTimer;
@@ -65,12 +73,19 @@ public class MenuManager : MonoBehaviour {
             ? Instantiate(gameDataPfb, new Vector3(0, 0, 0), Quaternion.identity).GetComponent<GameData>()
             : GameObject.Find("GameData").GetComponent<GameData>();
         gameData.name = "GameData";
-        
-        displayNameText.text = "Account: " + accountDataGO.accountData.displayName;
+
         accountDataGO.cards = serverApi.GetAccountCards(accountDataGO.accountData);
         DisplayAccountDecks();
-        // StartCoroutine(CycleBackgrounds());
-        // Debug.Log("got past the coroutine");
+
+        if (logoutButton != null) logoutButton.onClick.AddListener(Logout);
+        if (customGameButton != null) customGameButton.onClick.AddListener(OnCustomGameClicked);
+    }
+
+    private void OnCustomGameClicked() {
+        if (gameModeDialogue != null) gameModeDialogue.SetActive(false);
+        if (lobbyManager != null) {
+            lobbyManager.CreateLobby();
+        }
     }
 
     public void ToggleGameModeSelect() {
@@ -98,6 +113,16 @@ public class MenuManager : MonoBehaviour {
     public void ToggleAccountScreen() {
         accountScreen.SetActive(!accountScreen.activeSelf);
     }
+
+    public void Logout() {
+        // Destroy persistent objects
+        if (accountDataGO != null) Destroy(accountDataGO.gameObject);
+        if (gameData != null) Destroy(gameData.gameObject);
+
+        SceneManager.LoadScene("Login Screen");
+    }
+
+    // Friends sidebar is always visible - no toggle needed
 
     public void EditDeck() {
         SceneManager.LoadScene("Deck Editor");
