@@ -58,6 +58,35 @@ public class Utils {
         }
     }
 
+    /// <summary>
+    /// Strictly deserializes every card JSON in Data/Cards at startup. Any property name
+    /// that has no matching C# member (a typo like "statModfiers") fails loudly instead
+    /// of being silently ignored. Throws if any card is invalid.
+    /// </summary>
+    public static void ValidateAllCards() {
+        string cardsDir = Path.Combine(GetDataBasePath(), "Cards");
+        JsonSerializerSettings strict = new() {
+            MissingMemberHandling = MissingMemberHandling.Error,
+        };
+        strict.Converters.Add(new EffectTypeConverter());
+
+        List<string> failures = new();
+        string[] files = Directory.GetFiles(cardsDir, "*.json");
+        foreach (string path in files) {
+            try {
+                JsonConvert.DeserializeObject<CardDto>(File.ReadAllText(path), strict);
+            } catch (Exception ex) {
+                failures.Add($"{Path.GetFileName(path)}: {ex.Message}");
+            }
+        }
+        if (failures.Count > 0) {
+            throw new InvalidDataException(
+                $"[CardValidation] {failures.Count} of {files.Length} card files failed validation:\n  " +
+                string.Join("\n  ", failures));
+        }
+        Console.WriteLine($"[CardValidation] {files.Length} card files validated OK");
+    }
+
     public static bool CheckPlayability(Card card, GameMatch gameMatch, Player player, bool fromTopOfDeck = false) {
         // For tokens, check if they have any activatable abilities (granted or innate)
         if (card.type == CardType.Token) {

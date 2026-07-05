@@ -16,6 +16,7 @@ public class Card {
     public int? attack;
     public int? defense;
     public List<Keyword>? keywords;
+    public List<int>? keywordAmounts;  // Parallel to keywords - e.g. haunt 2
     public Tribe tribe;
     public Rarity rarity;
     public string? description;
@@ -86,6 +87,7 @@ public class Card {
         attack = cardDto.attack;
         defense = cardDto.defense;
         keywords = cardDto.keywords;
+        keywordAmounts = cardDto.keywordAmounts;
         tribe = cardDto.tribe;
         rarity = cardDto.rarity;
         description = cardDto.description;
@@ -502,9 +504,10 @@ public void Reveal() {
                 amount = Math.Max(amount, pEffect.keywordAmount ?? 1);
             }
         }
-        // If Haunt is innate (in keywords list), use base amount of 1 if no passive overrides
+        // If Haunt is innate (in keywords list), use keywordAmounts (parallel to keywords) or default to 1
         if (amount == 0 && keywords != null && keywords.Contains(Keyword.Haunt)) {
-            amount = 1;
+            int index = keywords.IndexOf(Keyword.Haunt);
+            amount = keywordAmounts != null && index < keywordAmounts.Count ? keywordAmounts[index] : 1;
         }
         return amount;
     }

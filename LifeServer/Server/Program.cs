@@ -18,6 +18,9 @@ using (var conn = SqlFunctions.CreateConnection()) {
     SqlFunctions.RunMigrations(conn);
 }
 
+// Fail fast if any card JSON is malformed or contains misspelled properties
+Utils.ValidateAllCards();
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment()) {
     

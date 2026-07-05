@@ -10,6 +10,7 @@ public class CardDto {
     public int? attack;
     public int? defense;
     public List<Keyword>? keywords;
+    public List<int>? keywordAmounts;  // Parallel to keywords - e.g. haunt 2
     public Tribe tribe;
     public Rarity rarity;
     public string description;

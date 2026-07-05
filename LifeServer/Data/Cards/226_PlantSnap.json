@@ -22,7 +22,6 @@
       "target": {
         "type": "cardInGraveyard"
       },
-      "player": "any",
       "destination": "exile",
       "amount": 1
     },
