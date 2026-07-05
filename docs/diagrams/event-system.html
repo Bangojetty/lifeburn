@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Event System Architecture</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #1a1a1a;
+      min-height: 100vh;
+      padding: 40px 20px;
+      color: #fff;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 40px;
+      font-weight: 300;
+      letter-spacing: 2px;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .section {
+      background: #252525;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+    .section-title {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #666;
+      margin-bottom: 16px;
+    }
+
+    .box {
+      background: #3a3a3a;
+      border: 1px solid #4a4a4a;
+      border-radius: 8px;
+      padding: 14px 20px;
+      text-align: center;
+      font-weight: 500;
+    }
+    .box.highlight {
+      background: #2a4a2a;
+      border-color: #4a7a4a;
+    }
+    .box.warning {
+      background: #4a2a2a;
+      border-color: #7a4a4a;
+    }
+
+    .arrow {
+      display: flex;
+      justify-content: center;
+      padding: 10px 0;
+      color: #555;
+      font-size: 20px;
+    }
+
+    .flow-row {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+    .flow-row .box { flex: 1; max-width: 200px; font-size: 13px; }
+
+    .queues {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+    }
+    .queue-box {
+      background: #2a2a2a;
+      border: 1px dashed #444;
+      border-radius: 8px;
+      padding: 14px;
+      min-width: 160px;
+    }
+    .queue-box h4 { color: #888; margin-bottom: 8px; font-size: 12px; }
+    .queue-item {
+      background: #333;
+      border-radius: 4px;
+      padding: 5px 10px;
+      margin: 4px 0;
+      font-size: 11px;
+      color: #aaa;
+    }
+
+    .divider {
+      text-align: center;
+      color: #555;
+      font-size: 11px;
+      letter-spacing: 3px;
+      margin: 24px 0;
+      position: relative;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      width: 35%;
+      height: 1px;
+      background: #333;
+    }
+    .divider::before { left: 0; }
+    .divider::after { right: 0; }
+
+    .loop {
+      border: 1px dashed #444;
+      border-radius: 8px;
+      padding: 20px;
+      position: relative;
+    }
+    .loop::before {
+      content: 'POLLING LOOP';
+      position: absolute;
+      top: -10px;
+      left: 20px;
+      background: #252525;
+      padding: 0 10px;
+      font-size: 10px;
+      color: #666;
+      letter-spacing: 2px;
+    }
+
+    .step-label {
+      text-align: center;
+      font-size: 11px;
+      color: #666;
+      padding: 6px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>EVENT SYSTEM FLOW</h1>
+
+    <div class="section">
+      <div class="section-title">Server</div>
+
+      <div class="box">Game Action Occurs</div>
+      <div class="arrow">↓</div>
+
+      <div class="box">Create GameEvent</div>
+      <div class="arrow">↓</div>
+
+      <div class="flow-row">
+        <div class="box">AddEventForPlayer</div>
+        <div class="box">AddEventForBoth</div>
+      </div>
+      <div class="arrow">↓</div>
+
+      <div class="queues">
+        <div class="queue-box">
+          <h4>Player 1 Queue</h4>
+          <div class="queue-item">Draw</div>
+          <div class="queue-item">Cast</div>
+          <div class="queue-item">NextPhase</div>
+        </div>
+        <div class="queue-box">
+          <h4>Player 2 Queue</h4>
+          <div class="queue-item">Draw (opp)</div>
+          <div class="queue-item">Cast (opp)</div>
+          <div class="queue-item">NextPhase</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider">HTTP / JSON</div>
+
+    <div class="section">
+      <div class="section-title">Client</div>
+
+      <div class="loop">
+        <div class="box">Poll: GET /match/{id}</div>
+        <div class="arrow">↓</div>
+
+        <div class="flow-row">
+          <div class="box highlight">Receive Events</div>
+          <div class="box warning">Server Clears Queue</div>
+        </div>
+        <div class="arrow">↓</div>
+
+        <div class="box">Process Events Sequentially</div>
+        <div class="step-label">Draw → Cast → Combat → Choice → ...</div>
+        <div class="arrow">↓</div>
+
+        <div class="box">Play Animations & Update UI</div>
+        <div class="arrow">↓</div>
+
+        <div class="box" style="opacity: 0.6;">Wait → Poll Again</div>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>
