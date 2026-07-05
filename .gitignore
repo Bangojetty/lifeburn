@@ -1,3 +1,4 @@
 
 # Server database lives on the droplet (157.230.138.62) - do not sync through git
 LifeServer/life.sqlite
+Project_Life/Builds/
