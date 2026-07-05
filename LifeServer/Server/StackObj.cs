@@ -30,11 +30,9 @@ public class StackObj {
     }
 
     public void ResolveStackObj(GameMatch gameMatch, int startIndex = 0) {
-        Console.WriteLine($"[ResolveStackObj] Starting resolution of {sourceCard?.name} at index {startIndex}, effects.Count={effects?.Count}");
         Debug.Assert(effects != null);
         for (int i = startIndex; i < effects.Count; i++) {
             Effect currentEffect = effects[i];
-            Console.WriteLine($"[ResolveStackObj] Processing effect {i}: {currentEffect.effect}, isCost={currentEffect.isCost}");
             // Set parent effect list so RepeatAllEffects knows what to repeat
             currentEffect.parentEffectList = effects;
             if (!currentEffect.ConditionsAreMet(gameMatch, player)) continue;
@@ -43,14 +41,12 @@ public class StackObj {
             if (currentEffect.isCost) {
                 // Check if cost can be paid
                 if (!currentEffect.CanPayCost(gameMatch, player)) {
-                    Console.WriteLine($"[ResolveStackObj] Cost effect {currentEffect.effect} cannot be paid - fizzling remaining effects");
                     FinalizeResolve(gameMatch);
                     return;
                 }
 
                 // Check if cost needs user selection
                 if (currentEffect.NeedsCostSelection(gameMatch, player)) {
-                    Console.WriteLine($"[ResolveStackObj] Cost effect {currentEffect.effect} needs user selection - halting");
                     List<int> selectableUids = currentEffect.GetCostSelectableUids(gameMatch, player);
                     gameMatch.RequestCostEffectSelection(player, currentEffect, selectableUids);
                     gameMatch.unresolvedStackObj = this;
@@ -58,7 +54,6 @@ public class StackObj {
                     return;
                 }
                 // Cost can be auto-paid - continue to resolve normally
-                Console.WriteLine($"[ResolveStackObj] Cost effect {currentEffect.effect} can be auto-paid");
             }
 
             if (currentEffect.optional) {
@@ -69,23 +64,17 @@ public class StackObj {
             }
             // Handle resolve-time target selection (e.g., ForkBolt: select targets after cast)
             if (currentEffect.resolveTarget && currentEffect.HasTargeting() && currentEffect.targetUids.Count == 0) {
-                Console.WriteLine($"[ResolveStackObj] Effect {i} needs resolve-time targets");
                 bool needsInput = gameMatch.RequestResolveTimeTargets(player, currentEffect);
                 if (needsInput) {
-                    Console.WriteLine($"[ResolveStackObj] Halting for resolve-time target selection");
                     gameMatch.unresolvedStackObj = this;
                     gameMatch.unresolvedEffectIndex = i;  // Stay on this effect to resolve after targets selected
                     return;
                 }
                 // No valid targets - effect fizzles this part, continue to next effect
-                Console.WriteLine($"[ResolveStackObj] No valid targets, skipping effect");
                 continue;
-            } else if (currentEffect.resolveTarget && currentEffect.HasTargeting()) {
-                Console.WriteLine($"[ResolveStackObj] Effect {i} has resolveTarget but already has {currentEffect.targetUids.Count} targets");
             }
             // Handle resolve-time selection from zone (e.g., Consider: select cards from hand after drawing)
             if (currentEffect.resolveTarget && currentEffect.HasSelection() && currentEffect.targetUids.Count == 0) {
-                Console.WriteLine($"[ResolveStackObj] Effect {i} needs resolve-time zone selection, halting");
                 gameMatch.RequestResolveTimeSelection(player, currentEffect);
                 gameMatch.unresolvedStackObj = this;
                 gameMatch.unresolvedEffectIndex = i;  // Stay on this effect to resolve after selection
@@ -196,13 +185,11 @@ public class StackObj {
             if ((currentEffect.effect == EffectType.Mill || currentEffect.effect == EffectType.Draw) &&
                 currentEffect.select != null && currentEffect.select.zone == null && currentEffect.select.zones == null &&
                 currentEffect.amount == null) {
-                Console.WriteLine($"[ResolveStackObj] Effect {i} ({currentEffect.effect}) needs amount selection (max={currentEffect.GetSelectMax()}), deck.Count={player.deck.Count}");
                 int maxAmount = currentEffect.GetSelectMax();
                 // For mill, cap at deck size
                 if (currentEffect.effect == EffectType.Mill) {
                     maxAmount = Math.Min(maxAmount, player.deck.Count);
                 }
-                Console.WriteLine($"[ResolveStackObj] Requesting amount selection, maxAmount={maxAmount}");
                 gameMatch.RequestEffectAmount(player, currentEffect, maxAmount);
                 gameMatch.unresolvedStackObj = this;
                 gameMatch.unresolvedEffectIndex = i;  // Stay on this effect to resolve after amount selected
@@ -211,7 +198,6 @@ public class StackObj {
             currentEffect.Resolve(gameMatch, player);
             // Check if this effect has upfront repeat count - execute additional times
             if (currentEffect.selectRepeatUpfront && currentEffect.repeatCount > 0) {
-                Console.WriteLine($"[StackObj] Executing {currentEffect.repeatCount} upfront repeats");
                 for (int r = 0; r < currentEffect.repeatCount; r++) {
                     // Check if targets are still valid (in play) before repeating
                     bool hasValidTarget = false;
@@ -224,7 +210,6 @@ public class StackObj {
                         }
                     }
                     if (!hasValidTarget) {
-                        Console.WriteLine($"[StackObj] Skipping repeat {r + 1} - no valid targets remaining");
                         continue;
                     }
                     // Clone the effect and execute it again with same targets

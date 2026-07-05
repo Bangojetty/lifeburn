@@ -289,7 +289,6 @@ public class GameMatch {
         // Halt all trigger processing if Ghost Deceiver is waiting for input
         if (ghostDeceiverStage > 0) return;
 
-        Console.WriteLine($"[CheckForTriggersAndPassives] eventType={eventType}, triggersToCheck.Count={triggersToCheck.Count}");
         foreach (TriggerContext tc in triggersToCheck) {
             Console.WriteLine($"  - TriggerContext: trigger={tc.trigger}, zone={tc.zone}, card={tc.card?.name ?? "null"}");
         }
@@ -302,7 +301,6 @@ public class GameMatch {
             CheckForTriggersPlayer(tc, nonTurnPlayer);
         }
 
-        Console.WriteLine($"[CheckForTriggersAndPassives] After checking: turnPlayer.controlledTriggers={turnPlayer.controlledTriggers.Count}, nonTurnPlayer.controlledTriggers={nonTurnPlayer.controlledTriggers.Count}");
         foreach (TriggeredEffect te in turnPlayer.controlledTriggers) {
             Console.WriteLine($"  - TurnPlayer trigger: {te.sourceCard?.name}, trigger={te.trigger}");
         }
@@ -1361,23 +1359,18 @@ public class GameMatch {
 
         // Check if the just-selected choice needs targeting
         List<Effect> selectedChoiceEffects = pair.Value.choices[originalChoiceIndex];
-        Console.WriteLine($"[PostChoiceTargeting] Selected choice {originalChoiceIndex}, effects count: {selectedChoiceEffects.Count}");
         bool needsTargeting = false;
         foreach (Effect e in selectedChoiceEffects) {
-            Console.WriteLine($"[PostChoiceTargeting] Checking effect: {e.effect}, HasTargeting={e.HasTargeting()}, resolveTarget={e.resolveTarget}, all={e.all}, targetType={e.GetTargetType()}");
             if (e.HasTargeting() && !e.resolveTarget && !e.all && e.targetBasedOn == null) {
                 List<int> possibleTargets = GetPossibleTargets(player, e);
-                Console.WriteLine($"[PostChoiceTargeting] possibleTargets={possibleTargets.Count}");
                 if (possibleTargets.Count > 0) {
                     string message = e.EffectToString(this);
-                    Console.WriteLine($"[PostChoiceTargeting] Creating target selection event: {message}");
                     CreateAndAddNewTargetSelectionEvent(player, possibleTargets, e.GetTargetMax(), message, e.GetTargetMin());
                     effectsWithTargets.Add(e);
                     needsTargeting = true;
                 }
             }
         }
-        Console.WriteLine($"[PostChoiceTargeting] needsTargeting={needsTargeting}");
 
         // If targeting is needed, store state and wait for target selection
         if (needsTargeting) {
@@ -1837,14 +1830,11 @@ public class GameMatch {
     }
 
     private bool CheckForCardTargetSelection(Player player, Card card) {
-        Console.WriteLine($"[CheckForCardTargetSelection] Card: {card.name}, stackEffects count: {card.stackEffects?.Count ?? 0}");
         if (card.stackEffects != null) {
             foreach (Effect effect in card.stackEffects) {
-                Console.WriteLine($"[CheckForCardTargetSelection] Processing effect: {effect.effect}, targetType: {effect.GetTargetType()}");
                 HandleEffectTargetSelection(player, effect);
             }
         }
-        Console.WriteLine($"[CheckForCardTargetSelection] effectsWithTargets count: {effectsWithTargets.Count}");
         return effectsWithTargets.Count > 0;
     }
 
@@ -1863,36 +1853,28 @@ public class GameMatch {
         // Use new helper methods that support both new target object and legacy fields
         int targetAmount = effect.GetTargetMax();
         int minTargetAmount = effect.GetTargetMin();
-        Console.WriteLine($"[HandleEffectTargetSelection] effect: {effect.effect}, targetType: {effect.GetTargetType()}, HasTargeting: {effect.HasTargeting()}");
         // Skip if no targeting or if effect targets all (no individual selection needed)
         if (!effect.HasTargeting()) {
-            Console.WriteLine($"[HandleEffectTargetSelection] Skipping - no targeting");
             return;
         }
         if (effect.all) {
-            Console.WriteLine($"[HandleEffectTargetSelection] Skipping - targets all");
             return;
         }
         // Skip resolve-time selections - these are handled during stack resolution, not before casting
         if (effect.resolveTarget) {
-            Console.WriteLine($"[HandleEffectTargetSelection] Skipping - resolveTarget is true");
             return;
         }
         // Skip if target will be auto-determined (e.g., TriggerCard, TriggerController)
         if (effect.targetBasedOn != null) {
-            Console.WriteLine($"[HandleEffectTargetSelection] Skipping - targetBasedOn is {effect.targetBasedOn}");
             return;
         }
         // Skip if this effect already has targets assigned (from post-choice targeting)
         if (effect.targetUids.Count > 0) {
-            Console.WriteLine($"[HandleEffectTargetSelection] Skipping - already has {effect.targetUids.Count} targets");
             return;
         }
         List<int> possibleTargets = GetPossibleTargets(player, effect);
-        Console.WriteLine($"[HandleEffectTargetSelection] possibleTargets count: {possibleTargets.Count}");
         // Skip target selection if there are no valid targets (ability fizzles - resolves with no effect)
         if (possibleTargets.Count == 0) {
-            Console.WriteLine($"[HandleEffectTargetSelection] Skipping - no valid targets");
             return;
         }
         string message = effect.EffectToString(this);
@@ -1952,7 +1934,6 @@ public class GameMatch {
 
         // If no valid targets, skip selection (effect fizzles this part)
         if (possibleTargets.Count == 0) {
-            Console.WriteLine($"[RequestResolveTimeTargets] No valid targets, skipping selection");
             return false;
         }
 
@@ -1965,7 +1946,6 @@ public class GameMatch {
 
         // If opponentsChoice, the opponent selects the target instead of the caster
         Player selectingPlayer = effect.opponentsChoice ? GetOpponent(player) : player;
-        Console.WriteLine($"[RequestResolveTimeTargets] Creating target selection: amount={targetAmount}, minAmount={minTargetAmount}");
         CreateAndAddNewTargetSelectionEvent(selectingPlayer, possibleTargets, targetAmount, message, minTargetAmount);
         return true;
     }
@@ -2390,14 +2370,11 @@ public class GameMatch {
 
     public void AddOrderedTriggersToStack(int accountId, List<int> finalOrderList) {
         Player player = accountIdToPlayer[accountId];
-        Console.WriteLine($"[AddOrderedTriggersToStack] Received order: [{string.Join(", ", finalOrderList)}], controlledTriggers.Count={player.controlledTriggers.Count}");
 
         // Validate indices - if they're out of range, the client sent stale ordering data
         if (finalOrderList.Any(i => i < 0 || i >= player.controlledTriggers.Count)) {
-            Console.WriteLine($"[AddOrderedTriggersToStack] ERROR: Invalid indices! Expected 0-{player.controlledTriggers.Count - 1}");
             // Use default order (0, 1, 2, ...)
             finalOrderList = Enumerable.Range(0, player.controlledTriggers.Count).ToList();
-            Console.WriteLine($"[AddOrderedTriggersToStack] Using default order: [{string.Join(", ", finalOrderList)}]");
         }
 
         var tempList = new List<TriggeredEffect>(player.controlledTriggers);
@@ -2416,7 +2393,6 @@ public class GameMatch {
     }
 
     private void PassPrioToPlayer(Player player) {
-        Console.WriteLine($"[PassPrioToPlayer] Giving priority to {player.playerName}, stack.Count={stack.Count}");
         // Clear the other player's playables/activatables when priority changes
         Player opponent = GetOpponent(player);
         opponent.playables.Clear();
@@ -2427,7 +2403,6 @@ public class GameMatch {
 
         // Auto-pass for bot players
         if (player.isBot) {
-            Console.WriteLine($"[PassPrioToPlayer] Bot auto-passing");
             PassPrio();
             return;
         }
@@ -2443,10 +2418,6 @@ public class GameMatch {
                 // Don't search backwards - that incorrectly includes NextPhase events from previous contexts (like turn transitions)
                 skipStartEventIndexP1 = playerOne.eventList.Count;
                 skipStartEventIndexP2 = playerTwo.eventList.Count;
-                Console.WriteLine($"[PassPrioToPlayer] Starting auto-skip: skipStartPhase={skipStartPhase}, currentPhase={currentPhase}");
-                Console.WriteLine($"[PassPrioToPlayer] Event indices: P1={skipStartEventIndexP1}, P2={skipStartEventIndexP2}");
-            } else {
-                Console.WriteLine($"[PassPrioToPlayer] Continuing auto-skip, currentPhase={currentPhase}");
             }
             PassPrio();
             return;
@@ -2458,17 +2429,14 @@ public class GameMatch {
         // Clear passToPhase for any player who has reached or passed their target
         // This prevents the client from continuing to autopass after the target is reached
         if (HasPlayerReachedTarget(playerOne)) {
-            Console.WriteLine($"[PassPrioToPlayer] Clearing passToPhase for {playerOne.playerName} (reached target)");
             playerOne.passToPhase = null;
             playerOne.passToMyMain = false;
         }
         if (HasPlayerReachedTarget(playerTwo)) {
-            Console.WriteLine($"[PassPrioToPlayer] Clearing passToPhase for {playerTwo.playerName} (reached target)");
             playerTwo.passToPhase = null;
             playerTwo.passToMyMain = false;
         }
 
-        Console.WriteLine($"[PassPrioToPlayer] Sending GainPrio to {player.playerName}");
         GameEvent gEvent = new GameEvent(EventType.GainPrio);
         AddEventForPlayer(player, gEvent);
     }
@@ -2483,16 +2451,13 @@ public class GameMatch {
     private bool ShouldAutoSkipPhases(Player player) {
         // If stack has items, check if this player's autopass is paused
         if (stack.Count > 0) {
-            Console.WriteLine($"[ShouldAutoSkipPhases] Stack has {stack.Count} items, {player.playerName}.autopassPausedForStack={player.autopassPausedForStack}");
             if (player.autopassPausedForStack) {
-                Console.WriteLine($"[ShouldAutoSkipPhases] Returning FALSE - autopass paused for {player.playerName}");
                 return false;
             }
             // Even if this player resumed autopass, we still need to stop to let them respond
             // Only continue auto-skip if BOTH players have resumed (clicked autopass button)
             Player opponent = GetOpponent(player);
             if (opponent.autopassPausedForStack) {
-                Console.WriteLine($"[ShouldAutoSkipPhases] Returning FALSE - opponent {opponent.playerName} still has autopass paused");
                 return false;
             }
         }
@@ -2517,7 +2482,6 @@ public class GameMatch {
         // Only check this player, not both - if the other player already passed at their target, we can continue
         // BUT: If there are items on the stack, don't stop for target phases - let the stack fully resolve first
         if (stack.Count == 0 && HasPlayerReachedTarget(player)) {
-            Console.WriteLine($"[ShouldAutoSkipPhases] {player.playerName} has reached their target - stopping");
             return false;
         }
 
@@ -2525,14 +2489,11 @@ public class GameMatch {
         if (currentPhase == Phase.Combat) {
             Player turnPlayer = GetPlayerByTurn(true);
             var attackCapable = GetAttackCapableUids(turnPlayer);
-            Console.WriteLine($"[ShouldAutoSkipPhases] Combat phase check - turnPlayer={turnPlayer.playerName}, attackCapable count={attackCapable.Count}");
             if (attackCapable.Count > 0) {
-                Console.WriteLine($"[ShouldAutoSkipPhases] Stopping at Combat - has attackers");
                 return false;
             }
         }
 
-        Console.WriteLine($"[ShouldAutoSkipPhases] All checks passed for {player.playerName} - WILL auto-skip");
         return true;
     }
 
@@ -2748,10 +2709,6 @@ public class GameMatch {
         // (passToPhase is NOT cleared - just paused until player manually passes)
         playerOne.autopassPausedForStack = true;
         playerTwo.autopassPausedForStack = true;
-        Console.WriteLine($"[AddStackObjToStack] Stack item added: {stackObj.sourceCard?.name ?? "unknown"}");
-        Console.WriteLine($"[AddStackObjToStack] P1 autopassPaused={playerOne.autopassPausedForStack}, passToPhase={playerOne.passToPhase}");
-        Console.WriteLine($"[AddStackObjToStack] P2 autopassPaused={playerTwo.autopassPausedForStack}, passToPhase={playerTwo.passToPhase}");
-        Console.WriteLine($"[AddStackObjToStack] Stack count is now {stack.Count}");
         GameEvent gEvent = GameEvent.CreateStackEvent(EventType.Trigger, new StackDisplayData(stackObj, this));
         AddEventForBothPlayers(stackObj.player, gEvent);
     }
@@ -3735,12 +3692,8 @@ public class GameMatch {
     public void PassPrio() {
         Player p1 = playerOne;
         Player p2 = playerTwo;
-        Console.WriteLine($"[PassPrio] phase={currentPhase}, turn={GetPlayerByTurn(true).playerName}, secondPass={secondPass}, stack={stack.Count}");
-        Console.WriteLine($"[PassPrio] P1({p1.playerName}): passToPhase={p1.passToPhase}, autopassPaused={p1.autopassPausedForStack}");
-        Console.WriteLine($"[PassPrio] P2({p2.playerName}): passToPhase={p2.passToPhase}, autopassPaused={p2.autopassPausedForStack}");
         // Halt priority passing if Ghost Deceiver is waiting for input
         if (ghostDeceiverStage > 0) {
-            Console.WriteLine($"[PassPrio] HALTED - Ghost Deceiver waiting for input (stage {ghostDeceiverStage})");
             return;
         }
 
@@ -3750,7 +3703,6 @@ public class GameMatch {
             List<int> attackCapableUids = GetAttackCapableUids(turnPlayer);
             int unassignedCount = attackCapableUids.Count(uid => !currentAttackUids.ContainsKey(uid));
             if (unassignedCount > 0) {
-                Console.WriteLine($"[PassPrio] HALTED - Ground Tactics active, {unassignedCount} attackers still unassigned");
                 return;
             }
         }
@@ -5915,9 +5867,6 @@ private void ApplySpellburn(Player player, bool isScorch) {
     /// Returns true if waiting for player input, false if no cards to select.
     /// </summary>
     public bool RequestPlayerChoiceDiscard(Player player, Effect effect, bool variableAmount) {
-        Console.WriteLine($"[PlayerChoiceDiscard] Requesting selection for {effect.sourceCard?.name}, variableAmount={variableAmount}");
-        Console.WriteLine($"[PlayerChoiceDiscard] Effect tribe={effect.tribe}, cardType={effect.cardType}");
-        Console.WriteLine($"[PlayerChoiceDiscard] Player hand count: {player.hand.Count}");
 
         // Find matching cards in hand based on cardType and tribe (if specified)
         List<int> selectableUids = new();
@@ -5925,21 +5874,18 @@ private void ApplySpellburn(Player player, bool isScorch) {
 
         foreach (Card c in player.hand) {
             bool qualifies = QualifyCard(c, qualifier);
-            Console.WriteLine($"[PlayerChoiceDiscard] Card {c.name} (uid={c.uid}): tribe={c.tribe}, type={c.type}, qualifies={qualifies}");
             if (qualifies) {
                 selectableUids.Add(c.uid);
             }
         }
 
         if (selectableUids.Count == 0) {
-            Console.WriteLine("[PlayerChoiceDiscard] No matching cards in hand");
             return false;
         }
 
         // Bot auto-discards highest index cards (last in hand)
         if (player.isBot) {
             int discardCount = variableAmount ? 0 : Math.Min(effect.amount ?? 1, selectableUids.Count);
-            Console.WriteLine($"[PlayerChoiceDiscard] Bot auto-discarding {discardCount} cards");
             // Select from the end of the list (highest index cards)
             List<int> botSelectedUids = selectableUids.TakeLast(discardCount).ToList();
             foreach (int uid in botSelectedUids) {
@@ -5971,14 +5917,11 @@ private void ApplySpellburn(Player player, bool isScorch) {
             selectionAmount = actualAmount;
         }
 
-        Console.WriteLine($"[PlayerChoiceDiscard] Selectable UIDs: [{string.Join(", ", selectableUids)}]");
-        Console.WriteLine($"[PlayerChoiceDiscard] Message: {message}, selectionAmount={selectionAmount}");
 
         GameEvent gEvent = GameEvent.CreateCostEvent(CostType.Discard, selectionAmount, selectableUids,
             new List<string> { message }, variableAmount: variableAmount);
         AddEventForPlayer(player, gEvent);
 
-        Console.WriteLine($"[PlayerChoiceDiscard] Sent selection event with {selectableUids.Count} options");
         return true;
     }
 
@@ -6223,14 +6166,12 @@ private void ApplySpellburn(Player player, bool isScorch) {
 
         // cost effect selection at resolve time (for isCost effects that need user selection)
         if (costEffectForSelection != null) {
-            Console.WriteLine($"[CostEffect] Processing selection, {selectedCards?.Count ?? 0} cards selected");
             Effect effect = costEffectForSelection;
             costEffectForSelection = null;
 
             // Set the targetUids on the effect so it knows what to sacrifice
             effect.targetUids = selectedCards?.Select(c => c.uid).ToList() ?? new List<int>();
 
-            Console.WriteLine($"[CostEffect] Set targetUids=[{string.Join(", ", effect.targetUids)}]");
 
             // Resume stack object resolution - the effect will now be resolved with the selected targets
             Debug.Assert(unresolvedStackObj != null, "No unresolved stack object for cost effect selection");
@@ -6240,17 +6181,13 @@ private void ApplySpellburn(Player player, bool isScorch) {
 
         // playerChoice discard at resolve time (for discard effects with amountBasedOn: playerChoice)
         if (playerChoiceDiscardEffect != null) {
-            Console.WriteLine($"[PlayerChoiceDiscard] === PROCESSING SELECTION ===");
-            Console.WriteLine($"[PlayerChoiceDiscard] selectedCards count={selectedCards?.Count ?? 0}");
             Effect effect = playerChoiceDiscardEffect;
-            Console.WriteLine($"[PlayerChoiceDiscard] effect.targetUids BEFORE=[{string.Join(", ", effect.targetUids)}]");
             playerChoiceDiscardEffect = null;
 
             // Preserve player UID if present (for "target opponent discards" effects like Reap)
             int? preservedPlayerUid = null;
             if (effect.targetUids.Count > 0 && IsPlayerUid(effect.targetUids[0])) {
                 preservedPlayerUid = effect.targetUids[0];
-                Console.WriteLine($"[PlayerChoiceDiscard] Preserving player UID: {preservedPlayerUid}");
             }
 
             // Set the targetUids and amount on the effect
@@ -6264,10 +6201,6 @@ private void ApplySpellburn(Player player, bool isScorch) {
             effect.targetUids = newTargetUids;
             effect.amount = selectedCards?.Count ?? 0;
 
-            Console.WriteLine($"[PlayerChoiceDiscard] effect.targetUids AFTER=[{string.Join(", ", effect.targetUids)}]");
-            Console.WriteLine($"[PlayerChoiceDiscard] effect.amount={effect.amount}");
-            Console.WriteLine($"[PlayerChoiceDiscard] unresolvedEffectIndex={unresolvedEffectIndex}");
-            Console.WriteLine($"[PlayerChoiceDiscard] About to call ResumeResolve...");
 
             // Resume stack object resolution - the effect will now be resolved with the selected cards
             Debug.Assert(unresolvedStackObj != null, "No unresolved stack object for playerChoice discard");
