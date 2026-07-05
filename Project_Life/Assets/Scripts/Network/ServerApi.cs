@@ -12,7 +12,7 @@ public class ServerApi {
     private const string LOCAL_SERVER = "http://localhost:5239/life/";
     private const string PUBLIC_SERVER = "http://157.230.138.62:5239/life/";
 
-    private string baseAddress = LOCAL_SERVER;
+    private string baseAddress = PUBLIC_SERVER;
 
 
     private UnityWebRequest CreateRequest(string path, RequestType type = RequestType.GET, object data = null) {
