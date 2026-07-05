@@ -11,7 +11,7 @@ Implement the proper changes in order for the card to function fully, but do not
 
 ## Steps
 
-1. Find and read `Data/Cards/*_$ARGUMENTS.json`
+1. Find and read `LifeServer/Data/Cards/*_$ARGUMENTS.json`
 2. Read the card's description
 3. Find similar cards that use similar mechanics/JSON structure
 4. Verify implementation matches description
