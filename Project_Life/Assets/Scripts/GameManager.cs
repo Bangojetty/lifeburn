@@ -241,6 +241,8 @@ public class GameManager : MonoBehaviour {
         if (gameOverContinueButton != null)
             gameOverContinueButton.onClick.AddListener(OnGameOverContinueClicked);
 
+        WireQuitButtons();
+
         StartCoroutine(StartGame());
     }
     
@@ -1788,13 +1790,120 @@ public class GameManager : MonoBehaviour {
     }
     
     public void QuitGame() {
+        LeaveCurrentMatch();
         Application.Quit();
     }
-    
+
     // testing
     public void TogglePauseMenu() {
         pauseMenu.SetActive(!pauseMenu.activeSelf);
     }
+
+    #region Quit to Menu
+
+    private GameObject quitConfirmPanel;
+
+    private Transform PausePanel => pauseMenu != null ? pauseMenu.transform.Find("Panel") : null;
+
+    // Wired at runtime so the scene doesn't need re-editing
+    private void WireQuitButtons() {
+        Transform mainMenuBtn = PausePanel?.Find("MainMenuBtn");
+        if (mainMenuBtn == null) {
+            Debug.LogWarning("[QuitToMenu] MainMenuBtn not found under pause menu");
+            return;
+        }
+        Button btn = mainMenuBtn.GetComponent<Button>();
+        btn.onClick.RemoveAllListeners();
+        btn.onClick.AddListener(ShowQuitConfirmation);
+    }
+
+    public void ShowQuitConfirmation() {
+        if (quitConfirmPanel == null) BuildQuitConfirmation();
+        quitConfirmPanel.SetActive(true);
+    }
+
+    private void BuildQuitConfirmation() {
+        // Full-screen dim overlay, parented to the pause menu so closing the menu hides it too
+        quitConfirmPanel = new GameObject("QuitConfirmPanel", typeof(RectTransform), typeof(Image));
+        RectTransform rt = (RectTransform)quitConfirmPanel.transform;
+        rt.SetParent(pauseMenu.transform, false);
+        rt.anchorMin = Vector2.zero;
+        rt.anchorMax = Vector2.one;
+        rt.offsetMin = Vector2.zero;
+        rt.offsetMax = Vector2.zero;
+        quitConfirmPanel.GetComponent<Image>().color = new Color(0f, 0f, 0f, 0.75f);
+
+        GameObject box = new GameObject("Box", typeof(RectTransform), typeof(Image));
+        RectTransform boxRt = (RectTransform)box.transform;
+        boxRt.SetParent(rt, false);
+        boxRt.sizeDelta = new Vector2(560, 240);
+        box.GetComponent<Image>().color = new Color(0.12f, 0.13f, 0.16f, 0.98f);
+
+        GameObject msg = new GameObject("Message", typeof(RectTransform));
+        RectTransform msgRt = (RectTransform)msg.transform;
+        msgRt.SetParent(boxRt, false);
+        msgRt.anchorMin = new Vector2(0f, 0.45f);
+        msgRt.anchorMax = new Vector2(1f, 1f);
+        msgRt.offsetMin = new Vector2(20f, 0f);
+        msgRt.offsetMax = new Vector2(-20f, -15f);
+        TextMeshProUGUI tmp = msg.AddComponent<TextMeshProUGUI>();
+        tmp.text = "Are you sure you want to quit?\nThis will concede the match.";
+        tmp.fontSize = 30;
+        tmp.alignment = TextAlignmentOptions.Center;
+
+        Transform template = PausePanel?.Find("MainMenuBtn");
+        CreateConfirmButton(template, boxRt, "Yes, quit", new Vector2(0.27f, 0f), ConfirmQuitToMenu);
+        CreateConfirmButton(template, boxRt, "Cancel", new Vector2(0.73f, 0f), () => quitConfirmPanel.SetActive(false));
+    }
+
+    private void CreateConfirmButton(Transform template, RectTransform parent, string label,
+                                     Vector2 anchor, UnityEngine.Events.UnityAction onClick) {
+        GameObject go;
+        if (template != null) {
+            go = Instantiate(template.gameObject, parent);
+        } else {
+            go = new GameObject(label, typeof(RectTransform), typeof(Image), typeof(Button));
+            go.GetComponent<Image>().color = new Color(0.25f, 0.3f, 0.4f);
+            GameObject txt = new GameObject("Text (TMP)", typeof(RectTransform));
+            txt.transform.SetParent(go.transform, false);
+            TextMeshProUGUI t = txt.AddComponent<TextMeshProUGUI>();
+            t.alignment = TextAlignmentOptions.Center;
+            t.fontSize = 26;
+        }
+        go.name = label;
+        RectTransform brt = (RectTransform)go.transform;
+        brt.SetParent(parent, false);
+        brt.anchorMin = brt.anchorMax = anchor;
+        brt.pivot = new Vector2(0.5f, 0f);
+        brt.anchoredPosition = new Vector2(0f, 25f);
+        brt.sizeDelta = new Vector2(210f, 60f);
+        TextMeshProUGUI labelTmp = go.GetComponentInChildren<TextMeshProUGUI>();
+        if (labelTmp != null) labelTmp.text = label;
+        Button b = go.GetComponent<Button>();
+        b.onClick.RemoveAllListeners();
+        b.onClick.AddListener(onClick);
+    }
+
+    public void ConfirmQuitToMenu() {
+        StopAllCoroutines();  // stop match-state polling and any running animations
+        LeaveCurrentMatch();
+        UnityEngine.SceneManagement.SceneManager.LoadScene("Main Menu");
+    }
+
+    // Tell the server we're conceding; safe to call even if the match already ended
+    private void LeaveCurrentMatch() {
+        try {
+            AccountData acct = gameData.accountData;
+            if (acct == null) acct = GameObject.Find("AccountData").GetComponent<AccountDataGO>().accountData;
+            if (gameData.matchState != null) {
+                serverApi.LeaveMatch(acct, gameData.matchState.matchId);
+            }
+        } catch (Exception e) {
+            Debug.LogWarning("[QuitToMenu] LeaveMatch failed: " + e.Message);
+        }
+    }
+
+    #endregion
     
     public static bool DictionariesEqual<TKey, TValue>(
         Dictionary<TKey, List<TValue>> dict1, 

@@ -747,6 +747,18 @@ public class ServerApi {
         return deleteRequest.responseCode;
     }
 
+    // Leave/concede the current match - the leaving player forfeits and the match ends
+    public long LeaveMatch(AccountData accountData, int matchId) {
+        Debug.Log("request: LeaveMatch");
+        UnityWebRequest postRequest = CreateRequest(baseAddress + $"match/{matchId}/leave", RequestType.POST);
+        postRequest.SetRequestHeader("Authorization",
+            "Basic " + Base64Encode(accountData.username + ":" + accountData.hashedPassword));
+        postRequest.SendWebRequest();
+        while (!postRequest.isDone) Task.Delay(10);
+        Debug.Log("LeaveMatch returned: " + postRequest.responseCode);
+        return postRequest.responseCode;
+    }
+
     public long KickPlayer(AccountData accountData, int lobbyId, int playerId) {
         Debug.Log("request: KickPlayer");
         UnityWebRequest postRequest = CreateRequest(baseAddress + $"lobbies/{lobbyId}/kick/{playerId}", RequestType.POST);
