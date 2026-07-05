@@ -9,17 +9,19 @@
   "stackEffects": [
     {
       "effect": "dealDamage",
-      "targetType": "summon",
-      "amount": 3,
-      "maxTargets": 1
+      "target": {
+        "type": "summon"
+      },
+      "amount": 3
     },
     {
       "effect": "dealDamage",
-      "targetType": "any",
+      "target": {
+        "type": "any"
+      },
       "resolveTarget": true,
       "opponentsChoice": true,
-      "amount": 2,
-      "maxTargets": 1
+      "amount": 2
     }
   ]
 }

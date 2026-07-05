@@ -9,7 +9,9 @@
   "stackEffects": [
     {
       "effect": "cantAttackOrBlock",
-      "targetType": "summon",
+      "target": {
+        "type": "summon"
+      },
       "duration": "untilThisLeaves"
     }
   ],

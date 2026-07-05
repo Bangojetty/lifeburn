@@ -6,41 +6,45 @@
   "tribe": "golem",
   "rarity": "common",
   "description": "Target attacking summon gains Trample this turn. If it's a golem, give it +2/+0 this turn.",
-  "castRestrictions": ["duringCombat"],
+  "castRestrictions": [
+    "duringCombat"
+  ],
   "stackEffects": [
-  {
-    "effect": "grantKeyword",
-    "targetType": "summon",
-    "keyword": "trample",
-    "thisTurn": true,
-    "restrictions": [
-	"attacking"
-	],
-    "additionalEffects": [
-      {
-        "targetBasedOn": "rootAffected",
-        "conditions": [
-          {
-            "condition": "isTribe",
-            "tribe": "golem"
-          }
-        ],
-        "effect": "grantPassive",
-		"thisTurn": true,
-		"passives": [
-			{
-				"passive": "changeStats",
-				"statModifiers": [
-					{
-						"statType": "attack",
-						"operatorType": "add",
-						"amount": 2
-					}
-				]
-			}
-		]
-      }
-    ] 
-  }
-  ] 
+    {
+      "effect": "grantKeyword",
+      "target": {
+        "type": "summon"
+      },
+      "keyword": "trample",
+      "thisTurn": true,
+      "restrictions": [
+        "attacking"
+      ],
+      "additionalEffects": [
+        {
+          "targetBasedOn": "rootAffected",
+          "conditions": [
+            {
+              "condition": "isTribe",
+              "tribe": "golem"
+            }
+          ],
+          "effect": "grantPassive",
+          "thisTurn": true,
+          "passives": [
+            {
+              "passive": "changeStats",
+              "statModifiers": [
+                {
+                  "statType": "attack",
+                  "operatorType": "add",
+                  "amount": 2
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

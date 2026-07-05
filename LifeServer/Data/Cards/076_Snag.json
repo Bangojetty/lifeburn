@@ -7,14 +7,16 @@
   "rarity": "common",
   "description": "Return target summon to its owner's hand. Gain 1 LP.",
   "stackEffects": [
-  {
-    "effect": "sendToZone",
-    "targetType": "summon",
-    "destination": "hand"
-  },
-  {
-    "effect": "gainLife",
-    "amount": 1
-  }
+    {
+      "effect": "sendToZone",
+      "target": {
+        "type": "summon"
+      },
+      "destination": "hand"
+    },
+    {
+      "effect": "gainLife",
+      "amount": 1
+    }
   ]
 }

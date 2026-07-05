@@ -9,12 +9,14 @@
   "stackEffects": [
     {
       "effect": "choose",
-	  "choiceIndex": 0,
+      "choiceIndex": 0,
       "choices": [
         [
           {
             "effect": "sendToZone",
-            "targetType": "graveyard",
+            "target": {
+              "type": "graveyard"
+            },
             "destination": "exile",
             "amount": 2
           }
@@ -22,17 +24,19 @@
         [
           {
             "effect": "destroy",
-            "targetType": "token" 
+            "target": {
+              "type": "token"
+            }
           }
         ],
         [
           {
             "effect": "createToken",
             "tokenType": "herb",
-            "amount": 1 
+            "amount": 1
           }
         ]
       ]
     }
-  ] 
+  ]
 }

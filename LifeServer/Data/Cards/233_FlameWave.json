@@ -15,9 +15,10 @@
   "stackEffects": [
     {
       "effect": "dealDamage",
-      "targetType": "summon",
-      "amount": 4,
-      "maxTargets": 1
+      "target": {
+        "type": "summon"
+      },
+      "amount": 4
     },
     {
       "effect": "repeatAllEffects",

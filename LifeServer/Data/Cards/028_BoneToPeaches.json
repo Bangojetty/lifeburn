@@ -7,14 +7,16 @@
   "rarity": "common",
   "description": "Destroy target token. Create an herb.",
   "stackEffects": [
-	  {
-		  "effect": "destroy",
-		  "targetType": "token"
-	  },
-	  {
-		  "effect": "createToken",
-		  "tokenType": "herb",
-		  "amount": 1
-	  }
+    {
+      "effect": "destroy",
+      "target": {
+        "type": "token"
+      }
+    },
+    {
+      "effect": "createToken",
+      "tokenType": "herb",
+      "amount": 1
+    }
   ]
 }

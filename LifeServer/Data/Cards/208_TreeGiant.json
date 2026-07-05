@@ -17,11 +17,14 @@
       "effects": [
         {
           "effect": "sendToZone",
-          "targetType": "graveyard",
+          "target": {
+            "type": "graveyard",
+            "min": 0,
+            "max": 2
+          },
           "sameZone": true,
           "destination": "exile",
-          "amount": 2,
-          "minTargets": 0
+          "amount": 2
         }
       ]
     }

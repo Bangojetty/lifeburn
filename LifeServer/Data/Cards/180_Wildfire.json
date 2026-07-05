@@ -3,7 +3,9 @@
   "name": "Wildfire",
   "cost": 0,
   "type": "spell",
-  "keywords": ["finale"],
+  "keywords": [
+    "finale"
+  ],
   "tribe": "goblin",
   "rarity": "common",
   "description": "Destroy all summons. This spell costs 3 times the number of summons you don't control.",
@@ -17,7 +19,9 @@
   "stackEffects": [
     {
       "effect": "destroy",
-      "targetType": "summon",
+      "target": {
+        "type": "summon"
+      },
       "all": true
     }
   ]

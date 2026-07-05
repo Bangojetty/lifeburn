@@ -13,7 +13,7 @@
     },
     {
       "effect": "discard",
-      "amount": 1  
+      "amount": 1
     },
     {
       "conditions": [
@@ -24,7 +24,9 @@
         }
       ],
       "effect": "dealDamage",
-      "targetType": "any",
+      "target": {
+        "type": "any"
+      },
       "resolveTarget": true,
       "amount": 1
     }

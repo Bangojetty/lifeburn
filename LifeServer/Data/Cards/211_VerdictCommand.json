@@ -21,7 +21,9 @@
         [
           {
             "effect": "destroy",
-            "targetType": "token"
+            "target": {
+              "type": "token"
+            }
           }
         ],
         [
@@ -34,7 +36,9 @@
         [
           {
             "effect": "sendToZone",
-            "targetType": "graveyard",
+            "target": {
+              "type": "graveyard"
+            },
             "destination": "exile",
             "amount": 2,
             "sameZone": true

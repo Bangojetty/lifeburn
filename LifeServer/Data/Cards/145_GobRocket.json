@@ -16,9 +16,10 @@
   "stackEffects": [
     {
       "effect": "dealDamage",
-      "targetType": "any",
-      "amount": 4,
-      "maxTargets": 1
+      "target": {
+        "type": "any"
+      },
+      "amount": 4
     }
-  ]  
+  ]
 }

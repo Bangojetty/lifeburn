@@ -9,9 +9,10 @@
   "stackEffects": [
     {
       "effect": "dealDamage",
-      "targetType": "any",
+      "target": {
+        "type": "any"
+      },
       "amount": 2,
-      "maxTargets": 1,
       "amountModifier": "+1",
       "modifierConditions": [
         {

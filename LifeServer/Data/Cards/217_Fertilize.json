@@ -37,7 +37,9 @@
       "effects": [
         {
           "effect": "addCounter",
-          "targetType": "summon",
+          "target": {
+            "type": "summon"
+          },
           "tribe": "treefolk",
           "counterType": "oneOne"
         }

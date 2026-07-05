@@ -110,9 +110,7 @@ public class GameMatch {
     private Effect? currentOptionalEffect;
     
     // additional costs
-    private List<TriggeredEffect> triggersWithCosts = new();
     private int cardAdditionalCostAmount;
-    private TriggeredEffect? currentTriggerForRevealCost;
 
     // effect choices
     private Dictionary<List<Effect>, Effect> choiceEffects = new();
@@ -1309,7 +1307,7 @@ public class GameMatch {
 
             Debug.Assert(currentPlayerToPassTo != null, "there is no currentPlayerToPassTo");
             if (optionalTriggers.Count == 0) {
-                HandleTriggers(optionalTriggerController, currentPlayerToPassTo, TriggerStage.AdditionalCosts);
+                HandleTriggers(optionalTriggerController, currentPlayerToPassTo, TriggerStage.Choices);
             } else {
                 // Send option event for the next optional trigger
                 TriggeredEffect nextTrigger = optionalTriggers.First();
@@ -1366,7 +1364,7 @@ public class GameMatch {
         Console.WriteLine($"[PostChoiceTargeting] Selected choice {originalChoiceIndex}, effects count: {selectedChoiceEffects.Count}");
         bool needsTargeting = false;
         foreach (Effect e in selectedChoiceEffects) {
-            Console.WriteLine($"[PostChoiceTargeting] Checking effect: {e.effect}, HasTargeting={e.HasTargeting()}, resolveTarget={e.resolveTarget}, all={e.all}, targetType={e.targetType}");
+            Console.WriteLine($"[PostChoiceTargeting] Checking effect: {e.effect}, HasTargeting={e.HasTargeting()}, resolveTarget={e.resolveTarget}, all={e.all}, targetType={e.GetTargetType()}");
             if (e.HasTargeting() && !e.resolveTarget && !e.all && e.targetBasedOn == null) {
                 List<int> possibleTargets = GetPossibleTargets(player, e);
                 Console.WriteLine($"[PostChoiceTargeting] possibleTargets={possibleTargets.Count}");
@@ -1446,24 +1444,6 @@ public class GameMatch {
         }
     }
 
-    private void ApplyAdditionalCosts(TriggeredEffect tEffect) {
-        Debug.Assert(tEffect.additionalCosts != null);
-        foreach (AdditionalCost aCost in tEffect.additionalCosts) {
-            switch (aCost.costType) {
-                case CostType.Reveal:
-                    if (aCost.amount == null && aCost.tokenType == null) {
-                        tEffect.sourceCard.Reveal();
-                    }
-                    break;
-                default:
-                    Console.WriteLine("Cost type of additional cost of type: " + aCost.costType + " for card: " +
-                                      tEffect.sourceCard.name + " is not implemented");
-                    break;
-            }
-        }
-    }
-
-
     // order of operations:
     // (turnPlayer first)
     // 1. optionals
@@ -1496,9 +1476,6 @@ public class GameMatch {
                 if (CheckForOptionalTriggers(player)) {
                     return;
                 }
-                goto case TriggerStage.AdditionalCosts;
-            case TriggerStage.AdditionalCosts:
-                if (CheckForAdditionalCosts(player)) return;
                 goto case TriggerStage.Choices;
             case TriggerStage.Choices:
                 if (CheckForChoicesTriggers(player)) return;
@@ -1566,89 +1543,6 @@ public class GameMatch {
         }
 
         return optionalTriggers.Count > 0;
-    }
-
-    private bool CheckForAdditionalCosts(Player player) {
-        // Collect all triggers with costs, but only send cost event for the first one
-        foreach (TriggeredEffect tEffect in player.controlledTriggers) {
-            if(tEffect.additionalCosts == null) continue;
-            if(!triggersWithCosts.Contains(tEffect)) triggersWithCosts.Add(tEffect);
-        }
-
-        // Only send cost event for the first trigger's first unpaid cost
-        if (triggersWithCosts.Count > 0) {
-            SendNextTriggerCostEvent(player);
-        }
-        return triggersWithCosts.Count > 0;
-    }
-
-    private void SendNextTriggerCostEvent(Player player) {
-        if (triggersWithCosts.Count == 0) return;
-        TriggeredEffect focusTrigger = triggersWithCosts.First();
-        foreach (AdditionalCost aCost in focusTrigger.additionalCosts!) {
-            if (aCost.isPaid) continue;
-
-            // Reveal costs - either auto-reveal source card or player selects from hand
-            if (aCost.costType == CostType.Reveal) {
-                // If amount is set or tribe/cardType filter, player must select cards to reveal from hand
-                if (aCost.amount > 0 || aCost.tribe != null || aCost.cardType != null) {
-                    // Get matching cards in hand
-                    List<int> selectableUids = new();
-                    foreach (Card c in player.hand) {
-                        if (aCost.tribe != null && c.tribe != aCost.tribe) continue;
-                        if (aCost.cardType != null && c.type != aCost.cardType) continue;
-                        selectableUids.Add(c.uid);
-                    }
-
-                    if (selectableUids.Count == 0) {
-                        // No valid cards to reveal - cost can't be paid, remove trigger
-                        player.controlledTriggers.Remove(focusTrigger);
-                        triggersWithCosts.Remove(focusTrigger);
-                        Console.WriteLine($"[Reveal Cost] No valid cards to reveal - trigger removed");
-                        if (triggersWithCosts.Count > 0) {
-                            SendNextTriggerCostEvent(player);
-                        } else {
-                            HandleTriggers(player, currentPlayerToPassTo!, TriggerStage.Choices);
-                        }
-                        return;
-                    }
-
-                    // Store the current trigger for when the cost selection comes back
-                    currentTriggerForRevealCost = focusTrigger;
-
-                    int revealAmount = aCost.amount > 0 ? aCost.amount : 1;
-                    string typeName = aCost.tribe?.ToString() ?? aCost.cardType?.ToString() ?? "card";
-                    string message = $"Reveal a {typeName} from your hand";
-
-                    GameEvent gEvent = GameEvent.CreateCostEvent(CostType.Reveal, revealAmount, selectableUids,
-                        new List<string> { message }, variableAmount: false);
-                    AddEventForPlayer(player, gEvent);
-                    return;
-                }
-
-                // No amount/filter - just reveal the source card
-                focusTrigger.sourceCard.Reveal();
-                GameEvent revealEvent = new GameEvent(EventType.Reveal);
-                revealEvent.focusCard = new CardDisplayData(focusTrigger.sourceCard);
-                AddEventForBothPlayers(player, revealEvent);
-                aCost.isPaid = true;
-                continue; // Check for next cost
-            }
-
-            // Sacrifice self costs are auto-paid (sacrifice the source card)
-            if (aCost.costType == CostType.Sacrifice && aCost.scope == Scope.SelfOnly) {
-                Destroy(focusTrigger.sourceCard);
-                aCost.isPaid = true;
-                continue; // Check for next cost
-            }
-
-            AddCostEvent(player, null, aCost);
-            return; // Only send one cost event at a time
-        }
-
-        // All costs paid, remove from triggersWithCosts and continue
-        triggersWithCosts.Remove(focusTrigger);
-        HandleTriggers(player, currentPlayerToPassTo!, TriggerStage.Choices);
     }
 
     private bool CheckCardForAdditionalCosts(Player player, Card focusCard) {
@@ -1946,7 +1840,7 @@ public class GameMatch {
         Console.WriteLine($"[CheckForCardTargetSelection] Card: {card.name}, stackEffects count: {card.stackEffects?.Count ?? 0}");
         if (card.stackEffects != null) {
             foreach (Effect effect in card.stackEffects) {
-                Console.WriteLine($"[CheckForCardTargetSelection] Processing effect: {effect.effect}, targetType: {effect.targetType}");
+                Console.WriteLine($"[CheckForCardTargetSelection] Processing effect: {effect.effect}, targetType: {effect.GetTargetType()}");
                 HandleEffectTargetSelection(player, effect);
             }
         }
@@ -1969,7 +1863,7 @@ public class GameMatch {
         // Use new helper methods that support both new target object and legacy fields
         int targetAmount = effect.GetTargetMax();
         int minTargetAmount = effect.GetTargetMin();
-        Console.WriteLine($"[HandleEffectTargetSelection] effect: {effect.effect}, targetType: {effect.targetType}, HasTargeting: {effect.HasTargeting()}");
+        Console.WriteLine($"[HandleEffectTargetSelection] effect: {effect.effect}, targetType: {effect.GetTargetType()}, HasTargeting: {effect.HasTargeting()}");
         // Skip if no targeting or if effect targets all (no individual selection needed)
         if (!effect.HasTargeting()) {
             Console.WriteLine($"[HandleEffectTargetSelection] Skipping - no targeting");
@@ -2064,7 +1958,7 @@ public class GameMatch {
 
         resolveTimeTargetEffect = effect;
         int targetAmount = effect.GetTargetMax();
-        int minTargetAmount = effect.minTargets ?? targetAmount;
+        int minTargetAmount = effect.GetTargetMin();
 
         // Generate message based on effect type
         string message = GenerateResolveTimeSelectionMessage(effect, targetAmount, minTargetAmount, possibleTargets.Count);
@@ -2208,12 +2102,19 @@ public class GameMatch {
         // Generate message based on effect type
         string message = effect.effect switch {
             EffectType.Sacrifice => $"Sacrifice a {effect.tokenType?.ToString()?.ToLower() ?? "token"}.",
+            EffectType.Reveal => $"Reveal a {effect.tribe?.ToString()?.ToLower() ?? effect.cardType?.ToString()?.ToLower() ?? "card"} from your hand.",
             _ => "Select a target for the cost."
+        };
+
+        CostType costType = effect.effect switch {
+            EffectType.Sacrifice => CostType.Sacrifice,
+            EffectType.Reveal => CostType.Reveal,
+            _ => CostType.Discard
         };
 
         // Create a cost event (uses same client-side handling as other costs)
         GameEvent gEvent = GameEvent.CreateCostEvent(
-            effect.effect == EffectType.Sacrifice ? CostType.Sacrifice : CostType.Discard,
+            costType,
             1,  // amount
             selectableUids,
             new List<string> { message }
@@ -6320,39 +6221,6 @@ private void ApplySpellburn(Player player, bool isScorch) {
             return;
         }
 
-        // reveal cost selection for triggered effects (additionalCosts with CostType.Reveal)
-        if (currentTriggerForRevealCost != null) {
-            Console.WriteLine($"[RevealCost] Processing selection, {selectedCards?.Count ?? 0} cards selected");
-            TriggeredEffect triggerEffect = currentTriggerForRevealCost;
-            currentTriggerForRevealCost = null;
-
-            // Reveal the selected cards
-            foreach (Card c in selectedCards) {
-                c.Reveal();
-                GameEvent revealEvent = new GameEvent(EventType.Reveal);
-                revealEvent.focusCard = new CardDisplayData(c);
-                AddEventForBothPlayers(player, revealEvent);
-            }
-
-            // Mark the reveal cost as paid
-            if (triggerEffect.additionalCosts != null) {
-                foreach (AdditionalCost aCost in triggerEffect.additionalCosts) {
-                    if (aCost.costType == CostType.Reveal && !aCost.isPaid) {
-                        aCost.isPaid = true;
-                        break;
-                    }
-                }
-            }
-
-            // Continue processing remaining costs
-            triggersWithCosts.Remove(triggerEffect);
-            if (!triggersWithCosts.Contains(triggerEffect)) {
-                triggersWithCosts.Insert(0, triggerEffect); // Re-add at front to check for more costs
-            }
-            SendNextTriggerCostEvent(player);
-            return;
-        }
-
         // cost effect selection at resolve time (for isCost effects that need user selection)
         if (costEffectForSelection != null) {
             Console.WriteLine($"[CostEffect] Processing selection, {selectedCards?.Count ?? 0} cards selected");
@@ -6479,32 +6347,6 @@ private void ApplySpellburn(Player player, bool isScorch) {
             PayCost(player, costToUse, selectedCards);
             AttemptToActivate(controller, currentActivatedEffect, ActivationStage.Choices);
             return;
-        }
-
-        // triggers
-        if (triggersWithCosts.Count > 0) {
-            TriggeredEffect focusTrigger = triggersWithCosts.First();
-            foreach (AdditionalCost aCost in focusTrigger.additionalCosts!) {
-                if (aCost.isPaid) continue;
-                // Validate that enough cards were selected for the cost
-                int requiredAmount = aCost.amount;
-                if (selectedCards == null || selectedCards.Count < requiredAmount) {
-                    Console.WriteLine($"Cost not met: required {requiredAmount}, got {selectedCards?.Count ?? 0}");
-                    return;
-                }
-                PayCost(player, aCost.costType, selectedCards);
-                aCost.isPaid = true;
-                if (focusTrigger.additionalCosts.Last() == aCost) triggersWithCosts.Remove(focusTrigger);
-                break;
-            }
-
-            if (triggersWithCosts.Count == 0) {
-                Debug.Assert(currentPlayerToPassTo != null, "there is no current player to pass to");
-                HandleTriggers(player, currentPlayerToPassTo, TriggerStage.Choices);
-            } else {
-                // Send the next cost event with fresh selectable cards
-                SendNextTriggerCostEvent(player);
-            }
         }
 
         // card casts

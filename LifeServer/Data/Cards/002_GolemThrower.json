@@ -15,12 +15,14 @@
       "effects": [
         {
           "effect": "choose",
-		  "choiceIndex": 0,
+          "choiceIndex": 0,
           "choices": [
             [
               {
                 "effect": "dealDamage",
-                "targetType": "summon",
+                "target": {
+                  "type": "summon"
+                },
                 "amount": 1
               }
             ],

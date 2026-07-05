@@ -7,13 +7,15 @@
   "rarity": "common",
   "description": "Counter target summon spell. Gain 1 LP.",
   "stackEffects": [
-  {
-    "effect": "counter",
-    "targetType": "summon"
-  },
-  {
-    "effect": "gainLife",
-    "amount": 1
-  }
+    {
+      "effect": "counter",
+      "target": {
+        "type": "summon"
+      }
+    },
+    {
+      "effect": "gainLife",
+      "amount": 1
+    }
   ]
 }

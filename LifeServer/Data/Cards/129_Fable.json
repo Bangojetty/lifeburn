@@ -21,7 +21,9 @@
       "deckDestinations": [
         {
           "destination": "top",
-          "select": { "upToAll": true },
+          "select": {
+            "upToAll": true
+          },
           "ordering": "any"
         },
         {
@@ -33,7 +35,9 @@
     },
     {
       "effect": "mill",
-      "upTo": 3
+      "select": {
+        "max": 3
+      }
     }
   ]
 }

@@ -9,7 +9,9 @@
   "stackEffects": [
     {
       "effect": "counter",
-      "targetType": "spell",
+      "target": {
+        "type": "spell"
+      },
       "additionalEffects": [
         {
           "effect": "choose",

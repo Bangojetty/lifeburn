@@ -18,7 +18,9 @@
         {
           "effect": "addCounter",
           "counterType": "oneOne",
-          "targetType": "summon",
+          "target": {
+            "type": "summon"
+          },
           "tribe": "goblin"
         }
       ]
@@ -31,7 +33,9 @@
       "effects": [
         {
           "effect": "dealDamage",
-          "targetType": "any",
+          "target": {
+            "type": "any"
+          },
           "amountBasedOn": "finalAttack",
           "description": "Deal damage equal to Goblin Tactician's power."
         }

@@ -9,10 +9,12 @@
   "stackEffects": [
     {
       "effect": "destroy",
-      "targetType": "summon",
+      "target": {
+        "type": "summon"
+      },
       "restrictions": [
-	  "defenseGreaterThanAttack"
-	  ]	  
+        "defenseGreaterThanAttack"
+      ]
     }
-  ] 
+  ]
 }

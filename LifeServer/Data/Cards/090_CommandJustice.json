@@ -15,7 +15,9 @@
         [
           {
             "effect": "counter",
-            "targetType": "spell"
+            "target": {
+              "type": "spell"
+            }
           }
         ],
         [
@@ -33,7 +35,9 @@
         [
           {
             "effect": "sendToZone",
-            "targetType": "graveyard",
+            "target": {
+              "type": "graveyard"
+            },
             "destination": "exile",
             "all": true
           }

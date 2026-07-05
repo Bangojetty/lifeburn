@@ -151,7 +151,7 @@ public class StackObj {
                     // Keep the player UID in targetUids[0] so Effect.Resolve can determine resolvedAffectedPlayer
                     // The discard loop in Effect.Resolve will skip player UIDs
                     discardingPlayer = gameMatch.PlayerByUid(currentEffect.targetUids[0]);
-                } else if (currentEffect.targetType == TargetType.Opponent) {
+                } else if (currentEffect.GetTargetType() == TargetType.Opponent) {
                     discardingPlayer = gameMatch.GetOpponent(player);
                 } else if (currentEffect.affectedPlayer == "opponent") {
                     discardingPlayer = gameMatch.GetOpponent(player);
@@ -192,11 +192,12 @@ public class StackObj {
                 // If no input needed (no matching cards), skip this effect
                 continue;
             }
-            // Handle mill/draw with upTo - need player to select amount
+            // Handle mill/draw with an amount-style select ("mill up to 3") - need player to select amount
             if ((currentEffect.effect == EffectType.Mill || currentEffect.effect == EffectType.Draw) &&
-                currentEffect.upTo != null && currentEffect.amount == null) {
-                Console.WriteLine($"[ResolveStackObj] Effect {i} ({currentEffect.effect}) needs amount selection (upTo={currentEffect.upTo}), deck.Count={player.deck.Count}");
-                int maxAmount = currentEffect.upTo.Value;
+                currentEffect.select != null && currentEffect.select.zone == null && currentEffect.select.zones == null &&
+                currentEffect.amount == null) {
+                Console.WriteLine($"[ResolveStackObj] Effect {i} ({currentEffect.effect}) needs amount selection (max={currentEffect.GetSelectMax()}), deck.Count={player.deck.Count}");
+                int maxAmount = currentEffect.GetSelectMax();
                 // For mill, cap at deck size
                 if (currentEffect.effect == EffectType.Mill) {
                     maxAmount = Math.Min(maxAmount, player.deck.Count);

@@ -15,11 +15,13 @@
       "effects": [
         {
           "effect": "castCard",
-          "targetType": "cardInHand",
+          "target": {
+            "type": "cardInHand"
+          },
           "cardType": "summon",
           "tribe": "treefolk"
         }
       ]
     }
-  ] 
+  ]
 }

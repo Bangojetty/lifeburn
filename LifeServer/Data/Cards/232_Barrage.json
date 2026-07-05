@@ -16,7 +16,9 @@
     },
     {
       "effect": "dealDamage",
-      "targetType": "any",
+      "target": {
+        "type": "any"
+      },
       "amountBasedOn": "goblinsControlled"
     }
   ]

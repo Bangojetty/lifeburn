@@ -10,11 +10,15 @@
     {
       "effect": "discard",
       "affectedPlayer": "opponent",
-      "targetType": "opponentHand",
-      "restrictions": ["nonSummon"],
+      "target": {
+        "type": "opponentHand",
+        "min": 0,
+        "max": 99
+      },
+      "restrictions": [
+        "nonSummon"
+      ],
       "resolveTarget": true,
-      "minTargets": 0,
-      "maxTargets": 99,
       "additionalEffects": [
         {
           "effect": "loseLife",

@@ -9,10 +9,12 @@
   "stackEffects": [
     {
       "effect": "destroy",
-      "targetType": "permanent",
+      "target": {
+        "type": "permanent"
+      },
       "restrictions": [
-	  "nonTreefolk"
-	  ],
+        "nonTreefolk"
+      ],
       "additionalEffects": [
         {
           "effect": "gainLife",

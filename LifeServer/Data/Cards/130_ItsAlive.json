@@ -7,28 +7,30 @@
   "rarity": "common",
   "description": "Lose half your LPs, rounded down. Return target summon from your graveyard to play. If it's a shadow summon, gain 5 LPs.",
   "stackEffects": [
-  {
-    "effect": "loseLife",
-    "amountBasedOn": "lifeTotal",
-    "amountModifier": "/2down"
-  },
-  {
-    "effect": "sendToZone",
-    "targetType": "cardInGraveyard",
-    "cardType": "summon",
-    "destination": "play",
-    "additionalEffects": [
-      {
-        "conditions": [
-          {
-            "condition": "rootTargetTribe",
-            "tribe": "shadow"
-          }
-        ],
-        "effect": "gainLife",
-        "amount": 5
-      }
-    ]
-  }
+    {
+      "effect": "loseLife",
+      "amountBasedOn": "lifeTotal",
+      "amountModifier": "/2down"
+    },
+    {
+      "effect": "sendToZone",
+      "target": {
+        "type": "cardInGraveyard"
+      },
+      "cardType": "summon",
+      "destination": "play",
+      "additionalEffects": [
+        {
+          "conditions": [
+            {
+              "condition": "rootTargetTribe",
+              "tribe": "shadow"
+            }
+          ],
+          "effect": "gainLife",
+          "amount": 5
+        }
+      ]
+    }
   ]
 }

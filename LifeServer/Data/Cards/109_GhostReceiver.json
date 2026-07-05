@@ -29,7 +29,9 @@
         },
         {
           "effect": "mill",
-          "upTo": 3
+          "select": {
+            "max": 3
+          }
         }
       ]
     }

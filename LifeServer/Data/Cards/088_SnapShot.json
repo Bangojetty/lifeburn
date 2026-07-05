@@ -9,7 +9,9 @@
   "stackEffects": [
     {
       "effect": "sendToZone",
-      "targetType": "summon",
+      "target": {
+        "type": "summon"
+      },
       "destination": "hand",
       "allOfSameName": true,
       "ownersControl": true

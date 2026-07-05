@@ -9,7 +9,9 @@
   "stackEffects": [
     {
       "effect": "grantPassive",
-      "targetType": "summon",
+      "target": {
+        "type": "summon"
+      },
       "passives": [
         {
           "passive": "changeStats",

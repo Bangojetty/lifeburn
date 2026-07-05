@@ -9,7 +9,9 @@
   "stackEffects": [
     {
       "effect": "sendToZone",
-      "targetType": "graveyard",
+      "target": {
+        "type": "graveyard"
+      },
       "amount": 1,
       "destination": "exile"
     },

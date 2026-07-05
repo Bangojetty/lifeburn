@@ -7,10 +7,12 @@
   "rarity": "common",
   "description": "Target opponent discards 2.",
   "stackEffects": [
-  {
-    "effect": "discard",
-    "targetType": "opponent",
-    "amount": 2
-  }
+    {
+      "effect": "discard",
+      "target": {
+        "type": "opponent"
+      },
+      "amount": 2
+    }
   ]
 }

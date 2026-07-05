@@ -7,13 +7,17 @@
   "rarity": "common",
   "description": "Target opponent reveals all summons from hand. You choose one for them to discard.",
   "stackEffects": [
-  {
-    "effect": "discard",
-    "affectedPlayer": "opponent",
-    "targetType": "opponentHand",
-    "restrictions": ["summon"],
-    "resolveTarget": true,
-    "amount": 1
-  }
+    {
+      "effect": "discard",
+      "affectedPlayer": "opponent",
+      "target": {
+        "type": "opponentHand"
+      },
+      "restrictions": [
+        "summon"
+      ],
+      "resolveTarget": true,
+      "amount": 1
+    }
   ]
 }

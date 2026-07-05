@@ -5,7 +5,9 @@
   "type": "summon",
   "attack": 2,
   "defense": 1,
-  "keywords": ["dive"],
+  "keywords": [
+    "dive"
+  ],
   "tribe": "merfolk",
   "rarity": "common",
   "description": "When Merfolk Scoper enters play, target opponent reveals their hand. You choose a non-summon card from their hand to exile until Merfolk Scoper leaves play.",
@@ -18,8 +20,12 @@
       "effects": [
         {
           "effect": "detain",
-          "targetType": "opponentHand",
-          "restrictions": ["nonSummon"],
+          "target": {
+            "type": "opponentHand"
+          },
+          "restrictions": [
+            "nonSummon"
+          ],
           "resolveTarget": true
         }
       ]

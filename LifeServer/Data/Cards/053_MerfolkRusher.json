@@ -26,7 +26,9 @@
             [
               {
                 "effect": "sendToZone",
-                "targetType": "summon",
+                "target": {
+                  "type": "summon"
+                },
                 "tribe": "merfolk",
                 "destination": "hand"
               }

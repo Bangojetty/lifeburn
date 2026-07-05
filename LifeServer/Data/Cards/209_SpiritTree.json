@@ -5,7 +5,9 @@
   "type": "summon",
   "attack": 1,
   "defense": 4,
-  "keywords": ["sprout"],
+  "keywords": [
+    "sprout"
+  ],
   "tribe": "treefolk",
   "rarity": "common",
   "description": " When Spirit Tree enters play, draw a card, then exile a card from a graveyard.",
@@ -20,7 +22,9 @@
         },
         {
           "effect": "sendToZone",
-          "targetType": "graveyard",
+          "target": {
+            "type": "graveyard"
+          },
           "destination": "exile",
           "amount": 1
         }

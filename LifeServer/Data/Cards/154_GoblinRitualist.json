@@ -18,9 +18,13 @@
       "effects": [
         {
           "effect": "castCard",
-          "targetType": "cardInGraveyard",
+          "target": {
+            "type": "cardInGraveyard"
+          },
           "cardType": "spell",
-          "restrictions": ["cost"],
+          "restrictions": [
+            "cost"
+          ],
           "restrictionMin": 1,
           "restrictionMax": 3
         }

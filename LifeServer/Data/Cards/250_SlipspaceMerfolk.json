@@ -5,7 +5,9 @@
   "type": "summon",
   "attack": 3,
   "defense": 1,
-  "keywords": ["dive"],
+  "keywords": [
+    "dive"
+  ],
   "tribe": "merfolk",
   "rarity": "common",
   "description": "Sacrifice Slipspace Merfolk: Return target permanent to its owner's hand.",
@@ -16,7 +18,9 @@
       "effects": [
         {
           "effect": "sendToZone",
-          "targetType": "permanent",
+          "target": {
+            "type": "permanent"
+          },
           "destination": "hand"
         }
       ]

@@ -5,7 +5,9 @@
   "type": "summon",
   "attack": 1,
   "defense": 1,
-  "keywords": ["blitz"],
+  "keywords": [
+    "blitz"
+  ],
   "tribe": "goblin",
   "rarity": "common",
   "description": "When spear gob enters play, deal 1 damage to any target.",
@@ -16,8 +18,10 @@
       "effects": [
         {
           "effect": "dealDamage",
-          "targetType": "any",
-          "amount": 1 
+          "target": {
+            "type": "any"
+          },
+          "amount": 1
         }
       ]
     }

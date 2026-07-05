@@ -3,16 +3,19 @@
   "name": "Burst Lightning",
   "cost": 1,
   "type": "spell",
-  "keywords": ["exhaust"],
+  "keywords": [
+    "exhaust"
+  ],
   "tribe": "goblin",
   "rarity": "common",
   "description": "Deal 2 damage to target summon.\nRepeat: pay 2 LP",
   "stackEffects": [
     {
       "effect": "dealDamage",
-      "targetType": "summon",
+      "target": {
+        "type": "summon"
+      },
       "amount": 2,
-      "maxTargets": 1,
       "repeatCostType": "loseLife",
       "repeatCostAmount": 2,
       "repeatSameTarget": true,

@@ -5,7 +5,9 @@
   "type": "summon",
   "attack": 3,
   "defense": 3,
-  "keywords": ["blitz"],
+  "keywords": [
+    "blitz"
+  ],
   "tribe": "goblin",
   "rarity": "common",
   "description": "When Gobby enters play, target opponent draws a card.",
@@ -16,7 +18,9 @@
       "effects": [
         {
           "effect": "draw",
-          "targetType": "opponent",
+          "target": {
+            "type": "opponent"
+          },
           "amount": 1
         }
       ]

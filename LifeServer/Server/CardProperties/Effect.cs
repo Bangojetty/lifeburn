@@ -40,10 +40,6 @@ public class Effect {
     // New unified selection object for selecting cards/amounts
     public Select? select;
 
-    // Legacy fields - kept for backwards compatibility
-    public int? minTargets;
-    public int? maxTargets;
-    public int? upTo;
     public bool attacking;
     public bool ownersControl;
     public List<PassiveEffect>? passives;
@@ -68,7 +64,6 @@ public class Effect {
     public PassiveEffect? tokenPassive;
     public List<DeckDestination>? deckDestinations;
     public DeckDestinationType? deckDestination;  // simpler single destination (top/bottom)
-    public TargetType? targetType;
     public bool targetPlayersZone;  // If true, target a player but affect cards in their zone (from targetZones)
     public string? counterType;
     public TargetBasedOn? targetBasedOn;
@@ -138,9 +133,6 @@ public class Effect {
             sameZone = sameZone,
             target = target,  // Reference copy is fine, Target is read-only config
             select = select,  // Reference copy is fine, Select is read-only config
-            minTargets = minTargets,
-            maxTargets = maxTargets,
-            upTo = upTo,
             attacking = attacking,
             ownersControl = ownersControl,
             passives = passives?.ToList(),
@@ -165,7 +157,6 @@ public class Effect {
             tokenPassive = tokenPassive,
             deckDestinations = deckDestinations?.ToList(),
             deckDestination = deckDestination,
-            targetType = targetType,
             targetPlayersZone = targetPlayersZone,
             counterType = counterType,
             targetBasedOn = targetBasedOn,
@@ -214,8 +205,11 @@ public class Effect {
         Effect cloned = e.Clone();
         cloned.subjectUid = sourceCard.uid;
         cloned.sourceCard = sourceCard;
-        // Don't default to 1 if upTo is set - these effects need player amount selection
-        if (cloned.upTo == null) {
+        // Don't default amount to 1 for mill/draw with an amount-style select ("mill up to 3") -
+        // those effects need player amount selection, which requires amount to stay null
+        bool needsAmountSelection = cloned.select != null && cloned.select.zone == null && cloned.select.zones == null &&
+                                    (cloned.effect == EffectType.Mill || cloned.effect == EffectType.Draw);
+        if (!needsAmountSelection) {
             cloned.amount ??= 1;
         }
         if (cloned.additionalEffects != null) {
@@ -230,17 +224,17 @@ public class Effect {
     #region Targeting and Selection Helpers
 
     /// <summary>
-    /// Gets the target type, preferring new target object over legacy targetType field.
+    /// Gets the target type from the target object.
     /// </summary>
     public TargetType? GetTargetType() {
-        return target?.type ?? targetType;
+        return target?.type;
     }
 
     /// <summary>
     /// Returns true if this effect requires targeting (in-play objects).
     /// </summary>
     public bool HasTargeting() {
-        return target != null || targetType != null;
+        return target != null;
     }
 
     /// <summary>
@@ -251,41 +245,34 @@ public class Effect {
     }
 
     /// <summary>
-    /// Gets the minimum number of targets, considering both new and legacy fields.
+    /// Gets the minimum number of targets (defaults to max for exact targeting).
     /// </summary>
     public int GetTargetMin() {
-        if (target != null) return target.GetMin();
-        return minTargets ?? GetTargetMax();
+        return target?.GetMin() ?? GetTargetMax();
     }
 
     /// <summary>
-    /// Gets the maximum number of targets, considering both new and legacy fields.
+    /// Gets the maximum number of targets (defaults to 1).
     /// </summary>
     public int GetTargetMax() {
-        if (target != null) return target.GetMax();
-        // For legacy targeting, use maxTargets if set, otherwise fall back to amount (e.g., "exile 2 cards")
-        return maxTargets ?? amount ?? 1;
+        return target?.GetMax() ?? 1;
     }
 
     /// <summary>
-    /// Gets the minimum selection count, considering both new and legacy fields.
+    /// Gets the minimum selection count.
     /// For effects like mill, this is the minimum amount to mill.
     /// </summary>
     public int GetSelectMin() {
         if (select != null) return select.GetMin();
-        // Legacy: upTo implies min of 0
-        if (upTo != null) return 0;
         return GetSelectMax();
     }
 
     /// <summary>
-    /// Gets the maximum selection count, considering both new and legacy fields.
+    /// Gets the maximum selection count (defaults to 1).
     /// For effects like mill, this is the maximum amount to mill.
     /// </summary>
     public int GetSelectMax() {
-        if (select != null) return select.GetMax();
-        // Legacy: upTo is the max, otherwise use maxTargets for selection
-        return upTo ?? maxTargets ?? 1;
+        return select?.GetMax() ?? 1;
     }
 
     /// <summary>
@@ -304,14 +291,6 @@ public class Effect {
         if (select != null) return select.GetZones();
         if (zone != null) return new List<Zone> { zone.Value };
         return new List<Zone>();
-    }
-
-    /// <summary>
-    /// Returns true if selection is optional (min is 0).
-    /// </summary>
-    public bool IsSelectionOptional() {
-        if (select != null) return select.IsOptional();
-        return upTo != null || (minTargets == null && maxTargets != null);
     }
 
     #endregion
@@ -346,7 +325,7 @@ public class Effect {
                 // Reveal self is always payable if sourceCard exists
                 if (scope == Scope.SelfOnly) return sourceCard != null;
                 // Reveal a card from hand - need at least one matching card
-                if (targetType == TargetType.CardInHand) {
+                if (GetTargetType() == TargetType.CardInHand) {
                     Qualifier revealQualifier = new Qualifier(this, player);
                     return gameMatch.GetQualifiedCards(player.hand, revealQualifier).Count > 0;
                 }
@@ -377,7 +356,7 @@ public class Effect {
                 // Reveal self is auto-pay
                 if (scope == Scope.SelfOnly) return false;
                 // Reveal from hand needs selection
-                if (targetType == TargetType.CardInHand) return true;
+                if (GetTargetType() == TargetType.CardInHand) return true;
                 return false;
             case EffectType.Sacrifice:
                 // Sacrifice self is auto-pay
@@ -401,7 +380,7 @@ public class Effect {
 
         switch (effect) {
             case EffectType.Reveal:
-                if (targetType == TargetType.CardInHand) {
+                if (GetTargetType() == TargetType.CardInHand) {
                     Qualifier revealQualifier = new Qualifier(this, player);
                     foreach (Card c in gameMatch.GetQualifiedCards(player.hand, revealQualifier)) {
                         selectableUids.Add(c.uid);
@@ -611,13 +590,13 @@ public class Effect {
                         affectedUids.Add(uid);
                     }
                 } else if (all) {
-                    // Deal damage to all targets matching targetType/cardType
-                    if (targetType == TargetType.Summon || cardType is CardType.Summon) {
+                    // Deal damage to all targets matching GetTargetType()/cardType
+                    if (GetTargetType() == TargetType.Summon || cardType is CardType.Summon) {
                         foreach (Card c in gameMatch.GetQualifiedCards(gameMatch.GetAllSummonsInPlay(), eQualifier)) {
                             gameMatch.DealDamage(c.uid, (int)amount, isSpellDamage: true, restrictions: restrictions);
                             affectedUids.Add(c.uid);
                         }
-                    } else if (targetType == TargetType.Opponent) {
+                    } else if (GetTargetType() == TargetType.Opponent) {
                         // Deal damage to each opponent (in 1v1, just the opponent)
                         Player opponent = gameMatch.GetOpponent(effectOwner);
                         gameMatch.DealDamage(opponent.uid, (int)amount, isSpellDamage: true, restrictions: restrictions);
@@ -671,7 +650,7 @@ public class Effect {
                 break;
             case EffectType.GrantPassive:
                 Debug.Assert(passives != null, "there are no passive for this GrantPassive effect");
-                Console.WriteLine($"GrantPassive: sourceCard={sourceCard?.name ?? "NULL"}, scope={scope}, targetType={targetType}, targetUids.Count={targetUids.Count}, subjectUid={subjectUid}");
+                Console.WriteLine($"GrantPassive: sourceCard={sourceCard?.name ?? "NULL"}, scope={scope}, GetTargetType()={GetTargetType()}, targetUids.Count={targetUids.Count}, subjectUid={subjectUid}");
                 affectedUids = new List<int>();
                 if (targetUids.Count > 0) {
                     // Apply to specific targets
@@ -684,11 +663,11 @@ public class Effect {
                     Console.WriteLine($"  GrantPassive using subjectUid={subjectUid}");
                     GrantPassive(gameMatch.cardByUid[subjectUid.Value]);
                     affectedUids.Add(subjectUid.Value);
-                } else if (targetType != null && !all) {
+                } else if (GetTargetType() != null && !all) {
                     // Effect required a target but had none - fizzle (do nothing)
-                    Console.WriteLine($"  GrantPassive fizzled - targetType={targetType} but no targets selected");
+                    Console.WriteLine($"  GrantPassive fizzled - GetTargetType()={GetTargetType()} but no targets selected");
                 } else {
-                    // Apply to all qualified summons (for "all" effects or effects without targetType)
+                    // Apply to all qualified summons (for "all" effects or effects without GetTargetType())
                     var allSummons = gameMatch.GetAllSummonsInPlay();
                     Console.WriteLine($"  All summons in play: {string.Join(", ", allSummons.Select(s => s.name))}");
                     foreach (Card c in gameMatch.GetQualifiedCards(allSummons, eQualifier)) {
@@ -779,7 +758,7 @@ public class Effect {
                 Debug.Assert(sourceCard != null, "there is no sourceCard for this Sacrifice Effect");
                 if (scope == Scope.SelfOnly) {
                     gameMatch.Destroy(sourceCard);
-                } else if (targetType == TargetType.Opponent && targetBasedOn == TargetBasedOn.Weakest) {
+                } else if (GetTargetType() == TargetType.Opponent && targetBasedOn == TargetBasedOn.Weakest) {
                     // Target opponent sacrifices their weakest summon
                     // targetUids[0] contains the targeted opponent's player UID
                     Player targetedOpponent = targetUids.Count > 0
@@ -789,7 +768,7 @@ public class Effect {
                     if (weakest != null) {
                         gameMatch.Destroy(weakest);
                     }
-                } else if (targetType == TargetType.Opponent && targetBasedOn == TargetBasedOn.Strongest) {
+                } else if (GetTargetType() == TargetType.Opponent && targetBasedOn == TargetBasedOn.Strongest) {
                     // Target opponent sacrifices their strongest summon
                     Player targetedOpponent = targetUids.Count > 0
                         ? gameMatch.GetPlayerByUid(targetUids[0]) ?? gameMatch.GetOpponent(effectOwner)
@@ -1216,8 +1195,8 @@ public class Effect {
     
 
     private void Mill(GameMatch gameMatch, Player affectedPlayer) {
-        // Use amount if set, otherwise fallback to upTo (for cases where selection was skipped)
-        int millAmount = amount ?? upTo ?? 0;
+        // Use amount if set, otherwise fallback to select.max (for cases where selection was skipped)
+        int millAmount = amount ?? select?.max ?? 0;
         if (millAmount > 0) {
             gameMatch.Mill(affectedPlayer, millAmount);
         }
@@ -1719,7 +1698,7 @@ private string GetDDMessage(DeckDestination dd, int totalCards) {
         string pronoun = useOpponentPronoun ? "opponent " : "";
         string tempString = "error: no effect string";
         string target = "card";
-        // set default target for effects with targetType or scope=SelfOnly
+        // set default target for effects with GetTargetType() or scope=SelfOnly
         if (cardType != null) target = cardType.ToString()!;
         if (tribe != null) target = tribe.ToString()!;
         Debug.Assert(sourceCard != null, "no sourceCard for this effect");
@@ -1773,7 +1752,7 @@ private string GetDDMessage(DeckDestination dd, int totalCards) {
                 break;
             case EffectType.Draw:
                 plurality = amount == 1 ? "" : "s";
-                if (targetType == TargetType.Opponent) {
+                if (GetTargetType() == TargetType.Opponent) {
                     tempString = "target opponent draws " + amount + " card" + plurality + ".";
                 } else {
                     tempString = pronoun + "draw" + verbAgreement + amount + " card" + plurality + ".";
@@ -1842,7 +1821,7 @@ private string GetDDMessage(DeckDestination dd, int totalCards) {
                 break;
             case EffectType.SendToZone:
                 // Handle exile from graveyard specially
-                if (destination == Zone.Exile && targetType == TargetType.CardInGraveyard) {
+                if (destination == Zone.Exile && GetTargetType() == TargetType.CardInGraveyard) {
                     int exileAmount = amount ?? 1;
                     string plural = exileAmount == 1 ? "" : "s";
                     tempString = "exile " + exileAmount + " card" + plural + " from a graveyard.";
@@ -1854,8 +1833,8 @@ private string GetDDMessage(DeckDestination dd, int totalCards) {
                     targetDesc = targetAmount == 1 ? "a " + tribe.ToString()!.ToLower() : targetAmount + " " + tribe.ToString()!.ToLower() + "s";
                 } else if (cardType != null) {
                     targetDesc = targetAmount == 1 ? "a " + cardType.ToString()!.ToLower() : targetAmount + " " + cardType.ToString()!.ToLower() + "s";
-                } else if (targetType != null) {
-                    targetDesc = "target " + targetType.ToString()!.ToLower();
+                } else if (GetTargetType() != null) {
+                    targetDesc = "target " + GetTargetType().ToString()!.ToLower();
                 } else {
                     targetDesc = targetAmount == 1 ? "a card" : targetAmount + " cards";
                 }
@@ -1895,7 +1874,7 @@ private string GetDDMessage(DeckDestination dd, int totalCards) {
                 if (restrictions != null && restrictions.Count > 0) {
                     gainControlTargetDesc += string.Join(" ", restrictions.Select(r => r.ToString().ToLower().Replace("non", "non-"))) + " ";
                 }
-                gainControlTargetDesc += targetType?.ToString().ToLower() ?? "permanent";
+                gainControlTargetDesc += GetTargetType()?.ToString().ToLower() ?? "permanent";
                 tempString = "gain control of " + gainControlTargetDesc + ".";
                 break;
             case EffectType.LoseLife:
@@ -1929,7 +1908,7 @@ private string GetDDMessage(DeckDestination dd, int totalCards) {
                     tempString = "reveal " + string.Join(", ", cardNames);
                 } else if (subjectUid != null) {
                     tempString = "reveal " + gameMatch.cardByUid[(int)subjectUid].name;
-                } else if (targetType == TargetType.CardInHand) {
+                } else if (GetTargetType() == TargetType.CardInHand) {
                     string tribeStr = tribe != null ? tribe.ToString()!.ToLower() + " " : "";
                     tempString = "reveal a " + tribeStr + "card from your hand";
                 } else {
@@ -1974,7 +1953,7 @@ private string GetDDMessage(DeckDestination dd, int totalCards) {
                 }
                 break;
             case EffectType.Sacrifice:
-                if (targetType == TargetType.Opponent) {
+                if (GetTargetType() == TargetType.Opponent) {
                     tempString = "choose target opponent";
                 } else if (tokenType != null && select?.upToAll == true) {
                     // Sacrifice any number of tokens with additional effect
@@ -2027,8 +2006,8 @@ private string GetDDMessage(DeckDestination dd, int totalCards) {
                 }
                 break;
             case EffectType.Counter:
-                // Build counter description based on targetType and restrictions
-                string counterTarget = targetType?.ToString()?.ToLower() ?? "spell";
+                // Build counter description based on GetTargetType() and restrictions
+                string counterTarget = GetTargetType()?.ToString()?.ToLower() ?? "spell";
                 string restrictionDesc = "";
                 if (restrictions != null && restrictions.Count > 0) {
                     foreach (Restriction r in restrictions) {
@@ -2083,7 +2062,7 @@ private string GetDDMessage(DeckDestination dd, int totalCards) {
                 break;
             case EffectType.Discard:
                 string randomStr = random ? " at random" : "";
-                if (targetType == TargetType.Opponent) {
+                if (GetTargetType() == TargetType.Opponent) {
                     plurality = amount == 1 ? "" : "s";
                     tempString = "target opponent discards " + amount + " card" + plurality + randomStr + ".";
                 } else if (select?.upToAll == true) {
@@ -2097,8 +2076,8 @@ private string GetDDMessage(DeckDestination dd, int totalCards) {
                 tempString = pronoun + "take" + verbAgreement + " an extra turn after this one.";
                 break;
             case EffectType.Destroy:
-                if (targetType != null) {
-                    tempString = "destroy target " + targetType.ToString()!.ToLower() + ".";
+                if (GetTargetType() != null) {
+                    tempString = "destroy target " + GetTargetType().ToString()!.ToLower() + ".";
                 } else if (all) {
                     string destroyTarget = cardType?.ToString()?.ToLower() ?? "summon";
                     tempString = "destroy all " + destroyTarget + "s.";

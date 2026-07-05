@@ -3,19 +3,23 @@
   "name": "Fisher",
   "cost": 3,
   "type": "spell",
-  "keywords": ["finale"],
+  "keywords": [
+    "finale"
+  ],
   "tribe": "shadow",
   "rarity": "common",
   "description": "Target opponent sacrifices their weakest summon. Mill 2.",
   "stackEffects": [
-  {
-    "effect": "sacrifice",
-    "targetType": "opponent",
-    "targetBasedOn": "weakest"
-  },
-  {
-    "effect": "mill",
-    "amount": 2 
-  }
-  ] 
+    {
+      "effect": "sacrifice",
+      "target": {
+        "type": "opponent"
+      },
+      "targetBasedOn": "weakest"
+    },
+    {
+      "effect": "mill",
+      "amount": 2
+    }
+  ]
 }

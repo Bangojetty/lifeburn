@@ -14,7 +14,9 @@
         [
           {
             "effect": "counter",
-            "targetType": "summon",
+            "target": {
+              "type": "summon"
+            },
             "additionalEffects": [
               {
                 "effect": "draw",
@@ -27,7 +29,9 @@
         [
           {
             "effect": "counter",
-            "targetType": "spell",
+            "target": {
+              "type": "spell"
+            },
             "restrictions": [
               "nonSummon"
             ],

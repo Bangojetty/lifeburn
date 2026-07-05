@@ -9,19 +9,21 @@
   "rarity": "common",
   "description": "When Merfolk Deceiver enters play, return target summon with keywords or abilities to its owner's hand.",
   "triggeredEffects": [
-  {
-    "trigger": "enteredZone",
-    "zone": "play",
-    "effects": [
-      {
-        "effect": "sendToZone",
-        "targetType": "summon",
-        "restrictions": [
-		"keywordsOrAbilities"
-		],
-        "destination": "hand" 
-      }
-    ]
-  }
-  ] 
+    {
+      "trigger": "enteredZone",
+      "zone": "play",
+      "effects": [
+        {
+          "effect": "sendToZone",
+          "target": {
+            "type": "summon"
+          },
+          "restrictions": [
+            "keywordsOrAbilities"
+          ],
+          "destination": "hand"
+        }
+      ]
+    }
+  ]
 }

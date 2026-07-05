@@ -15,9 +15,13 @@
       "effects": [
         {
           "effect": "sendToZone",
-          "targetZones": ["graveyard"],
+          "targetZones": [
+            "graveyard"
+          ],
           "destination": "exile",
-          "targetType": "player",
+          "target": {
+            "type": "player"
+          },
           "targetPlayersZone": true,
           "description": "Exile target player's graveyard"
         },

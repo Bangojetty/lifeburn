@@ -7,46 +7,50 @@
   "rarity": "common",
   "description": "Choose one: \n {c0}-Counter target summon with 1 defense and lose 2 LPs. \n {c0}-Counter target spell with 2 or less LP cost and lose 2 LPs. \n {c0}-Draw a card.",
   "stackEffects": [
-	{
-		"effect": "choose",
-		"choiceIndex": 0,
-		"choices": [
-		  [
-			{
-			  "effect": "counter",
-			  "targetType": "summon",
-			  "restrictions": [
-			  "defense"
-			  ],
-			  "restrictionMax": 1,
-			  "restrictionMin": 1
-			},
-			{
-			  "effect": "loseLife",
-			  "amount": 2 
-			}
-		  ],
-		  [
-			{
-			  "effect": "counter",
-			  "targetType": "spell",
-			  "restrictions": [
-			  "cost"
-			  ],
-			  "restrictionMax": 2 
-			},
-			{
-			  "effect": "loseLife",
-			  "amount": 2
-			}
-		  ],	
-		  [
-			{
-			  "effect": "draw",
-			  "amount": 1 
-			}
-		  ]
-		]
-	}
+    {
+      "effect": "choose",
+      "choiceIndex": 0,
+      "choices": [
+        [
+          {
+            "effect": "counter",
+            "target": {
+              "type": "summon"
+            },
+            "restrictions": [
+              "defense"
+            ],
+            "restrictionMax": 1,
+            "restrictionMin": 1
+          },
+          {
+            "effect": "loseLife",
+            "amount": 2
+          }
+        ],
+        [
+          {
+            "effect": "counter",
+            "target": {
+              "type": "spell"
+            },
+            "restrictions": [
+              "cost"
+            ],
+            "restrictionMax": 2
+          },
+          {
+            "effect": "loseLife",
+            "amount": 2
+          }
+        ],
+        [
+          {
+            "effect": "draw",
+            "amount": 1
+          }
+        ]
+      ]
+    }
   ]
 }

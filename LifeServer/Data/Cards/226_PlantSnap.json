@@ -16,8 +16,12 @@
     },
     {
       "effect": "sendToZone",
-      "targetZones": ["graveyard"],
-      "targetType": "cardInGraveyard",
+      "targetZones": [
+        "graveyard"
+      ],
+      "target": {
+        "type": "cardInGraveyard"
+      },
       "player": "any",
       "destination": "exile",
       "amount": 1

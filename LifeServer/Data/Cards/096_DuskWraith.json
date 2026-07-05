@@ -16,13 +16,23 @@
       "effects": [
         {
           "effect": "destroy",
-          "targetType": "summon",
-          "conditions": [{ "condition": "summonsInPlay" }]
+          "target": {
+            "type": "summon"
+          },
+          "conditions": [
+            {
+              "condition": "summonsInPlay"
+            }
+          ]
         },
         {
           "effect": "gainLife",
           "amount": 3,
-          "conditions": [{ "condition": "noSummonsInPlay" }]
+          "conditions": [
+            {
+              "condition": "noSummonsInPlay"
+            }
+          ]
         }
       ]
     }

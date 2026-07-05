@@ -30,7 +30,6 @@ public class TriggeredEffect {
     [JsonConverter(typeof(StringEnumConverter))]
     public Keyword? keyword;  // For tribute triggers - the keyword the tributed card must have
     public string? player;  // "player" or "opponent" - who the trigger responds to
-    public List<AdditionalCost>? additionalCosts;
     public List<Effect> effects;
     [JsonProperty(ItemConverterType = typeof(StringEnumConverter))]
     public List<Restriction>? restrictions;
@@ -63,7 +62,6 @@ public class TriggeredEffect {
             tribe = tribe,
             keyword = keyword,
             player = player,
-            additionalCosts = additionalCosts,
             effects = effects?.Select(e => e.Clone()).ToList(),  // Deep clone effects list
             restrictions = restrictions,
             restrictionMax = restrictionMax,
@@ -76,12 +74,7 @@ public class TriggeredEffect {
     }
 
     public bool CostsArePayable(GameMatch gameMatch, Player player) {
-        // Check old-style additionalCosts (for backwards compatibility)
-        if (additionalCosts != null && !additionalCosts.All(aCost => aCost.CostIsAvailable(gameMatch, player))) {
-            return false;
-        }
-
-        // Check new-style isCost effects in the effects list
+        // Check isCost effects in the effects list
         if (effects != null) {
             foreach (Effect effect in effects) {
                 if (effect.isCost && !effect.CanPayCost(gameMatch, player)) {

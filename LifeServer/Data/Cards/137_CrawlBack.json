@@ -9,14 +9,16 @@
   "stackEffects": [
     {
       "effect": "sendToZone",
-      "targetType": "cardInGraveyard",
+      "target": {
+        "type": "cardInGraveyard"
+      },
       "cardType": "summon",
       "tribe": "shadow",
       "destination": "play",
       "restrictions": [
         "cost"
       ],
-      "restrictionMax": 3   
+      "restrictionMax": 3
     }
   ]
 }

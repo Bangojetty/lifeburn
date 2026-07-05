@@ -9,7 +9,9 @@
   "stackEffects": [
     {
       "effect": "castCard",
-      "targetType": "cardInHandOrGraveyard",
+      "target": {
+        "type": "cardInHandOrGraveyard"
+      },
       "cardType": "summon",
       "tribe": "treefolk"
     },

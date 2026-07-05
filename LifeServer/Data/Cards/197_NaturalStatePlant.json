@@ -20,18 +20,26 @@
             [
               {
                 "effect": "sendToZone",
-                "targetZones": ["graveyard"],
+                "targetZones": [
+                  "graveyard"
+                ],
                 "destination": "exile",
-                "targetType": "cardInGraveyard",
+                "target": {
+                  "type": "cardInGraveyard"
+                },
                 "amount": 2
               }
             ],
             [
               {
                 "effect": "sendToZone",
-                "targetZones": ["graveyard"],
+                "targetZones": [
+                  "graveyard"
+                ],
                 "destination": "hand",
-                "targetType": "cardInGraveyard",
+                "target": {
+                  "type": "cardInGraveyard"
+                },
                 "tribe": "treefolk",
                 "amount": 1
               }
@@ -57,18 +65,26 @@
             [
               {
                 "effect": "sendToZone",
-                "targetZones": ["graveyard"],
+                "targetZones": [
+                  "graveyard"
+                ],
                 "destination": "exile",
-                "targetType": "cardInGraveyard",
+                "target": {
+                  "type": "cardInGraveyard"
+                },
                 "amount": 2
               }
             ],
             [
               {
                 "effect": "sendToZone",
-                "targetZones": ["graveyard"],
+                "targetZones": [
+                  "graveyard"
+                ],
                 "destination": "hand",
-                "targetType": "cardInGraveyard",
+                "target": {
+                  "type": "cardInGraveyard"
+                },
                 "tribe": "treefolk",
                 "amount": 1
               }

@@ -23,10 +23,14 @@
       "effects": [
         {
           "effect": "sendToZone",
-          "targetZones": ["graveyard"],
+          "targetZones": [
+            "graveyard"
+          ],
           "tribe": "treefolk",
           "destination": "hand",
-          "targetType": "CardInGraveyard"
+          "target": {
+            "type": "CardInGraveyard"
+          }
         }
       ]
     }

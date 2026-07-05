@@ -9,14 +9,16 @@
   "stackEffects": [
     {
       "effect": "destroy",
-      "targetType": "summon",
+      "target": {
+        "type": "summon"
+      },
       "restrictions": [
-	  "hasKeyword"
-	  ]
+        "hasKeyword"
+      ]
     },
     {
       "effect": "choose",
-	  "choiceIndex": 0,
+      "choiceIndex": 0,
       "choices": [
         [
           {
@@ -28,10 +30,10 @@
           {
             "effect": "createToken",
             "tokenType": "herb",
-            "amount": 1 
+            "amount": 1
           }
         ]
-      ] 
+      ]
     }
   ]
 }

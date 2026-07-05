@@ -17,7 +17,9 @@
   "stackEffects": [
     {
       "effect": "destroy",
-      "targetType": "summon",
+      "target": {
+        "type": "summon"
+      },
       "additionalEffects": [
         {
           "conditions": [

@@ -9,7 +9,9 @@
   "stackEffects": [
     {
       "effect": "dealDamage",
-      "targetType": "summon",
+      "target": {
+        "type": "summon"
+      },
       "all": true,
       "amount": 2
     }

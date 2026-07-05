@@ -38,7 +38,9 @@
       "effects": [
         {
           "effect": "grantPassive",
-          "targetType": "summon",
+          "target": {
+            "type": "summon"
+          },
           "tribe": "treefolk",
           "passives": [
             {

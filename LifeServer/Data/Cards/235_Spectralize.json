@@ -9,7 +9,9 @@
   "stackEffects": [
     {
       "effect": "exileAndReturn",
-      "targetType": "summon",
+      "target": {
+        "type": "summon"
+      },
       "additionalEffects": [
         {
           "effect": "grantKeyword",

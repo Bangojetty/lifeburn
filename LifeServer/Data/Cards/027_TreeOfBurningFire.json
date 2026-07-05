@@ -20,12 +20,14 @@
           "effects": [
             {
               "effect": "dealDamage",
-              "targetType": "any",
+              "target": {
+                "type": "any"
+              },
               "amount": 1
             }
           ]
         }
       ]
     }
-  ] 
+  ]
 }

@@ -5,46 +5,58 @@
   "type": "summon",
   "attack": 3,
   "defense": 2,
-  "keywords": ["dive"],
+  "keywords": [
+    "dive"
+  ],
   "tribe": "merfolk",
   "rarity": "rare",
   "description": "Discard or sacrifice a merfolk: Target merfolk cant take or deal damage this turn. When Eadro, Merfolk God dies, create 1/1 merfolk tokens equal to the number of merfolk summons in your graveyard.",
   "activatedEffects": [
-  {
-    "alternateCosts": [
-      { "altCostType": "discard", "tribe": "merfolk", "amount": 1 },
-      { "altCostType": "sacrifice", "tribe": "merfolk", "amount": 1 }
-    ],
-    "effects": [
-      {
-        "effect": "grantPassive",
-        "targetType": "summon",
-        "tribe": "merfolk",
-        "thisTurn": true,
-        "passives": [
-          {
-            "passive": "cantTakeDamage"
+    {
+      "alternateCosts": [
+        {
+          "altCostType": "discard",
+          "tribe": "merfolk",
+          "amount": 1
+        },
+        {
+          "altCostType": "sacrifice",
+          "tribe": "merfolk",
+          "amount": 1
+        }
+      ],
+      "effects": [
+        {
+          "effect": "grantPassive",
+          "target": {
+            "type": "summon"
           },
-          {
-            "passive": "cantDealDamage"
-          }
-        ]
-      }
-    ]
-  }
+          "tribe": "merfolk",
+          "thisTurn": true,
+          "passives": [
+            {
+              "passive": "cantTakeDamage"
+            },
+            {
+              "passive": "cantDealDamage"
+            }
+          ]
+        }
+      ]
+    }
   ],
   "triggeredEffects": [
-  {
-    "trigger": "death",
-    "effects": [
-      {
-        "effect": "createToken",
-        "tokenType": "merfolk",
-        "attack": 1,
-        "defense": 1,
-        "amountBasedOn": "merfolkInGraveyard"
-      }
-    ]
-  }
+    {
+      "trigger": "death",
+      "effects": [
+        {
+          "effect": "createToken",
+          "tokenType": "merfolk",
+          "attack": 1,
+          "defense": 1,
+          "amountBasedOn": "merfolkInGraveyard"
+        }
+      ]
+    }
   ]
 }

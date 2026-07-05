@@ -7,14 +7,16 @@
   "rarity": "common",
   "description": "Target opponent sacrifices their strongest summon. Mill 1.",
   "stackEffects": [
-  {
-    "effect": "sacrifice",
-    "targetType": "opponent",
-    "targetBasedOn": "strongest"
-  },
-  {
-    "effect": "mill",
-    "amount": 1
-  }
+    {
+      "effect": "sacrifice",
+      "target": {
+        "type": "opponent"
+      },
+      "targetBasedOn": "strongest"
+    },
+    {
+      "effect": "mill",
+      "amount": 1
+    }
   ]
 }

@@ -7,17 +7,19 @@
   "rarity": "common",
   "description": "Destroy target summon with 3 or less attack. Mill 1.",
   "stackEffects": [
-  {
-    "effect": "destroy",
-    "targetType": "summon",
-    "restrictions": [
-	"attack"
-	],
-    "restrictionMax": 3
-  },
-  {
-    "effect": "mill",
-    "amount": 1
-  }
+    {
+      "effect": "destroy",
+      "target": {
+        "type": "summon"
+      },
+      "restrictions": [
+        "attack"
+      ],
+      "restrictionMax": 3
+    },
+    {
+      "effect": "mill",
+      "amount": 1
+    }
   ]
 }

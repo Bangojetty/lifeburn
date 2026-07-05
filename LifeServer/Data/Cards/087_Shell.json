@@ -7,32 +7,34 @@
   "rarity": "common",
   "description": "Target summon can't be targeted by spells or abilities and gains +0/+1 this turn.",
   "stackEffects": [
-	  {
-		"effect": "grantPassive",
-		"targetType": "summon",
-		"passives": [
-		  {
-			"passive": "cantBeTargeted",
-			"thisTurn": true
-		  }
-		],
-		"additionalEffects": [
-		  {
-			"effect": "grantPassive",
-			"passives": [
-			  {
-				"passive": "changeStats",
-				"statModifiers": [
-				  {
-					"statType": "defense",
-					"operatorType": "add",
-					"amount": 1
-				  }
-			    ]
-		      }
-			]
-		  }
-		]
-	  }
-    ]
+    {
+      "effect": "grantPassive",
+      "target": {
+        "type": "summon"
+      },
+      "passives": [
+        {
+          "passive": "cantBeTargeted",
+          "thisTurn": true
+        }
+      ],
+      "additionalEffects": [
+        {
+          "effect": "grantPassive",
+          "passives": [
+            {
+              "passive": "changeStats",
+              "statModifiers": [
+                {
+                  "statType": "defense",
+                  "operatorType": "add",
+                  "amount": 1
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

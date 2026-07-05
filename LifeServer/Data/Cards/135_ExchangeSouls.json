@@ -7,16 +7,18 @@
   "rarity": "common",
   "description": "Mill 1. Return a summon from your graveyard to play.",
   "stackEffects": [
-  {
-    "effect": "mill",
-    "amount": 1
-  },
-  {
-    "effect": "sendToZone",
-    "targetType": "cardInGraveyard",
-    "cardType": "summon",
-    "destination": "play",
-    "resolveTarget": true
-  }
-  ] 
+    {
+      "effect": "mill",
+      "amount": 1
+    },
+    {
+      "effect": "sendToZone",
+      "target": {
+        "type": "cardInGraveyard"
+      },
+      "cardType": "summon",
+      "destination": "play",
+      "resolveTarget": true
+    }
+  ]
 }
