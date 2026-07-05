@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lifeburn Card Tracker</title>
+<style>
+  :root {
+    --bg: #f6f7f9; --panel: #ffffff; --text: #1a1d21; --muted: #6b7280;
+    --border: #e2e5ea; --accent: #4f6df5;
+    --pass: #16a34a; --pass-bg: #e7f6ec;
+    --fail: #dc2626; --fail-bg: #fdeaea;
+    --fixed: #d97706; --fixed-bg: #fdf3e2;
+    --untested: #6b7280; --untested-bg: #eef0f3;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #14161a; --panel: #1d2026; --text: #e8eaed; --muted: #9aa2ad;
+      --border: #30343c; --accent: #7b93ff;
+      --pass: #4ade80; --pass-bg: #17301f;
+      --fail: #f87171; --fail-bg: #341b1b;
+      --fixed: #fbbf24; --fixed-bg: #33290f;
+      --untested: #9aa2ad; --untested-bg: #262a31;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text);
+         font: 14px/1.45 -apple-system, "Segoe UI", Roboto, sans-serif; }
+  header { position: sticky; top: 0; z-index: 10; background: var(--panel);
+           border-bottom: 1px solid var(--border); padding: 12px 20px; }
+  .row1 { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  h1 { font-size: 17px; margin: 0; }
+  .counts { color: var(--muted); font-size: 13px; }
+  .counts b { color: var(--text); }
+  button { cursor: pointer; border: 1px solid var(--border); background: var(--panel);
+           color: var(--text); border-radius: 7px; padding: 6px 12px; font: inherit; }
+  button:hover { border-color: var(--accent); }
+  button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  #saveState { font-size: 12px; color: var(--muted); min-width: 70px; }
+  #saveState.dirty { color: var(--fixed); }
+  .progress { height: 6px; background: var(--untested-bg); border-radius: 3px;
+              overflow: hidden; margin-top: 10px; display: flex; }
+  .progress .p { background: var(--pass); }
+  .progress .x { background: var(--fixed); }
+  .progress .f { background: var(--fail); }
+  .row2 { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; align-items: center; }
+  .chip { border-radius: 999px; padding: 4px 12px; font-size: 13px; }
+  .chip.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+  input[type=search] { flex: 1; min-width: 160px; max-width: 300px; padding: 6px 10px;
+    border: 1px solid var(--border); border-radius: 7px; background: var(--bg);
+    color: var(--text); font: inherit; }
+  main { padding: 14px 20px 60px; max-width: 1200px; margin: 0 auto; }
+  #intro { text-align: center; margin-top: 12vh; }
+  #intro p { color: var(--muted); max-width: 52ch; margin: 10px auto; }
+  table { width: 100%; border-collapse: collapse; background: var(--panel);
+          border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  thead th { text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: .04em;
+             color: var(--muted); padding: 8px 10px; border-bottom: 1px solid var(--border);
+             position: sticky; top: 118px; background: var(--panel); }
+  td { padding: 6px 10px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  td.id { color: var(--muted); width: 44px; font-variant-numeric: tabular-nums; }
+  td.name { font-weight: 600; white-space: nowrap; }
+  td.r1 { color: var(--muted); font-size: 12.5px; max-width: 300px; }
+  .seg { display: inline-flex; border: 1px solid var(--border); border-radius: 7px; overflow: hidden; }
+  .seg button { border: none; border-radius: 0; padding: 4px 10px; font-size: 12.5px;
+                background: transparent; color: var(--muted); }
+  .seg button + button { border-left: 1px solid var(--border); }
+  .seg button.on-Passed   { background: var(--pass-bg);   color: var(--pass);   font-weight: 700; }
+  .seg button.on-Failed   { background: var(--fail-bg);   color: var(--fail);   font-weight: 700; }
+  .seg button.on-Fixed    { background: var(--fixed-bg);  color: var(--fixed);  font-weight: 700; }
+  .seg button.on-Untested { background: var(--untested-bg); color: var(--untested); font-weight: 700; }
+  td.notes input { width: 100%; min-width: 180px; border: 1px solid transparent; background: transparent;
+                   color: var(--text); font: inherit; font-size: 12.5px; border-radius: 5px; padding: 4px 6px; }
+  td.notes input:hover { border-color: var(--border); }
+  td.notes input:focus { border-color: var(--accent); outline: none; background: var(--bg); }
+  tr.st-Passed td.name::after { content: " ✓"; color: var(--pass); }
+  tr.st-Failed td.name::after { content: " ✗"; color: var(--fail); }
+  tr.st-Fixed  td.name::after { content: " ⟳"; color: var(--fixed); }
+  #err { color: var(--fail); margin: 12px 0; white-space: pre-wrap; }
+</style>
+</head>
+<body>
+<header id="hdr" hidden>
+  <div class="row1">
+    <h1>Lifeburn Card Tracker</h1>
+    <span class="counts" id="counts"></span>
+    <span style="flex:1"></span>
+    <span id="saveState">Saved</span>
+    <button id="reloadBtn" title="Re-read the file (e.g. after a git pull)">Reload</button>
+  </div>
+  <div class="progress" id="prog"></div>
+  <div class="row2">
+    <button class="chip active" data-f="all">All</button>
+    <button class="chip" data-f="Untested">Untested</button>
+    <button class="chip" data-f="Passed">Passed</button>
+    <button class="chip" data-f="Failed">Failed</button>
+    <button class="chip" data-f="Fixed">Fixed</button>
+    <button class="chip" data-f="next50" title="First 50 untested cards">Next 50</button>
+    <input type="search" id="q" placeholder="Search name, id, or notes…">
+  </div>
+</header>
+<main>
+  <div id="intro">
+    <h1>Lifeburn Card Tracker</h1>
+    <p>This page edits <b>CARD_TEST_TRACKER.md</b> directly — your clicks are saved
+       straight into the file, so the repo (and Claude) always sees your latest results.</p>
+    <p><button class="primary" id="openBtn">Open CARD_TEST_TRACKER.md…</button></p>
+    <p id="hint">Pick the file at the root of the Lifeburn repo. Requires Chrome or Edge.</p>
+    <div id="err"></div>
+  </div>
+  <table id="tbl" hidden>
+    <thead><tr>
+      <th>ID</th><th>Card</th><th>Status</th><th>Round 1 Notes</th><th>Round 2 Notes</th>
+    </tr></thead>
+    <tbody id="tbody"></tbody>
+  </table>
+</main>
+<script>
+"use strict";
+const STATUSES = ["Untested", "Passed", "Failed", "Fixed"];
+let fileHandle = null;
+let lines = [];        // full file, split on \n (with \r stripped; rewritten as CRLF)
+let cards = [];        // { id, name, status, r1, r2, lineIdx }
+let filter = "all";
+let dirty = false, saveTimer = null;
+
+const $ = s => document.querySelector(s);
+
+async function openFile() {
+  if (!window.showOpenFilePicker) {
+    $("#err").textContent = "This browser doesn't support direct file editing. Use Chrome or Edge.";
+    return;
+  }
+  try {
+    [fileHandle] = await window.showOpenFilePicker({
+      types: [{ description: "Markdown", accept: { "text/markdown": [".md"] } }]
+    });
+    await loadFromHandle();
+  } catch (e) { if (e.name !== "AbortError") $("#err").textContent = e.message; }
+}
+
+async function loadFromHandle() {
+  const file = await fileHandle.getFile();
+  const text = await file.text();
+  parse(text);
+  $("#intro").hidden = true;
+  $("#hdr").hidden = false;
+  $("#tbl").hidden = false;
+  setDirty(false);
+  render();
+}
+
+function parse(text) {
+  lines = text.replace(/\r\n/g, "\n").split("\n");
+  cards = [];
+  const re = /^\|\s*(\d+)\s*\|([^|]*)\|([^|]*)\|([^|]*)\|([^|]*)\|\s*$/;
+  for (let i = 0; i < lines.length; i++) {
+    const m = lines[i].match(re);
+    if (!m || m[2].trim() === "Name" || /^-+$/.test(m[2].trim())) continue;
+    let status = m[3].trim();
+    if (!STATUSES.includes(status)) status = "Untested";
+    cards.push({ id: +m[1], name: m[2].trim(), status, r1: m[4].trim(), r2: m[5].trim(), lineIdx: i });
+  }
+  cards.sort((a, b) => a.id - b.id);
+}
+
+function serialize() {
+  for (const c of cards) {
+    lines[c.lineIdx] = `| ${c.id} | ${c.name} | ${c.status} | ${c.r1} | ${c.r2} |`;
+  }
+  const n = { Untested: 0, Passed: 0, Failed: 0, Fixed: 0 };
+  cards.forEach(c => n[c.status]++);
+  for (let i = 0; i < lines.length; i++) {
+    if (lines[i].startsWith("**Untested:**")) lines[i] = `**Untested:** ${n.Untested}`;
+    else if (lines[i].startsWith("**Passed:**")) lines[i] = `**Passed:** ${n.Passed + n.Fixed}`;
+    else if (lines[i].startsWith("**Failed:**")) lines[i] = `**Failed:** ${n.Failed}`;
+  }
+  return lines.join("\r\n");
+}
+
+function setDirty(d) {
+  dirty = d;
+  const el = $("#saveState");
+  el.textContent = d ? "Saving…" : "Saved";
+  el.classList.toggle("dirty", d);
+}
+
+function scheduleSave() {
+  setDirty(true);
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(save, 600);
+}
+
+async function save() {
+  if (!fileHandle) return;
+  try {
+    const w = await fileHandle.createWritable();
+    await w.write(serialize());
+    await w.close();
+    setDirty(false);
+    renderHeader();
+  } catch (e) {
+    $("#saveState").textContent = "Save failed!";
+    console.error(e);
+  }
+}
+
+function renderHeader() {
+  const n = { Untested: 0, Passed: 0, Failed: 0, Fixed: 0 };
+  cards.forEach(c => n[c.status]++);
+  const total = cards.length, done = n.Passed + n.Fixed;
+  $("#counts").innerHTML =
+    `<b>${done}</b>/${total} passed · <b>${n.Failed}</b> failed · <b>${n.Untested}</b> untested`;
+  $("#prog").innerHTML =
+    `<div class="p" style="width:${100 * n.Passed / total}%"></div>` +
+    `<div class="x" style="width:${100 * n.Fixed / total}%"></div>` +
+    `<div class="f" style="width:${100 * n.Failed / total}%"></div>`;
+}
+
+function visibleCards() {
+  const q = $("#q").value.trim().toLowerCase();
+  let list = cards;
+  if (filter === "next50") list = cards.filter(c => c.status === "Untested").slice(0, 50);
+  else if (filter !== "all") list = cards.filter(c => c.status === filter);
+  if (q) list = list.filter(c =>
+    c.name.toLowerCase().includes(q) || String(c.id) === q ||
+    c.r1.toLowerCase().includes(q) || c.r2.toLowerCase().includes(q));
+  return list;
+}
+
+function render() {
+  renderHeader();
+  const tb = $("#tbody");
+  tb.innerHTML = "";
+  for (const c of visibleCards()) {
+    const tr = document.createElement("tr");
+    tr.className = "st-" + c.status;
+    tr.innerHTML = `<td class="id">${c.id}</td><td class="name"></td><td></td>` +
+                   `<td class="r1"></td><td class="notes"></td>`;
+    tr.children[1].textContent = c.name;
+    tr.children[3].textContent = c.r1;
+    const seg = document.createElement("div");
+    seg.className = "seg";
+    for (const s of STATUSES) {
+      const b = document.createElement("button");
+      b.textContent = s === "Untested" ? "—" : s;
+      b.title = s;
+      if (c.status === s) b.className = "on-" + s;
+      b.onclick = () => { c.status = s; scheduleSave(); render(); };
+      seg.appendChild(b);
+    }
+    tr.children[2].appendChild(seg);
+    const inp = document.createElement("input");
+    inp.value = c.r2;
+    inp.placeholder = "notes…";
+    inp.onchange = () => { c.r2 = inp.value.replace(/\|/g, "/"); scheduleSave(); };
+    tr.children[4].appendChild(inp);
+    tb.appendChild(tr);
+  }
+}
+
+$("#openBtn").onclick = openFile;
+$("#reloadBtn").onclick = async () => { if (dirty) await save(); await loadFromHandle(); };
+$("#q").oninput = render;
+document.querySelectorAll(".chip").forEach(ch => ch.onclick = () => {
+  document.querySelectorAll(".chip").forEach(x => x.classList.remove("active"));
+  ch.classList.add("active");
+  filter = ch.dataset.f;
+  render();
+});
+window.addEventListener("beforeunload", e => { if (dirty) { save(); e.preventDefault(); } });
+</script>
+</body>
+</html>
