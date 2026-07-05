@@ -1,7 +1,7 @@
 # Lifeburn — Cleanup & Playtest Readiness Plan
 
 **Created:** 2026-07-05
-**Status:** Not started
+**Status:** In progress — Phases 1 & 2 complete (2026-07-05); Phase 3 (card re-test) underway
 **Goal:** Clean up leftover AI-session markdown, eliminate the recurring bug sources, re-verify every card, and get the game to a stable, playtestable, publishable-track state.
 
 ## Context
@@ -20,7 +20,7 @@ Recurring bug sources identified from the session logs:
 
 ## Phase 1 — Markdown cleanup & knowledge capture
 
-- [ ] **Create a project `CLAUDE.md`** at repo root containing:
+- [x] **Create a project `CLAUDE.md`** at repo root containing:
   - Architecture overview (Unity client `Project_Life/`, .NET 7 server `LifeServer/`, SQLite, REST + polling, card JSON in `LifeServer/Data/Cards/`).
   - Build/run instructions (`dotnet build LifeServer/`, Unity scene flow).
   - **Card JSON conventions harvested from the session files' "Key Learnings" sections**, including at minimum:
@@ -32,30 +32,30 @@ Recurring bug sources identified from the session logs:
     - Conditions belong at the triggered-effect level to prevent the trigger firing, not on the inner effect.
     - Both the outer ActivatedEffect/TriggeredEffect AND inner Effect need `targetType`/`tribe` for proper filtering.
     - When a card changes zones, remove it from the old zone list before adding to the new one (double-trigger bug class).
-- [ ] **Move reference docs into `docs/`:** `LIFESERVER_GAMEPLAY_MECHANICS.md`, `LIFESERVER_CLIENT_COMMUNICATION.md` (keep these — genuine architecture references).
-- [ ] **Keep `CARD_TEST_TRACKER.md` at repo root** (the `/cardbatch` and `/impcard` skills reference it; it becomes the Phase 3 tracker).
-- [ ] **Delete the 13 scratch files** (git history preserves all content):
+- [x] **Move reference docs into `docs/`:** `LIFESERVER_GAMEPLAY_MECHANICS.md`, `LIFESERVER_CLIENT_COMMUNICATION.md` (keep these — genuine architecture references).
+- [x] **Keep `CARD_TEST_TRACKER.md` at repo root** (the `/cardbatch` and `/impcard` skills reference it; it becomes the Phase 3 tracker).
+- [x] **Delete the 13 scratch files** (git history preserves all content):
   `session_4.md`, `session_5.md`, `session_6.md`, `session_7.md`, `session_8.md`, `session_9.md`, `session_10.md`, `session_12.md`, `summary-3.md`, `summary_11.md`, `session_summary_2025-12-20.md`, `session_summary_2025-12-22.md`, `SESSION_SUMMARY_StoneToss_XCosts.md`, `triggered_ability_migration.md`, `inconsistencies_to_fix.md`.
   (Delete only after the Key Learnings are captured in `CLAUDE.md`.)
 
 ## Phase 2 — Kill the bug factory
 
-- [ ] **Finish the `isCost` migration:** convert all remaining cards using `TriggeredEffect.additionalCosts` to `isCost: true` effects, then delete `TriggeredEffect.additionalCosts`, `SendNextTriggerCostEvent()`, and related handling in `HandleCostSelection()`.
-- [ ] **Finish the `Target`/`Select` migration:** convert all card JSONs still using legacy `targetType`/`maxTargets`/`minTargets`/`upTo`/`targetZone` fields, then remove the legacy fields and fallback code paths from `Effect.cs`, `Qualifier.cs`, `StackObj.cs`, `GameMatch.cs`.
-- [ ] **Add card JSON schema validation** — validate all 281 card files against `LifeServer/Data/CardSchema.json` (and the Active/AdditionalCost/AlternateCost schemas) at server startup or as a `dotnet test` step. Unknown/misspelled property names must fail loudly. This alone would have caught most historical card bugs.
-- [ ] **Reinstate a test project** in `LifeServer/Tests/` targeting the known bug classes:
+- [x] **Finish the `isCost` migration:** convert all remaining cards using `TriggeredEffect.additionalCosts` to `isCost: true` effects, then delete `TriggeredEffect.additionalCosts`, `SendNextTriggerCostEvent()`, and related handling in `HandleCostSelection()`.
+- [x] **Finish the `Target`/`Select` migration:** convert all card JSONs still using legacy `targetType`/`maxTargets`/`minTargets`/`upTo`/`targetZone` fields, then remove the legacy fields and fallback code paths from `Effect.cs`, `Qualifier.cs`, `StackObj.cs`, `GameMatch.cs`.
+- [x] **Add card JSON schema validation** — validate all 281 card files against `LifeServer/Data/CardSchema.json` (and the Active/AdditionalCost/AlternateCost schemas) at server startup or as a `dotnet test` step. Unknown/misspelled property names must fail loudly. This alone would have caught most historical card bugs.
+- [x] **Reinstate a test project** in `LifeServer/Tests/` targeting the known bug classes:
   - Zone-transition bookkeeping (card never present in two zone lists at once).
   - Trigger scoping (selfOnly/othersOnly/all).
   - Cost payment / fizzle behavior for `isCost` effects.
-- [ ] **Strip leftover debug logging** added during Dec 2025 bug hunts (`[PassPrio]`, `[PassPrioToPlayer]`, `[FinishWithTriggers]`, `[AddStackObjToStack]`, `[ShouldAutoSkipPhases]`, `[CheckForTriggersAndPassives]`, `[AddOrderedTriggersToStack]`, QualifyCard/QualifyTrigger logs, etc.).
+- [x] **Strip leftover debug logging** added during Dec 2025 bug hunts (`[PassPrio]`, `[PassPrioToPlayer]`, `[FinishWithTriggers]`, `[AddStackObjToStack]`, `[ShouldAutoSkipPhases]`, `[CheckForTriggersAndPassives]`, `[AddOrderedTriggersToStack]`, QualifyCard/QualifyTrigger logs, etc.).
 
 ## Phase 3 — Full card re-test (NEW testing phase)
 
 **Every single card gets tested again**, from scratch, after the Phase 2 migrations — the legacy-path removal touches nearly every card, so prior "Passed" statuses no longer count.
 
-- [ ] **Reset `CARD_TEST_TRACKER.md` for Round 2:** set all 281 cards back to `Untested`, keep the historical notes column (rename to "Round 1 Notes" or similar), and add a fresh notes column for this round. Update the header counts (Untested: 281 / Passed: 0 / Failed: 0).
+- [x] **Reset `CARD_TEST_TRACKER.md` for Round 2:** set all 281 cards back to `Untested`, keep the historical notes column (rename to "Round 1 Notes" or similar), and add a fresh notes column for this round. Update the header counts (Untested: 281 / Passed: 0 / Failed: 0).
 - [ ] **Test in batches** (the `/cardbatch` and `/impcard` skills support this workflow), logging every fix in the tracker as before.
-- [ ] **Track engine bugs found during re-testing** in a new `docs/BUGS.md` (replaces the untracked "bugs need fixing still" from the 1.0 commit).
+- [x] **Track engine bugs found during re-testing** in a new `docs/BUGS.md` (replaces the untracked "bugs need fixing still" from the 1.0 commit).
 - [ ] Exit criteria: all 281 cards `Passed` in Round 2, `docs/BUGS.md` empty or all items resolved.
 
 ## Phase 4 — Playtesting & pre-publish flags
