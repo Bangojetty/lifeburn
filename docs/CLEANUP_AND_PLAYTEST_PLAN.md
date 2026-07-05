@@ -65,7 +65,7 @@ Recurring bug sources identified from the session logs:
   - Replace MD5 Basic Auth with proper password hashing + token auth.
   - Remove the hardcoded ngrok URL in `Project_Life/Assets/Scripts/Network/ServerApi.cs`; make the server address configurable.
   - Revisit 1-second polling (batching, backoff, or push-based updates).
-  - Decide whether `LifeServer/life.sqlite` should stay in git (binary DB can't merge; running the server on two machines between pulls clobbers data). Consider ignoring it and adding a schema/seed script instead.
+  - ~~Decide whether `LifeServer/life.sqlite` should stay in git~~ **Done 2026-07-05:** server + DB now live on the DO droplet (`157.230.138.62`, systemd `lifeburn.service`); `life.sqlite` removed from git tracking.
 
 ---
 

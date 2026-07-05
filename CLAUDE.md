@@ -21,6 +21,8 @@ Two-player collectible card game. Authoritative .NET server + Unity client, comm
 ## Build & run
 
 - Server: `dotnet build "LifeServer/LifeServer.sln"`; run with `dotnet run --project LifeServer/Server` (listens on `0.0.0.0:5239` http / `7039` https per `launchSettings.json`).
+- Tests: `dotnet test LifeServer/Tests` — includes strict validation of every card JSON (unknown properties fail) plus gameplay-invariant tests. The server also validates all cards at startup (`Utils.ValidateAllCards`).
+- **Production server**: DigitalOcean droplet `157.230.138.62` (ssh as `dev`), systemd unit `lifeburn.service`, app at `/home/dev/lifeburn/app` (self-contained linux-x64 publish + `Data/` folder), DB at `/home/dev/lifeburn/life.sqlite` (NOT in git — `.gitignore`d). Deploy: `dotnet publish LifeServer/Server -c Release -r linux-x64 --self-contained true`, copy `LifeServer/Data` into the publish dir, tar + scp to the droplet, extract into `~/lifeburn/app`, `sudo systemctl restart lifeburn`. Client `PUBLIC_SERVER` points at `http://157.230.138.62:5239/life/`.
 - Client: open `Project_Life/` in Unity 2022.3.62f3. For local testing set `ServerApi.baseAddress = LOCAL_SERVER`.
 - Solo card testing: the server has a **test bot** matchmaking path (creates "Test Bot" player, id -999); used with the `/impcard` and `/cardbatch` workflows against `CARD_TEST_TRACKER.md` (repo root).
 
