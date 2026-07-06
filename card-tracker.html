@@ -105,8 +105,10 @@
     <h1>Lifeburn Card Tracker</h1>
     <p>This page edits <b>CARD_TEST_TRACKER.md</b> directly — your clicks are saved
        straight into the file, so the repo (and Claude) always sees your latest results.</p>
+    <p><button class="primary" id="resumeBtn" hidden>Continue with CARD_TEST_TRACKER.md</button></p>
     <p><button class="primary" id="openBtn">Open CARD_TEST_TRACKER.md…</button></p>
-    <p id="hint">Pick the file at the root of the Lifeburn repo. Requires Chrome or Edge.</p>
+    <p id="hint">Pick the file at the root of the Lifeburn repo. Requires Chrome or Edge.
+       When asked, choose “Allow on every visit” and the file will open automatically next time.</p>
     <div id="err"></div>
   </div>
   <table id="tbl" hidden>
@@ -127,6 +129,31 @@ let dirty = false, saveTimer = null;
 
 const $ = s => document.querySelector(s);
 
+// ---- remember the file handle across sessions (IndexedDB) ----
+function idb() {
+  return new Promise((res, rej) => {
+    const r = indexedDB.open("card-tracker", 1);
+    r.onupgradeneeded = () => r.result.createObjectStore("kv");
+    r.onsuccess = () => res(r.result);
+    r.onerror = () => rej(r.error);
+  });
+}
+async function idbSet(key, val) {
+  const db = await idb();
+  return new Promise((res, rej) => {
+    const tx = db.transaction("kv", "readwrite");
+    tx.objectStore("kv").put(val, key);
+    tx.oncomplete = res; tx.onerror = () => rej(tx.error);
+  });
+}
+async function idbGet(key) {
+  const db = await idb();
+  return new Promise((res, rej) => {
+    const rq = db.transaction("kv").objectStore("kv").get(key);
+    rq.onsuccess = () => res(rq.result); rq.onerror = () => rej(rq.error);
+  });
+}
+
 async function openFile() {
   if (!window.showOpenFilePicker) {
     $("#err").textContent = "This browser doesn't support direct file editing. Use Chrome or Edge.";
@@ -136,9 +163,35 @@ async function openFile() {
     [fileHandle] = await window.showOpenFilePicker({
       types: [{ description: "Markdown", accept: { "text/markdown": [".md"] } }]
     });
+    await idbSet("handle", fileHandle).catch(() => {});
     await loadFromHandle();
   } catch (e) { if (e.name !== "AbortError") $("#err").textContent = e.message; }
 }
+
+// Try to reopen the remembered file. Returns true if loaded.
+async function tryResume(interactive) {
+  const h = await idbGet("handle").catch(() => null);
+  if (!h) return false;
+  let perm = await h.queryPermission({ mode: "readwrite" });
+  if (perm !== "granted" && interactive) {
+    perm = await h.requestPermission({ mode: "readwrite" });
+  }
+  if (perm !== "granted") return false;
+  fileHandle = h;
+  await loadFromHandle();
+  return true;
+}
+
+// On page load: reopen silently if permission persists ("Allow on every visit"),
+// otherwise show a one-click resume button (no browsing needed).
+(async () => {
+  if (await tryResume(false)) return;
+  const h = await idbGet("handle").catch(() => null);
+  if (h) {
+    $("#resumeBtn").hidden = false;
+    $("#hint").textContent = "One click re-opens your tracker — choose “Allow on every visit” to skip even that next time.";
+  }
+})();
 
 async function loadFromHandle() {
   const file = await fileHandle.getFile();
@@ -267,6 +320,11 @@ function render() {
 }
 
 $("#openBtn").onclick = openFile;
+$("#resumeBtn").onclick = async () => {
+  if (!await tryResume(true)) {
+    $("#err").textContent = "Couldn't reopen the saved file — pick it once more below.";
+  }
+};
 $("#reloadBtn").onclick = async () => { if (dirty) await save(); await loadFromHandle(); };
 $("#q").oninput = render;
 document.querySelectorAll(".chip").forEach(ch => ch.onclick = () => {
