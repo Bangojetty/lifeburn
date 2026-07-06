@@ -56,7 +56,7 @@
           border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
   thead th { text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: .04em;
              color: var(--muted); padding: 8px 10px; border-bottom: 1px solid var(--border);
-             position: sticky; top: 118px; background: var(--panel); }
+             position: sticky; top: var(--hdr-h, 0px); background: var(--panel); }
   td { padding: 6px 10px; border-bottom: 1px solid var(--border); vertical-align: middle; }
   tr:last-child td { border-bottom: none; }
   td.id { color: var(--muted); width: 44px; font-variant-numeric: tabular-nums; }
@@ -149,7 +149,13 @@ async function loadFromHandle() {
   $("#tbl").hidden = false;
   setDirty(false);
   render();
+  syncStickyTop();
 }
+
+function syncStickyTop() {
+  document.documentElement.style.setProperty("--hdr-h", $("#hdr").offsetHeight + "px");
+}
+window.addEventListener("resize", syncStickyTop);
 
 function parse(text) {
   lines = text.replace(/\r\n/g, "\n").split("\n");
