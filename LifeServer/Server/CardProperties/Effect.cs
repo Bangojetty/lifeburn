@@ -650,28 +650,27 @@ public class Effect {
                 break;
             case EffectType.GrantPassive:
                 Debug.Assert(passives != null, "there are no passive for this GrantPassive effect");
-                Console.WriteLine($"GrantPassive: sourceCard={sourceCard?.name ?? "NULL"}, scope={scope}, GetTargetType()={GetTargetType()}, targetUids.Count={targetUids.Count}, subjectUid={subjectUid}");
                 affectedUids = new List<int>();
+                // subjectUid is set on every triggered/activated effect (it's the source card),
+                // so only honor it when the effect explicitly points at its subject - otherwise
+                // "other golems get +1/+1" style effects would buff the source card instead
+                bool grantsToSubject = targetBasedOn != null || scope == Scope.SelfOnly;
                 if (targetUids.Count > 0) {
                     // Apply to specific targets
                     foreach (int uid in targetUids) {
                         GrantPassive(gameMatch.cardByUid[uid]);
                         affectedUids.Add(uid);
                     }
-                } else if (subjectUid != null && gameMatch.cardByUid.ContainsKey(subjectUid.Value)) {
-                    // Apply to subject (from additionalEffect with targetBasedOn: rootAffected)
-                    Console.WriteLine($"  GrantPassive using subjectUid={subjectUid}");
+                } else if (grantsToSubject && subjectUid != null && gameMatch.cardByUid.ContainsKey(subjectUid.Value)) {
+                    // Apply to subject (self-buffs, or additionalEffect with targetBasedOn: rootAffected)
                     GrantPassive(gameMatch.cardByUid[subjectUid.Value]);
                     affectedUids.Add(subjectUid.Value);
                 } else if (GetTargetType() != null && !all) {
                     // Effect required a target but had none - fizzle (do nothing)
-                    Console.WriteLine($"  GrantPassive fizzled - GetTargetType()={GetTargetType()} but no targets selected");
+                    Console.WriteLine($"GrantPassive fizzled - GetTargetType()={GetTargetType()} but no targets selected");
                 } else {
-                    // Apply to all qualified summons (for "all" effects or effects without GetTargetType())
-                    var allSummons = gameMatch.GetAllSummonsInPlay();
-                    Console.WriteLine($"  All summons in play: {string.Join(", ", allSummons.Select(s => s.name))}");
-                    foreach (Card c in gameMatch.GetQualifiedCards(allSummons, eQualifier)) {
-                        Console.WriteLine($"  Granting passive to: {c.name} (uid={c.uid})");
+                    // Apply to all qualified summons (scope/tribe/restrictions via the qualifier)
+                    foreach (Card c in gameMatch.GetQualifiedCards(gameMatch.GetAllSummonsInPlay(), eQualifier)) {
                         GrantPassive(c);
                         affectedUids.Add(c.uid);
                     }
@@ -1094,7 +1093,6 @@ public class Effect {
 
     private void GrantPassive(Card c) {
         Debug.Assert(passives != null, "there are no passives to grant :(");
-        Console.WriteLine($"    GrantPassive method called for: {c.name} (uid={c.uid}), passives.Count={passives.Count}, thisTurn={thisTurn}");
         foreach (PassiveEffect pEffect in passives) {
             // Clone the passive so each target has its own instance
             PassiveEffect clonedPassive = pEffect.Clone();
@@ -1686,6 +1684,38 @@ private string GetDDMessage(DeckDestination dd, int totalCards) {
         return tempAffectedUids;
     }
 
+    /// <summary>
+    /// Amount to show in effect text: resolves X (from the source card, once chosen) and
+    /// applies amountModifier when its conditions currently hold - so "deal 2 (3 with a
+    /// stone)" style cards display the number that will actually happen.
+    /// Returns "X" when an X value hasn't been chosen yet.
+    /// </summary>
+    private string GetDisplayAmountText(GameMatch gameMatch) {
+        int? displayAmount = amount;
+        if (amountBasedOn == AmountBasedOn.X) {
+            if (sourceCard?.x == null) return "X";
+            displayAmount = sourceCard.x;
+        }
+        if (displayAmount == null) return amount?.ToString() ?? "?";
+
+        if (amountModifier != null && sourceCard != null) {
+            Player owner = sourceCard.currentZone == Zone.Play
+                ? gameMatch.GetControllerOf(sourceCard)
+                : gameMatch.GetOwnerOf(sourceCard);
+            if (modifierConditions == null || modifierConditions.All(c => c.Verify(gameMatch, owner))) {
+                displayAmount = amountModifier switch {
+                    "/2down" => (int)Math.Floor(displayAmount.Value / 2f),
+                    "+1" => displayAmount + 1,
+                    "+2" => displayAmount + 2,
+                    "-2" => Math.Max(0, displayAmount.Value - 2),
+                    "x2" => displayAmount * 2,
+                    _ => displayAmount
+                };
+            }
+        }
+        return displayAmount.ToString()!;
+    }
+
     public string EffectToString(GameMatch gameMatch, bool forOpponentChoice = false) {
         if (description != null) {
             return description;
@@ -1939,17 +1969,28 @@ private string GetDDMessage(DeckDestination dd, int totalCards) {
                 break;
             case EffectType.DealDamage:
                 TargetType? dmgTargetType = GetTargetType();
-                if (dmgTargetType != null) {
-                    if (dmgTargetType == TargetType.Any) {
-                        tempString = "deal " + amount + " damage to any target";
+                string dmgText = GetDisplayAmountText(gameMatch);
+                if (all) {
+                    string qualifierWords = "";
+                    if (restrictions != null && restrictions.Contains(Restriction.NonGolem)) qualifierWords = "non-golem ";
+                    else if (tribe != null) qualifierWords = tribe.ToString()!.ToLower() + " ";
+                    string othersWord = scope == Scope.OthersOnly ? "other " : "";
+                    if (dmgTargetType == TargetType.Opponent) {
+                        tempString = "deal " + dmgText + " damage to each opponent";
                     } else {
-                        tempString = "deal " + amount + " damage to target " + dmgTargetType;
+                        tempString = "deal " + dmgText + " damage to all " + othersWord + qualifierWords + "summons";
+                    }
+                } else if (dmgTargetType != null) {
+                    if (dmgTargetType == TargetType.Any) {
+                        tempString = "deal " + dmgText + " damage to any target";
+                    } else {
+                        tempString = "deal " + dmgText + " damage to target " + dmgTargetType;
                     }
                 } else if (affectedPlayer != null) {
                     string playerTarget = affectedPlayer == "opponent" ? "each opponent" : "you";
-                    tempString = "deal " + amount + " damage to " + playerTarget;
+                    tempString = "deal " + dmgText + " damage to " + playerTarget;
                 } else if (targetBasedOn == TargetBasedOn.AttackedPlayer) {
-                    tempString = "deal " + amount + " damage to that summon's controller";
+                    tempString = "deal " + dmgText + " damage to that summon's controller";
                 }
                 break;
             case EffectType.Sacrifice:
@@ -1966,6 +2007,8 @@ private string GetDDMessage(DeckDestination dd, int totalCards) {
                             tempString += " and create that many " + addEffect.attack + "/" + addEffect.defense + " " + createdToken + " tokens";
                         }
                     }
+                } else if (tokenType != null) {
+                    tempString = "sacrifice a " + tokenType.ToString()!.ToLower();
                 } else {
                     tempString = "sacrifice " + target;
                 }

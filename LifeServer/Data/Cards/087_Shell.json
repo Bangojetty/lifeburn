@@ -21,6 +21,7 @@
       "additionalEffects": [
         {
           "effect": "grantPassive",
+          "targetBasedOn": "rootAffected",
           "passives": [
             {
               "passive": "changeStats",

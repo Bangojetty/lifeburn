@@ -2319,6 +2319,8 @@ public class GameMatch {
         // Check for Taunt summons first - if any exist, ONLY they can be attacked
         List<int> tauntUids = new();
         foreach (Card c in opponent.playField) {
+            // Only summons can be attacked (objects like Quarry sit in playField too)
+            if (c.type != CardType.Summon && c.type != CardType.Token) continue;
             if (DetectKeyword(c, Keyword.Taunt)) {
                 // Spectral summons can only be attacked by Spectral attackers
                 if (DetectKeyword(c, Keyword.Spectral) && !attackerHasSpectral) continue;
@@ -2333,6 +2335,8 @@ public class GameMatch {
 
         // No Taunt summons - normal attack logic
         foreach (Card c in opponent.playField) {
+            // Only summons can be attacked (objects like Quarry sit in playField too)
+            if (c.type != CardType.Summon && c.type != CardType.Token) continue;
             // Spectral summons can only be attacked by Spectral attackers
             if (DetectKeyword(c, Keyword.Spectral) && !attackerHasSpectral) continue;
 
@@ -2855,8 +2859,10 @@ public class GameMatch {
 
     private bool AllOpponentSummonsAreBeingAttacked(Player player) {
         Player opponent = GetOpponent(player);
+        // Objects in playField (e.g. Quarry) can't be attacked, so they don't gate the player
+        var summons = opponent.playField.Where(c => c.type is CardType.Summon or CardType.Token).ToList();
         // has no summons or they all have been assigned attackers
-        return opponent.playField.Count == 0 || opponent.playField.All(c => currentAttackUids.ContainsValue(c.uid));
+        return summons.Count == 0 || summons.All(c => currentAttackUids.ContainsValue(c.uid));
     }
 
     /// <summary>

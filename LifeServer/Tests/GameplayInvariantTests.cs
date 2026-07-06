@@ -24,6 +24,34 @@ public class GameplayInvariantTests {
     }
 
     [Test]
+    public void CreatingStones_DoesNotZeroHandCardCosts() {
+        GameMatch match = NewMatch(out Player p1, out _);
+        // Realistic golem hand: EarthquakeGolem, FoundryGolem, Quarry, DigitalStone, RockToss
+        int[] ids = { 21, 26, 29, 36, 23 };
+        List<Card> hand = ids.Select((id, i) => Card.GetCard(600 + i, id, match)).ToList();
+        foreach (Card c in hand) {
+            c.currentZone = Zone.Hand;
+            c.playerHandOf = p1;
+            p1.hand.Add(c);
+            p1.ownedCards.Add(c);
+        }
+
+        // Baseline right after match init (bot test dummies already spawned)
+        foreach (Card c in hand) {
+            Assert.That(new CardDisplayData(c).cost, Is.EqualTo(c.cost), $"{c.name} at match start");
+        }
+
+        // Quarry-style stone creation, then the passive sweep that follows every event
+        for (int i = 0; i < 4; i++) p1.tokens.Add(new Token(TokenType.Stone, match));
+        match.CheckForPassives();
+
+        foreach (Card c in hand) {
+            int expected = c.id == 26 ? 0 : c.cost;  // FoundryGolem legitimately 0 at 4+ stones
+            Assert.That(new CardDisplayData(c).cost, Is.EqualTo(expected), $"{c.name} after 4 stones");
+        }
+    }
+
+    [Test]
     public void ConcurrentMatches_AreIndependent() {
         GameMatch matchA = NewMatch(out Player a1, out _, matchId: 1, playerIdBase: 1);
         GameMatch matchB = NewMatch(out Player b1, out _, matchId: 2, playerIdBase: 3);

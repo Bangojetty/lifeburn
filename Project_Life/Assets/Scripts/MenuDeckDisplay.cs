@@ -16,6 +16,13 @@ public class MenuDeckDisplay : MonoBehaviour, ISelectHandler, IDeselectHandler {
         }
         menuManager = GameObject.Find("MenuManager").GetComponent<MenuManager>();
         menuManager.deckObjs.Add(gameObject);
+
+        // If this display is the deck that's already selected in memory (e.g. re-entering
+        // the screen), re-select it so the UI reflects the actual current deck
+        if (gameObject.activeInHierarchy && gameData.currentDeck != null && deckData != null &&
+            deckData.id == gameData.currentDeck.id) {
+            EventSystem.current.SetSelectedGameObject(gameObject);
+        }
     }
 
     public void OnSelect(BaseEventData eventData) {

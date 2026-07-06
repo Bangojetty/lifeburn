@@ -242,8 +242,22 @@ public class GameManager : MonoBehaviour {
             gameOverContinueButton.onClick.AddListener(OnGameOverContinueClicked);
 
         WireQuitButtons();
+        EnsureHandsRenderAbovePlay();
 
         StartCoroutine(StartGame());
+    }
+
+    // Cards in hand must always draw on top of cards in play. Hand and play zones are
+    // siblings under each participant container, so render order is sibling order.
+    private void EnsureHandsRenderAbovePlay() {
+        foreach (var participant in new[] { (Participant)player, opponent }) {
+            if (participant == null || participant.handZoneObj == null || participant.playZoneObj == null) continue;
+            Transform hand = participant.handZoneObj.transform;
+            Transform play = participant.playZoneObj.transform;
+            if (hand.parent == play.parent && hand.GetSiblingIndex() < play.GetSiblingIndex()) {
+                hand.SetSiblingIndex(play.GetSiblingIndex());
+            }
+        }
     }
     
     private void InitializeStaticCardDisplays() {

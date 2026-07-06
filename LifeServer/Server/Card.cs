@@ -408,6 +408,14 @@ public void Reveal() {
         // Next spell free - reduces non-summon cost to 0
         if (type != CardType.Summon && playerHandOf != null && playerHandOf.nextSpellFree) finalCost = 0;
         finalCost += grantedPassives.Sum(pEffect => pEffect.costModifier);
+        // Diagnostic for the "all cards became 0 cost" playtest bug - log WHY a nonzero-cost
+        // card computed 0 so the next occurrence pinpoints the path. Remove once solved.
+        if (finalCost == 0 && cost > 0) {
+            var grantedInfo = string.Join(",", grantedPassives.Select(p => $"{p.passive}(cost={p.cost},mod={p.costModifier},by={p.grantedBy?.name})"));
+            Console.WriteLine($"[CostDebug] {name} uid={uid} computed 0 (base {cost}) x={x} hasX={HasXCost()} " +
+                              $"nextSpellFree={playerHandOf?.nextSpellFree} granted=[{grantedInfo}] " +
+                              $"innateModifyCost={passiveEffects?.Any(p => p.passive == Passive.ModifyCost)}");
+        }
         return finalCost;
     }
     

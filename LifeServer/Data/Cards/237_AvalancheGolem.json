@@ -13,6 +13,7 @@
       "costType": "sacrifice",
       "tokenType": "stone",
       "playerChosenAmount": true,
+      "description": "Sacrifice any number of stones: Deal that much damage to all other summons.",
       "effects": [
         {
           "effect": "dealDamage",

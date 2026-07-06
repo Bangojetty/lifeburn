@@ -85,6 +85,7 @@ public class DeckEditManager : MonoBehaviour {
         } else {
             // Normal deck editing mode - hide draft UI
             if (waitingOverlay != null) waitingOverlay.SetActive(false);
+            HideDraftOpponentStatus();
 
             if (gameData.currentDeck != null) {
                 editorDeckName.text = gameData.currentDeck.deckName;
@@ -142,9 +143,17 @@ public class DeckEditManager : MonoBehaviour {
         draftPollCoroutine = StartCoroutine(PollDraftStatus());
     }
 
+    // The OpponentStatusPanel in this scene belongs to draft deck-building; hide it
+    // for regular deck editing so a stray "Opponent" label doesn't appear
+    private void HideDraftOpponentStatus() {
+        GameObject opponentStatusPanel = GameObject.Find("OpponentStatusPanel");
+        if (opponentStatusPanel != null) opponentStatusPanel.SetActive(false);
+    }
+
     private void SetupSeriesMode() {
         Debug.Log("[DeckEditManager] SetupSeriesMode called");
         Debug.Log($"[DeckEditManager] Series: {gameData.seriesPlayerWins}-{gameData.seriesOpponentWins}, Best of {gameData.seriesBestOf}");
+        HideDraftOpponentStatus();
 
         // Update title with series score
         if (titleText != null) {

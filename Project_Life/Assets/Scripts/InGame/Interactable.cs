@@ -13,6 +13,16 @@ public class Interactable : MonoBehaviour, IPointerClickHandler {
         if (gameManager == null || cardDisplay == null || cardDisplay.card == null) return;
 
         if (eventData.button == PointerEventData.InputButton.Left) {
+            // While choosing attackers, attacking takes precedence over activated abilities -
+            // forward the click to the attack-selection handler instead of opening the ability
+            if (gameManager.attackCapableUids.Contains(cardDisplay.card.uid)) {
+                InGame.AttackCapable attackCapable = cardDisplay.dynamicReferencer != null
+                    ? cardDisplay.dynamicReferencer.attackCapable : null;
+                if (attackCapable != null) {
+                    attackCapable.OnPointerClick(eventData);
+                    return;
+                }
+            }
             // Handle deck top card casting (Sky Scryer)
             if (cardDisplay.isDeckTopCard && cardDisplay.isPlayable) {
                 gameManager.DisplayDeckTopCastVerification(cardDisplay);
