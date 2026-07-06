@@ -1813,6 +1813,7 @@ public class GameManager : MonoBehaviour {
             return;
         }
         Button btn = mainMenuBtn.GetComponent<Button>();
+        btn.interactable = true;  // disabled in the scene from before the feature existed
         btn.onClick.RemoveAllListeners();
         btn.onClick.AddListener(ShowQuitConfirmation);
     }
