@@ -15,6 +15,10 @@ public class LifeController : ControllerBase {
     private static Matches matches = new();
     private static GameMatch? currentLocalMatch;
     private static AccountData? matchableAccount;
+    private static DateTime matchableAccountLastSeen;   // queued player's last poll (queue entry expires if they stop polling)
+    private static DateTime currentLocalMatchCreatedAt; // pending pairing expires if never claimed
+    private const int QueueEntryTimeoutSeconds = 15;    // client polls every ~1s while queueing
+    private const int PendingMatchTimeoutSeconds = 30;
     private static Object QueueLockObj = new();
     private static Object MatchLockObj = new();
     private static Object DraftLockObj = new();
@@ -23,10 +27,14 @@ public class LifeController : ControllerBase {
     private const int TotalCardAmount = 281;
 
     // Static cleanup method for background service
+    // Finished matches stay registered this long so the (remaining) client can fetch
+    // the final game-over events before the match disappears.
+    private const int FinishedMatchGraceSeconds = 60;
+
     public static void CleanupInactiveMatches(int timeoutSeconds) {
         lock (MatchLockObj) {
-            // First, clean up any finished matches
-            var finishedMatches = matches.GetFinishedMatches();
+            // Clean up finished matches once their grace period has passed
+            var finishedMatches = matches.GetFinishedMatches(FinishedMatchGraceSeconds);
             foreach (var matchId in finishedMatches) {
                 matches.EndMatch(matchId);
                 Console.WriteLine($"Cleaned up finished match {matchId}");
@@ -44,11 +52,10 @@ public class LifeController : ControllerBase {
 
                 Console.WriteLine($"Player {disconnectedPlayer.playerName} disconnected from match {matchId} after {timeoutSeconds}s - {winner.playerName} wins");
 
-                // End the game with the disconnected player losing
+                // End the game with the disconnected player losing; the match itself is
+                // removed by the finished-match sweep after the grace period, so the
+                // winner's client can still fetch the game-over events
                 match.EndGame(winner, "opponent disconnected");
-
-                // Clean up the match
-                matches.EndMatch(matchId);
             }
         }
     }
@@ -365,14 +372,33 @@ public class LifeController : ControllerBase {
 
         // lock to prevent multiple players from matching with the same player
         lock (QueueLockObj) {
+            // Expire a pending pairing that the queued player never claimed
+            // (e.g. their client crashed between queueing and pickup)
+            if (currentLocalMatch != null &&
+                (DateTime.UtcNow - currentLocalMatchCreatedAt).TotalSeconds > PendingMatchTimeoutSeconds) {
+                Console.WriteLine($"Discarding unclaimed match {currentLocalMatch.matchId} - queue handoff timed out");
+                matches.EndMatch(currentLocalMatch.matchId);
+                currentLocalMatch = null;
+                matchableAccount = null;
+            }
+            // Expire a queued player who stopped polling (left without DELETE queue)
+            if (matchableAccount != null && currentLocalMatch == null &&
+                matchableAccount.id != accountData.id &&
+                (DateTime.UtcNow - matchableAccountLastSeen).TotalSeconds > QueueEntryTimeoutSeconds) {
+                Console.WriteLine($"Removing stale queue entry for {matchableAccount.displayName}");
+                matchableAccount = null;
+            }
+
             // if no one has claimed queue spot 1 put yourself there
             if (matchableAccount == null) {
                 matchableAccount = accountData;
+                matchableAccountLastSeen = DateTime.UtcNow;
                 Console.WriteLine($"Player {accountData.displayName} entered queue");
                 return Ok(null);
             }
             // if you're already in queue spot 1
             if (matchableAccount.id == accountData.id) {
+                matchableAccountLastSeen = DateTime.UtcNow;
                 // check to see if someone has matched with you yet
                 if (currentLocalMatch == null) return Ok(null);
                 matchableAccount = null;
@@ -392,6 +418,7 @@ public class LifeController : ControllerBase {
             currentLocalMatch = new GameMatch(matches.NextMatchId(),
                 new Player(matchableAccount.displayName, matchableAccount.id),
                 new Player(accountData.displayName, accountData.id));
+            currentLocalMatchCreatedAt = DateTime.UtcNow;
             matches.SetMatchData(currentLocalMatch);
             currentLocalMatch.playerTwo.deck = GetDeckCards(deckId, currentLocalMatch);
             Console.WriteLine("New match with ID " + (currentLocalMatch.matchId + " has been created with users " +
@@ -759,9 +786,14 @@ public class LifeController : ControllerBase {
                 match.EndGame(winner, "opponent left");
             }
 
-            // Clean up the match
-            matches.EndMatch(matchId);
-            Console.WriteLine($"Match {matchId} cleaned up after player left");
+            // Bot matches have no one left waiting - remove immediately. Human matches
+            // stay registered through the grace period so the opponent's client can
+            // still fetch the game-over events (finished-match sweep removes them).
+            Player opponentOfLeaver = match.GetOpponent(match.accountIdToPlayer[accountData.id]);
+            if (opponentOfLeaver.isBot) {
+                matches.EndMatch(matchId);
+                Console.WriteLine($"Match {matchId} (vs bot) cleaned up after player left");
+            }
 
             return Ok(new { message = "Left match successfully" });
         }

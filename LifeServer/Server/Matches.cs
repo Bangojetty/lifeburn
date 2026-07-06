@@ -118,13 +118,16 @@ public class Matches {
         return allMatches.Keys.ToList();
     }
 
-    // Get finished matches that should be cleaned up
-    public List<int> GetFinishedMatches() {
+    // Get finished matches that should be cleaned up.
+    // graceSeconds keeps a finished match around long enough for clients to
+    // fetch the final game-over events before it disappears.
+    public List<int> GetFinishedMatches(int graceSeconds = 0) {
         var result = new List<int>();
+        DateTime cutoff = DateTime.UtcNow.AddSeconds(-graceSeconds);
         foreach (var kvp in allMatches) {
-            if (kvp.Value.isGameOver) {
-                result.Add(kvp.Key);
-            }
+            if (!kvp.Value.isGameOver) continue;
+            if (kvp.Value.gameOverAt != null && kvp.Value.gameOverAt > cutoff) continue;
+            result.Add(kvp.Key);
         }
         return result;
     }

@@ -10,17 +10,60 @@ namespace Tests;
 [TestFixture]
 public class GameplayInvariantTests {
 
-    private static GameMatch NewMatch(out Player p1, out Player p2) {
-        p1 = new Player("TestPlayerOne", 1);
-        p2 = new Player("TestPlayerTwo", 2);
+    private static GameMatch NewMatch(out Player p1, out Player p2, int matchId = 1, int playerIdBase = 1) {
+        p1 = new Player("TestPlayerOne" + matchId, playerIdBase);
+        p2 = new Player("TestPlayerTwo" + matchId, playerIdBase + 1);
         // 40-card decks of simple vanilla summons (6 = Golem, 7 = RockGolem)
         p1.deck = Enumerable.Range(0, 40).Select(i => Card.GetCard(100 + i, 6)).ToList();
         p2.deck = Enumerable.Range(0, 40).Select(i => Card.GetCard(200 + i, 7)).ToList();
-        GameMatch match = new GameMatch(1, p1, p2);
+        GameMatch match = new GameMatch(matchId, p1, p2);
         foreach (Card c in p1.deck) c.currentGameMatch = match;
         foreach (Card c in p2.deck) c.currentGameMatch = match;
         match.InitializeMatch();
         return match;
+    }
+
+    [Test]
+    public void ConcurrentMatches_AreIndependent() {
+        GameMatch matchA = NewMatch(out Player a1, out _, matchId: 1, playerIdBase: 1);
+        GameMatch matchB = NewMatch(out Player b1, out _, matchId: 2, playerIdBase: 3);
+
+        Matches registry = new Matches();
+        registry.SetMatchData(matchA);
+        registry.SetMatchData(matchB);
+
+        // Mutating match A must not touch match B
+        int bHandBefore = b1.hand.Count;
+        int bLifeBefore = b1.lifeTotal;
+        Card aCard = a1.hand.First();
+        matchA.SendToZone(a1, Zone.Graveyard, aCard);
+        matchA.GainLife(a1, 5);
+
+        Assert.That(b1.hand.Count, Is.EqualTo(bHandBefore));
+        Assert.That(b1.lifeTotal, Is.EqualTo(bLifeBefore));
+        Assert.That(registry.GetMatchData(1), Is.SameAs(matchA));
+        Assert.That(registry.GetMatchData(2), Is.SameAs(matchB));
+
+        // Ending match A leaves match B fully registered and playable
+        registry.EndMatch(1);
+        Assert.That(registry.GetMatchData(1), Is.Null);
+        Assert.That(registry.GetMatchData(2), Is.SameAs(matchB));
+        Assert.That(registry.GetPlayerMatchId(b1.playerId), Is.EqualTo(2));
+    }
+
+    [Test]
+    public void FinishedMatches_StayRegisteredDuringGracePeriod() {
+        GameMatch match = NewMatch(out Player p1, out _);
+        Matches registry = new Matches();
+        registry.SetMatchData(match);
+
+        Assert.That(registry.GetFinishedMatches(0), Is.Empty, "Match not over yet");
+
+        match.EndGame(p1, "test");
+        Assert.That(registry.GetFinishedMatches(60), Is.Empty,
+            "Freshly finished match must survive the grace period so clients can fetch game-over events");
+        Assert.That(registry.GetFinishedMatches(0), Is.EquivalentTo(new[] { match.matchId }),
+            "Once grace expires the match is eligible for cleanup");
     }
 
     /// <summary>

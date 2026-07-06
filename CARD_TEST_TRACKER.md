@@ -1,9 +1,9 @@
 # Card Test Tracker
 
 **Total Cards:** 281
-**Untested:** 241
-**Passed:** 33
-**Failed:** 7
+**Untested:** 233
+**Passed:** 40
+**Failed:** 8
 
 ---
 
@@ -37,12 +37,12 @@
 | 15 | ReplacerGolem | golem | 0 | Passed | Fixed leftZone trigger (card already moved when checking) |  |
 | 16 | ExcavatorGolem | golem | 0 | Passed |  |  |
 | 17 | Smash | golem | 0 | Passed | X display, thisTurn buff, cancel fix |  |
-| 237 | AvalancheGolem | golem | 0 | Untested | Variable stone sacrifice, playerChosenAmount, all damage |  |
-| 240 | BreakThrough | golem | 0 | Untested | Attacking restriction, granted keywords, additionalEffects targetBasedOn |  |
-| 241 | FoundationGolem | golem | 0 | Untested | phaseOfPlayer for controller-only trigger |  |
-| 242 | GraniteGolem | golem | 0 | Untested |  |  |
-| 243 | TargetDummy | golem | 0 | Untested | Taunt keyword implementation |  |
-| 244 | ShatteringSmash | golem | 0 | Untested | requireOneFromEach targeting, BothPlayersHaveSummons cast restriction |  |
+| 237 | AvalancheGolem | golem | 0 | Passed | Variable stone sacrifice, playerChosenAmount, all damage |  |
+| 240 | BreakThrough | golem | 0 | Passed | Attacking restriction, granted keywords, additionalEffects targetBasedOn |  |
+| 241 | FoundationGolem | golem | 0 | Passed | phaseOfPlayer for controller-only trigger |  |
+| 242 | GraniteGolem | golem | 0 | Passed |  |  |
+| 243 | TargetDummy | golem | 0 | Passed | Taunt keyword implementation |  |
+| 244 | ShatteringSmash | golem | 0 | Passed | requireOneFromEach targeting, BothPlayersHaveSummons cast restriction |  |
 | 18 | GolemBlesser | golem | 1 | Failed | Clone/owner system for self-buff fix |  |
 | 19 | MoltenGravel | golem | 1 | Passed | Fixed conditional trample (GetKeywords now uses GetVerifiedPassives) |  |
 | 20 | ChancellorGolem | golem | 1 | Passed | Fixed opening hand trigger zone check |  |
@@ -50,7 +50,7 @@
 | 22 | LordGolem | golem | 2 | Passed | Fixed aura (self: false in JSON) |  |
 | 24 | RockArms | golem | 2 | Passed | Token buff fix |  |
 | 25 | BrassGolem | golem | 2 | Passed | Fixed dynamic token stats (passive with amountBasedOn), baseAttack/baseDefense for color |  |
-| 238 | CastAMold | golem | 2 | Untested |  |  |
+| 238 | CastAMold | golem | 2 | Passed |  |  |
 | 23 | RockToss | golem | 3 | Failed | Conditional damage modifier fix (effectOwner vs affectedPlayer) |  |
 | 29 | Quarry | golem | 3 | Failed | isPlayerTurn, description fix |  |
 | 30 | DigUp | golem | 3 | Passed |  |  |
@@ -59,7 +59,7 @@
 | 33 | Stoned | golem | 4 | Passed |  |  |
 | 37 | StoneSearch | golem | 4 | Passed | Fixed tutor-to-play event ordering (SendToZone before RefreshCardDisplays) |  |
 | 32 | StoneToss | golem | 5 | Passed | Variable X sacrifice, X-based life cost, 2X damage |  |
-| 239 | GroundTactics | golem | 5 | Untested |  |  |
+| 239 | GroundTactics | golem | 5 | Failed |  |  |
 | 34 | MasterGolem | golem | 6 | Passed | Tribute multiplier, StonesInPlay amountBasedOn |  |
 | 36 | DigitalStone | golem | 6 | Passed |  |  |
 | 38 | Foundry | golem | 6 | Passed |  |  |

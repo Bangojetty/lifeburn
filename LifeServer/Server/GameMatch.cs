@@ -54,6 +54,7 @@ public class GameMatch {
 
     // Game over tracking
     public bool isGameOver { get; private set; }
+    public DateTime? gameOverAt { get; private set; }  // When the game ended (for delayed cleanup)
     public int? winnerId { get; private set; }      // Player ID of the winner of this game
     public int? loserId { get; private set; }       // Player ID of the loser of this game
 
@@ -5571,6 +5572,7 @@ private void ApplySpellburn(Player player, bool isScorch) {
     /// </summary>
     private void EndGame(Player winner, Player loser) {
         isGameOver = true;
+        gameOverAt = DateTime.UtcNow;
         winnerId = winner.uid;
         loserId = loser.uid;
 
