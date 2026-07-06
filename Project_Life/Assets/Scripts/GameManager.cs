@@ -346,14 +346,50 @@ public class GameManager : MonoBehaviour {
             }
         }
 
-        // set the current resolving stack object if resolve event exists
-        if (gameData.matchState.playerState.eventList.Any(gEvent => gEvent.eventType == EventType.Resolve)) {
-            currentResolvingStackObj = stackView.transform.GetChild(stackView.transform.childCount - 1).gameObject;
-        }
         // iterate through the events and play their animations, waiting for each one to finish before the next starts
         foreach (GameEvent gEvent in gameData.matchState.playerState.eventList) {
             gEventIsInProgress = true;
             string plurality;
+            // Resolve always takes the current top of the local stack view. This must be
+            // evaluated per-event (not pre-scanned): when a cast resolves instantly (bot
+            // passes immediately), the Cast and Resolve arrive in the SAME batch and the
+            // stack visual only exists once the Cast event has been animated.
+            if (gEvent.eventType == EventType.Resolve) {
+                currentResolvingStackObj = stackView.transform.childCount > 0
+                    ? stackView.transform.GetChild(stackView.transform.childCount - 1).gameObject
+                    : null;
+            }
+            try {
+                ProcessEvent(gEvent, out plurality);
+            } catch (Exception e) {
+                // An exception while dispatching an event must never wedge the whole queue
+                Debug.LogException(e);
+                Debug.LogWarning($"[QueueEventAnims] {gEvent.eventType} handler threw - skipping event to keep the queue alive");
+                gEventIsInProgress = false;
+            }
+            float eventDeadline = Time.time + 20f;
+            yield return new WaitUntil(() => !gEventIsInProgress || Time.time >= eventDeadline);
+            if (gEventIsInProgress) {
+                Debug.LogWarning($"[QueueEventAnims] {gEvent.eventType} did not finish within 20s - forcing continue");
+                gEventIsInProgress = false;
+            }
+        }
+        RefreshAttackArrows();
+        RefreshStateDisplays();
+        eventAnimsAreInProgress = false;
+        Debug.Log("events anims complete");
+
+        // Show game over panel after all animations have finished
+        if (pendingGameOver) {
+            Debug.Log("Showing game over screen now that animations are complete");
+            pendingGameOver = false;
+            HandleGameOver(null);  // We don't need the event data, we use matchState
+        }
+    }
+
+    private void ProcessEvent(GameEvent gEvent, out string plurality) {
+        plurality = "";
+        {
             switch (gEvent.eventType) {
                 case EventType.Draw:
                     Debug.Log("Draw Event");
@@ -766,18 +802,6 @@ public class GameManager : MonoBehaviour {
                     Debug.Log("EventType: " + gEvent.eventType + " not implemented.");
                     break;
             }
-            yield return new WaitUntil(() => !gEventIsInProgress);
-        }
-        RefreshAttackArrows();
-        RefreshStateDisplays();
-        eventAnimsAreInProgress = false;
-        Debug.Log("events anims complete");
-
-        // Show game over panel after all animations have finished
-        if (pendingGameOver) {
-            Debug.Log("Showing game over screen now that animations are complete");
-            pendingGameOver = false;
-            HandleGameOver(null);  // We don't need the event data, we use matchState
         }
     }
 
