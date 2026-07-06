@@ -9,16 +9,17 @@
   "rarity": "common",
   "description": "Foundry Golem cost 0 if you control at least 4 stones.",
   "passiveEffects": [
-	  {
-		"conditions": [
-		  {
-			"condition": "control",
-			"minAmount": 4,
-			"tokenType": "stone"
-		  }
-		],
-		"passive": "modifyCost",
-		"cost": 0
-	  }
+    {
+      "conditions": [
+        {
+          "condition": "control",
+          "minAmount": 4,
+          "tokenType": "stone"
+        }
+      ],
+      "passive": "modifyCost",
+      "scope": "selfOnly",
+      "cost": 0
+    }
   ]
 }

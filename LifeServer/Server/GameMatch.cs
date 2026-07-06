@@ -441,6 +441,9 @@ public class GameMatch {
         if (!handPassiveTypes.Contains(pEffect.passive)) return;
         foreach (Card c in player.hand) {
             if (!QualifyCard(c, pQualifier)) continue;
+            // Skip the source card's own innate passive - its passiveEffects entry already provides
+            // it with live condition evaluation; a clone would strip the conditions and stick forever
+            if (c == sourceCard && sourceCard.passiveEffects != null && sourceCard.passiveEffects.Contains(pEffect)) continue;
             if (HasPassiveFromSource(c, sourceCard, pEffect.passive)) continue;
             ApplyClonedPassive(c, sourceCard, pEffect);
         }

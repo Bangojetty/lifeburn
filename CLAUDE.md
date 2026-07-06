@@ -30,6 +30,7 @@ Two-player collectible card game. Authoritative .NET server + Unity client, comm
 
 Scoping & triggers:
 - `scope: "selfOnly"` is REQUIRED on "when this enters/attacks/dies" triggers. `enteredZone` triggers with no scope default to `Scope.All` and fire for EVERY card entering that zone. (`Scope` = `selfOnly` / `othersOnly` / `all`; `PassiveEffect` defaults to `all`, `TriggeredEffect` defaults to `selfOnly` — but be explicit.)
+- Self-referential passives ("THIS card costs 0 if…", e.g. `modifyCost`) also REQUIRE `scope: "selfOnly"` — passives are applied as auras (`ApplyPassive`/`QualifyCard`), and the applied clones drop their conditions, so an unscoped conditional passive sprays a permanent effect onto every card the moment its condition is first met (the FoundryGolem 0-cost bug).
 - `phaseOfPlayer: "player"` on phase triggers that should only fire on the controller's turn.
 - Conditions go at the **triggered-effect level** to prevent the trigger firing at all; a condition on the inner effect still fires the trigger (and prompts) but no-ops.
 - Tokens are `Zone.Play` (there is no token zone). Match stones with `"zone": "play"` + `"tokenType": "stone"`.
