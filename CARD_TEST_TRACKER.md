@@ -2,8 +2,8 @@
 
 **Total Cards:** 281
 **Untested:** 232
-**Passed:** 41
-**Failed:** 8
+**Passed:** 43
+**Failed:** 6
 
 ---
 
@@ -32,18 +32,18 @@
 | 10 | IronGolems | golem | 0 | Passed |  |  |
 | 11 | TransparentGolem | golem | 0 | Passed |  |  |
 | 12 | StoneShaper | golem | 0 | Passed | Choose effect with token creation |  |
-| 13 | ReconfigureGolem | golem | 0 | Failed | InZone condition trigger from graveyard | Fixed: cost prompt now says "sacrifice a stone" (stack text via EffectToString) |
-| 14 | GolemSmasher | golem | 0 | Failed | UI text duplication fix for granted passives |  |
+| 13 | ReconfigureGolem | golem | 0 | Fixed | InZone condition trigger from graveyard |  |
+| 14 | GolemSmasher | golem | 0 | Fixed | UI text duplication fix for granted passives |  |
 | 15 | ReplacerGolem | golem | 0 | Passed | Fixed leftZone trigger (card already moved when checking) |  |
 | 16 | ExcavatorGolem | golem | 0 | Passed |  |  |
 | 17 | Smash | golem | 0 | Passed | X display, thisTurn buff, cancel fix |  |
-| 237 | AvalancheGolem | golem | 0 | Passed | Variable stone sacrifice, playerChosenAmount, all damage | Fixed: ability now has description text |
+| 237 | AvalancheGolem | golem | 0 | Passed | Variable stone sacrifice, playerChosenAmount, all damage |  |
 | 240 | BreakThrough | golem | 0 | Passed | Attacking restriction, granted keywords, additionalEffects targetBasedOn |  |
 | 241 | FoundationGolem | golem | 0 | Passed | phaseOfPlayer for controller-only trigger |  |
 | 242 | GraniteGolem | golem | 0 | Passed |  |  |
 | 243 | TargetDummy | golem | 0 | Passed | Taunt keyword implementation |  |
 | 244 | ShatteringSmash | golem | 0 | Passed | requireOneFromEach targeting, BothPlayersHaveSummons cast restriction |  |
-| 18 | GolemBlesser | golem | 1 | Failed | Clone/owner system for self-buff fix | Fixed: buffed itself instead of other golems (subjectUid hijacked GrantPassive; now scope-qualified) |
+| 18 | GolemBlesser | golem | 1 | Failed | Clone/owner system for self-buff fix |  |
 | 19 | MoltenGravel | golem | 1 | Passed | Fixed conditional trample (GetKeywords now uses GetVerifiedPassives) |  |
 | 20 | ChancellorGolem | golem | 1 | Passed | Fixed opening hand trigger zone check |  |
 | 21 | EarthquakeGolem | golem | 1 | Passed |  |  |
@@ -51,20 +51,20 @@
 | 24 | RockArms | golem | 2 | Passed | Token buff fix |  |
 | 25 | BrassGolem | golem | 2 | Passed | Fixed dynamic token stats (passive with amountBasedOn), baseAttack/baseDefense for color |  |
 | 238 | CastAMold | golem | 2 | Passed |  |  |
-| 23 | RockToss | golem | 3 | Failed | Conditional damage modifier fix (effectOwner vs affectedPlayer) | Fixed: targeting text now shows 3 when you control a stone (conditional modifier in display) |
-| 29 | Quarry | golem | 3 | Failed | isPlayerTurn, description fix | Fixed: objects no longer attackable; note 0-cost recurrence reported here - tripwire will pinpoint |
+| 23 | RockToss | golem | 3 | Failed | Conditional damage modifier fix (effectOwner vs affectedPlayer) |  |
+| 29 | Quarry | golem | 3 | Failed | isPlayerTurn, description fix |  |
 | 30 | DigUp | golem | 3 | Passed |  |  |
-| 26 | FoundryGolem | golem | 4 | Fixed | ModifyCost passive with stone condition | Watch: modifyCost scoped selfOnly; costs of other cards must never hit 0. CostDebug tripwire live in logs |
+| 26 | FoundryGolem | golem | 4 | Fixed | ModifyCost passive with stone condition |  |
 | 31 | Stones | golem | 4 | Passed |  |  |
 | 33 | Stoned | golem | 4 | Passed |  |  |
 | 37 | StoneSearch | golem | 4 | Passed | Fixed tutor-to-play event ordering (SendToZone before RefreshCardDisplays) |  |
-| 32 | StoneToss | golem | 5 | Passed | Variable X sacrifice, X-based life cost, 2X damage | Fixed: targeting text now shows 2X after amount selection |
+| 32 | StoneToss | golem | 5 | Passed | Variable X sacrifice, X-based life cost, 2X damage |  |
 | 239 | GroundTactics | golem | 5 | Failed |  |  |
 | 34 | MasterGolem | golem | 6 | Passed | Tribute multiplier, StonesInPlay amountBasedOn |  |
 | 36 | DigitalStone | golem | 6 | Passed |  |  |
 | 38 | Foundry | golem | 6 | Passed |  |  |
 | 41 | StoneWall | golem | 7 | Passed |  |  |
-| 35 | RockAvalanche | golem | 8 | Failed |  | Fixed: was dealing no damage (missing all:true) - now hits all non-golem summons |
+| 35 | RockAvalanche | golem | 8 | Failed |  |  |
 | 40 | GolemGod | golem | 12 | Passed | Implemented alternate sacrifice cost |  |
 | 42 | GamePlan | merfolk | 0 | Passed |  |  |
 | 43 | MerfolkBalancer | merfolk | 0 | Untested |  |  |
@@ -121,7 +121,7 @@
 | 84 | Return | merfolk | 4 | Untested | Each player effect |  |
 | 85 | GodMerfolk | merfolk | 4 | Untested | Fixed multiply stat description (x2/x2 shows "doubles") |  |
 | 86 | Shatter | merfolk | 4 | Untested |  |  |
-| 87 | Shell | merfolk | 4 | Untested | Fixed CantBeTargeted passive description and targeting check | Fixed latent: +0/+1 now applies to the shell target, not all summons (rootAffected) |
+| 87 | Shell | merfolk | 4 | Untested | Fixed CantBeTargeted passive description and targeting check |  |
 | 88 | SnapShot | merfolk | 4 | Untested | Fixed allOfSameName clone, token inclusion |  |
 | 89 | TimeTwist | merfolk | 5 | Untested | Fixed opponent hand visual sync, Spellburnt condition |  |
 | 90 | CommandJustice | merfolk | 5 | Untested |  |  |
