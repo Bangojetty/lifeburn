@@ -255,9 +255,15 @@ public class DeckEditManager : MonoBehaviour {
     }
 
     private void DisplayCollection() {
+        // Default ordering: tribe first, then cost, then id
+        List<CardDisplayData> sortedCards = gameData.allCardDisplayDatas
+            .OrderBy(c => (int)c.tribe)
+            .ThenBy(c => c.cost)
+            .ThenBy(c => c.id)
+            .ToList();
         // Temporary access to all cards. The outer for loop is to put 3 copies of each card in.
         for (var cardCount = 0; cardCount < 3; cardCount++) {
-            foreach (var i in gameData.allCardDisplayDatas) {
+            foreach (var i in sortedCards) {
                 if (collectionCardsToObj.ContainsKey(i.id)) {
                     var cardDisplay = collectionCardsToObj[i.id].GetComponent<DeckEditorCardDisplay>();
                     if (cardDisplay.copies < 3) {

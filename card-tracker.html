@@ -63,6 +63,7 @@
   td { padding: 6px 10px; border-bottom: 1px solid var(--border); vertical-align: middle; }
   tr:last-child td { border-bottom: none; }
   td.id { color: var(--muted); width: 44px; font-variant-numeric: tabular-nums; }
+  td.tribe { color: var(--muted); text-transform: capitalize; width: 80px; }
   td.name { font-weight: 600; white-space: nowrap; }
   td.r1 { color: var(--muted); font-size: 12.5px; max-width: 300px; }
   .seg { display: inline-flex; border: 1px solid var(--border); border-radius: 7px; overflow: hidden; }
@@ -116,7 +117,7 @@
   </div>
   <table id="tbl" hidden>
     <thead><tr>
-      <th>ID</th><th>Card</th><th>Status</th><th>Round 1 Notes</th><th>Round 2 Notes</th>
+      <th>ID</th><th>Card</th><th>Tribe</th><th>Cost</th><th>Status</th><th>Round 1 Notes</th><th>Round 2 Notes</th>
     </tr></thead>
     <tbody id="tbody"></tbody>
   </table>
@@ -207,23 +208,29 @@ async function loadFromHandle() {
   render();
 }
 
+const TRIBE_ORDER = ["golem", "merfolk", "shadow", "goblin", "treefolk"];
+
 function parse(text) {
   lines = text.replace(/\r\n/g, "\n").split("\n");
   cards = [];
-  const re = /^\|\s*(\d+)\s*\|([^|]*)\|([^|]*)\|([^|]*)\|([^|]*)\|\s*$/;
+  const re = /^\|\s*(\d+)\s*\|([^|]*)\|([^|]*)\|([^|]*)\|([^|]*)\|([^|]*)\|([^|]*)\|\s*$/;
   for (let i = 0; i < lines.length; i++) {
     const m = lines[i].match(re);
     if (!m || m[2].trim() === "Name" || /^-+$/.test(m[2].trim())) continue;
-    let status = m[3].trim();
+    let status = m[5].trim();
     if (!STATUSES.includes(status)) status = "Untested";
-    cards.push({ id: +m[1], name: m[2].trim(), status, r1: m[4].trim(), r2: m[5].trim(), lineIdx: i });
+    cards.push({ id: +m[1], name: m[2].trim(), tribe: m[3].trim(), cost: +m[4].trim() || 0,
+                 status, r1: m[6].trim(), r2: m[7].trim(), lineIdx: i });
   }
-  cards.sort((a, b) => a.id - b.id);
+  // tribe first, then cost, then id
+  cards.sort((a, b) =>
+    (TRIBE_ORDER.indexOf(a.tribe) - TRIBE_ORDER.indexOf(b.tribe)) ||
+    (a.cost - b.cost) || (a.id - b.id));
 }
 
 function serialize() {
   for (const c of cards) {
-    lines[c.lineIdx] = `| ${c.id} | ${c.name} | ${c.status} | ${c.r1} | ${c.r2} |`;
+    lines[c.lineIdx] = `| ${c.id} | ${c.name} | ${c.tribe} | ${c.cost} | ${c.status} | ${c.r1} | ${c.r2} |`;
   }
   const n = { Untested: 0, Passed: 0, Failed: 0, Fixed: 0 };
   cards.forEach(c => n[c.status]++);
@@ -280,7 +287,7 @@ function visibleCards() {
   if (filter === "next50") list = cards.filter(c => c.status === "Untested").slice(0, 50);
   else if (filter !== "all") list = cards.filter(c => c.status === filter);
   if (q) list = list.filter(c =>
-    c.name.toLowerCase().includes(q) || String(c.id) === q ||
+    c.name.toLowerCase().includes(q) || String(c.id) === q || c.tribe.toLowerCase() === q ||
     c.r1.toLowerCase().includes(q) || c.r2.toLowerCase().includes(q));
   return list;
 }
@@ -292,10 +299,11 @@ function render() {
   for (const c of visibleCards()) {
     const tr = document.createElement("tr");
     tr.className = "st-" + c.status;
-    tr.innerHTML = `<td class="id">${c.id}</td><td class="name"></td><td></td>` +
-                   `<td class="r1"></td><td class="notes"></td>`;
+    tr.innerHTML = `<td class="id">${c.id}</td><td class="name"></td><td class="tribe"></td>` +
+                   `<td class="id">${c.cost}</td><td></td><td class="r1"></td><td class="notes"></td>`;
     tr.children[1].textContent = c.name;
-    tr.children[3].textContent = c.r1;
+    tr.children[2].textContent = c.tribe;
+    tr.children[5].textContent = c.r1;
     const seg = document.createElement("div");
     seg.className = "seg";
     for (const s of STATUSES) {
@@ -306,12 +314,12 @@ function render() {
       b.onclick = () => { c.status = s; scheduleSave(); render(); };
       seg.appendChild(b);
     }
-    tr.children[2].appendChild(seg);
+    tr.children[4].appendChild(seg);
     const inp = document.createElement("input");
     inp.value = c.r2;
     inp.placeholder = "notes…";
     inp.onchange = () => { c.r2 = inp.value.replace(/\|/g, "/"); scheduleSave(); };
-    tr.children[4].appendChild(inp);
+    tr.children[6].appendChild(inp);
     tb.appendChild(tr);
   }
 }
