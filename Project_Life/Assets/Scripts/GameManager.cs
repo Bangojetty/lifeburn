@@ -1187,8 +1187,7 @@ public class GameManager : MonoBehaviour {
                 newCardAnimator.Play("DrawOpp",-1, 0f);
                 // wait longer if the next event is not a draw event
                 if (isLastDrawEvent) {
-                    yield return new WaitUntil(() => newCardAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1
-                                                     && !newCardAnimator.IsInTransition(0));
+                    yield return WaitForAnimationOrTimeout(newCardAnimator);
                 } else {
                     yield return new WaitForSeconds(0.5f);
                 }
@@ -1196,8 +1195,7 @@ public class GameManager : MonoBehaviour {
                 newCardAnimator.Play("Draw",-1, 0f);
                 // wait longer if the next event is not a draw event
                 if (isLastDrawEvent) {
-                    yield return new WaitUntil(() => newCardAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1
-                                                     && !newCardAnimator.IsInTransition(0));
+                    yield return WaitForAnimationOrTimeout(newCardAnimator);
                 } else {
                     yield return new WaitForSeconds(0.5f);
                 }
@@ -1205,6 +1203,22 @@ public class GameManager : MonoBehaviour {
         }
         // finalize the event by toggling gEventsInProgress
         gEventIsInProgress = false;
+    }
+
+    /// <summary>
+    /// Waits for an animator to finish its current state, but never forever - if the
+    /// animation doesn't complete (object inactive, state missing, destroyed mid-wait),
+    /// give up after a few seconds so the event queue can't get permanently stuck.
+    /// </summary>
+    private IEnumerator WaitForAnimationOrTimeout(Animator animator, float timeoutSeconds = 3f) {
+        float deadline = Time.time + timeoutSeconds;
+        yield return new WaitUntil(() =>
+            Time.time >= deadline ||
+            animator == null ||
+            (animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1 && !animator.IsInTransition(0)));
+        if (Time.time >= deadline) {
+            Debug.LogWarning("[AnimWait] Animation wait timed out - continuing so the event queue doesn't stall");
+        }
     }
 
     private IEnumerator DiscardEvent(GameEvent gEvent) {
@@ -1296,8 +1310,7 @@ public class GameManager : MonoBehaviour {
         } else {
             string animName = gEvent.isOpponent ? "DrawOpp" : "Draw";
             newCardAnimator.Play(animName, -1, 0f);
-            yield return new WaitUntil(() => newCardAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1
-                                             && !newCardAnimator.IsInTransition(0));
+            yield return WaitForAnimationOrTimeout(newCardAnimator);
         }
 
         gEventIsInProgress = false;
