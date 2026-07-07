@@ -76,6 +76,52 @@ public class GameplayInvariantTests {
     }
 
     [Test]
+    public void StoneToss_XCost_CappedByLifeAndDoesNotHang() {
+        // Stone Toss (32): base cost 5 (paid in life), additional "sacrifice X stones and lose
+        // X life". At 8 life you can afford base 5 + at most 2 more (survive with >= 1), so the
+        // sacrifice selection must cap X at 2 even with 6 stones available.
+        GameMatch match = NewMatch(out Player p1, out Player p2);
+        // Make it p1's main phase with an empty stack so the cast is legal
+        match.turnPlayerId = p1.playerId;
+        match.prioPlayerId = p1.playerId;
+        match.currentPhase = Phase.Main;
+        p1.lifeTotal = 8;
+
+        Card stoneToss = Card.GetCard(800, 32, match);
+        stoneToss.currentZone = Zone.Hand;
+        p1.hand.Add(stoneToss);
+        match.cardByUid[stoneToss.uid] = stoneToss;
+        for (int i = 0; i < 6; i++) {
+            Token stone = new Token(TokenType.Stone, match);
+            stone.currentZone = Zone.Play;
+            p1.tokens.Add(stone);
+            p1.allCardsPlayer.Add(stone);   // sacrifice candidates are drawn from here
+            p1.cardToCardStackId[stone] = 1; // Destroy() reads this when sacrificing
+            match.cardByUid[stone.uid] = stone;
+        }
+
+        p1.eventList.Clear();
+        match.AttemptToCast(p1, stoneToss);
+
+        // The variable sacrifice cost event should be offered with a max capped by life (2),
+        // not the raw stone count (6)
+        GameEvent costEvent = p1.eventList.LastOrDefault(e => e.eventType == EventType.Cost);
+        Assert.That(costEvent, Is.Not.Null, "Stone Toss should prompt a variable sacrifice cost");
+        Assert.That(costEvent.amount, Is.EqualTo(2),
+            "Max X must be capped so base cost (5) + X life leaves the player alive at 8 life");
+
+        // Paying the max (sacrifice 2 stones) must complete without hanging - the auto-paid
+        // life cost previously caused an infinite 'waiting for input' state
+        List<Card> twoStones = p1.tokens.Take(2).Cast<Card>().ToList();
+        Assert.DoesNotThrow(() => match.HandleCostSelection(p1, twoStones));
+        // The X-life additional cost (2) is paid during cost resolution; the base cost (5) is
+        // paid later when the card actually casts (after target selection). Here we've paid the
+        // additional cost and the sacrifice, so life = 8 - 2 = 6 and the 2 stones are gone.
+        Assert.That(p1.lifeTotal, Is.EqualTo(6), "8 - 2 X-life = 6 at this point");
+        Assert.That(p1.tokens, Has.Count.EqualTo(4), "2 of 6 stones sacrificed");
+    }
+
+    [Test]
     public void ConcurrentMatches_AreIndependent() {
         GameMatch matchA = NewMatch(out Player a1, out _, matchId: 1, playerIdBase: 1);
         GameMatch matchB = NewMatch(out Player b1, out _, matchId: 2, playerIdBase: 3);

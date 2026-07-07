@@ -1542,15 +1542,20 @@ public class GameMatch {
         return optionalTriggers.Count > 0;
     }
 
+    // Returns true only if a cost still needs CLIENT INPUT (a cost event was sent and we must
+    // wait for the response). Auto-paid costs (Life) do NOT count - returning true for them
+    // hangs the cast waiting for input that never comes (the Stone Toss "lose X life" freeze).
     private bool CheckCardForAdditionalCosts(Player player, Card focusCard) {
         if(focusCard.additionalCosts == null) return false;
+        bool waitingForInput = false;
         foreach (AdditionalCost aCost in focusCard.additionalCosts) {
             if (aCost.isPaid) continue;
 
             // For X-based costs where X hasn't been set yet, the first cost determines X
             if (aCost.amountBasedOn == AmountBasedOn.X && focusCard.x == null) {
                 if (aCost.costType == CostType.Sacrifice || aCost.costType == CostType.Discard) {
-                    // Send variable selection cost event - player chooses how many to sacrifice/discard
+                    // Send variable selection cost event - player chooses how many to sacrifice/discard.
+                    // Must wait for this before any later cost (it sets X for them).
                     AddVariableCostEvent(player, aCost, focusCard);
                     cardAdditionalCostAmount++;
                     return true; // Wait for selection, which will set X
@@ -1568,8 +1573,9 @@ public class GameMatch {
             // Other costs require user selection
             AddCostEvent(player, null, aCost, focusCard);
             cardAdditionalCostAmount++;
+            waitingForInput = true;
         }
-        return cardAdditionalCostAmount > 0;
+        return waitingForInput;
     }
     private bool CheckForChoicesTriggers(Player player) {
         foreach (TriggeredEffect tEffect in player.controlledTriggers) {
@@ -3250,6 +3256,28 @@ public class GameMatch {
         }
 
         int maxAmount = selectableUidList.Count;
+
+        // If choosing X here also costs life (e.g. Stone Toss: "sacrifice X stones and lose X
+        // life"), cap X so the player can afford both the card's base life cost AND the X life,
+        // and still survive (>= 1 life). Without this you can pick an X that kills you paying
+        // your own cost, which isn't a legal cost payment.
+        int lifePerX = 0;
+        if (sourceCard.additionalCosts != null) {
+            foreach (AdditionalCost other in sourceCard.additionalCosts) {
+                if (other.costType == CostType.Life && other.amountBasedOn == AmountBasedOn.X) {
+                    lifePerX += 1;  // "lose X life" costs 1 life per unit of X
+                }
+            }
+        }
+        if (lifePerX > 0) {
+            // Spells pay their base cost in life; summons pay in tribute (0 life here)
+            int baseLifeCost = sourceCard.type == CardType.Spell && !sourceCard.HasKeyword(Keyword.Finale)
+                ? sourceCard.GetCost() : 0;
+            int lifeBudget = attemptingPlayer.lifeTotal - 1 - baseLifeCost;  // must survive with >= 1
+            int maxAffordableX = lifeBudget <= 0 ? 0 : lifeBudget / lifePerX;
+            maxAmount = Math.Min(maxAmount, maxAffordableX);
+        }
+
         string targetName = aCost.tokenType?.ToString() ?? "card";
         string costVerb = aCost.costType == CostType.Discard ? "discard" : "sacrifice";
         string message = $"{costVerb} any number of {targetName}s (0 to {maxAmount})";

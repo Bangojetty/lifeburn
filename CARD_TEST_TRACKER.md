@@ -1,8 +1,8 @@
 # Card Test Tracker
 
 **Total Cards:** 281
-**Untested:** 180
-**Passed:** 86
+**Untested:** 178
+**Passed:** 88
 **Failed:** 15
 
 ---
@@ -58,7 +58,7 @@
 | 31 | Stones | golem | 4 | Passed |  |  |
 | 33 | Stoned | golem | 4 | Passed |  |  |
 | 37 | StoneSearch | golem | 4 | Passed | Fixed tutor-to-play event ordering (SendToZone before RefreshCardDisplays) |  |
-| 32 | StoneToss | golem | 5 | Passed | Variable X sacrifice, X-based life cost, 2X damage |  |
+| 32 | StoneToss | golem | 5 | Passed | Variable X sacrifice, X-based life cost, 2X damage | Fixed: game-breaking hang on life cost + X now capped by affordable life (cannot pick a lethal X) |
 | 239 | GroundTactics | golem | 5 | Fixed |  |  |
 | 34 | MasterGolem | golem | 6 | Passed | Tribute multiplier, StonesInPlay amountBasedOn |  |
 | 36 | DigitalStone | golem | 6 | Passed |  |  |
@@ -76,7 +76,7 @@
 | 49 | PoseidonsBlessing | merfolk | 0 | Passed |  |  |
 | 50 | Fishies | merfolk | 0 | Failed |  |  |
 | 51 | MerfolkGazer | merfolk | 0 | Passed |  |  |
-| 52 | DiverMerfolk | merfolk | 0 | Untested |  |  |
+| 52 | DiverMerfolk | merfolk | 0 | Passed |  |  |
 | 53 | MerfolkRusher | merfolk | 0 | Passed |  |  |
 | 54 | CuriousMerfolk | merfolk | 0 | Passed |  |  |
 | 55 | MerfolkKeeper | merfolk | 0 | Passed | Draw trigger with notFirst restriction, +1/+1 counters |  |
@@ -111,7 +111,7 @@
 | 246 | Riptide | merfolk | 2 | Passed | Token destruction includes Token class instances |  |
 | 251 | MerfolkElite | merfolk | 2 | Failed |  |  |
 | 76 | Snag | merfolk | 3 | Passed |  |  |
-| 77 | BackSnap | merfolk | 3 | Untested | Spell alternate cost ordering fix (cost choice before target selection) |  |
+| 77 | BackSnap | merfolk | 3 | Passed | Spell alternate cost ordering fix (cost choice before target selection) |  |
 | 78 | DrawCounter | merfolk | 3 | Passed | Counter target selection fix |  |
 | 79 | Dispell | merfolk | 3 | Untested |  |  |
 | 80 | MerfolkTribe | merfolk | 3 | Passed |  |  |
