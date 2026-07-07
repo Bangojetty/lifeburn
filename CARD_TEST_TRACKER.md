@@ -1,9 +1,9 @@
 # Card Test Tracker
 
 **Total Cards:** 281
-**Untested:** 195
-**Passed:** 74
-**Failed:** 12
+**Untested:** 180
+**Passed:** 86
+**Failed:** 15
 
 ---
 
@@ -109,28 +109,28 @@
 | 75 | SiftRubble | merfolk | 2 | Failed |  |  |
 | 81 | Opt | merfolk | 2 | Failed | Fixed infinite loop with resolve index, optional shuffle |  |
 | 246 | Riptide | merfolk | 2 | Passed | Token destruction includes Token class instances |  |
-| 251 | MerfolkElite | merfolk | 2 | Untested |  | Fixed: caused server stack-overflow crash (self-referential oneOneInPlay); re-entrancy guard added |
-| 76 | Snag | merfolk | 3 | Untested |  |  |
+| 251 | MerfolkElite | merfolk | 2 | Failed |  |  |
+| 76 | Snag | merfolk | 3 | Passed |  |  |
 | 77 | BackSnap | merfolk | 3 | Untested | Spell alternate cost ordering fix (cost choice before target selection) |  |
-| 78 | DrawCounter | merfolk | 3 | Untested | Counter target selection fix |  |
+| 78 | DrawCounter | merfolk | 3 | Passed | Counter target selection fix |  |
 | 79 | Dispell | merfolk | 3 | Untested |  |  |
-| 80 | MerfolkTribe | merfolk | 3 | Untested |  |  |
+| 80 | MerfolkTribe | merfolk | 3 | Passed |  |  |
 | 82 | Brainstorm | merfolk | 3 | Untested | Multiplayer flow fix, shuffle message fix |  |
 | 83 | CounterBalance | merfolk | 3 | Untested |  |  |
-| 256 | SpawnFish | merfolk | 3 | Untested |  |  |
+| 256 | SpawnFish | merfolk | 3 | Passed |  |  |
 | 84 | Return | merfolk | 4 | Untested | Each player effect |  |
-| 85 | GodMerfolk | merfolk | 4 | Untested | Fixed multiply stat description (x2/x2 shows "doubles") |  |
-| 86 | Shatter | merfolk | 4 | Untested |  |  |
-| 87 | Shell | merfolk | 4 | Untested | Fixed CantBeTargeted passive description and targeting check |  |
-| 88 | SnapShot | merfolk | 4 | Untested | Fixed allOfSameName clone, token inclusion |  |
+| 85 | GodMerfolk | merfolk | 4 | Passed | Fixed multiply stat description (x2/x2 shows "doubles") |  |
+| 86 | Shatter | merfolk | 4 | Passed |  |  |
+| 87 | Shell | merfolk | 4 | Passed | Fixed CantBeTargeted passive description and targeting check |  |
+| 88 | SnapShot | merfolk | 4 | Passed | Fixed allOfSameName clone, token inclusion |  |
 | 89 | TimeTwist | merfolk | 5 | Untested | Fixed opponent hand visual sync, Spellburnt condition |  |
-| 90 | CommandJustice | merfolk | 5 | Untested |  |  |
-| 91 | Refresh | merfolk | 5 | Untested | Implemented modifySummonLimit effect |  |
-| 92 | WashAway | merfolk | 8 | Untested |  |  |
-| 249 | Legionaires | merfolk | 9 | Untested |  |  |
+| 90 | CommandJustice | merfolk | 5 | Failed |  |  |
+| 91 | Refresh | merfolk | 5 | Passed | Implemented modifySummonLimit effect |  |
+| 92 | WashAway | merfolk | 8 | Passed |  |  |
+| 249 | Legionaires | merfolk | 9 | Passed |  |  |
 | 93 | TurnTime | merfolk | 10 | Untested | Fixed phaseOfPlayer trigger, forOpponentChoice text |  |
-| 94 | GodRecallSpell | merfolk | 10 | Untested |  |  |
-| 95 | SwapControl | merfolk | 15 | Untested |  |  |
+| 94 | GodRecallSpell | merfolk | 10 | Passed |  |  |
+| 95 | SwapControl | merfolk | 15 | Failed |  |  |
 | 96 | DuskWraith | shadow | 0 | Untested | Conditional destroy/gainLife, target selection message fix |  |
 | 97 | Ghastly | shadow | 0 | Untested | Opening hand playerChoice discard |  |
 | 98 | GraveDigger | shadow | 0 | Untested |  |  |

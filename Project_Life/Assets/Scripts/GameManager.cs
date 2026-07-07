@@ -1820,9 +1820,12 @@ public class GameManager : MonoBehaviour {
         gameData = GameObject.Find("GameData").GetComponent<GameData>();
         gameData.accountData = GameObject.Find("AccountData").GetComponent<AccountDataGO>().accountData;
 
-        // If coming from lobby, matchState is null but lobbyMatchId is set
-        // Fetch the initial matchState here (this is the first fetch, so events will be included)
-        if (gameData.matchState == null && gameData.lobbyMatchId.HasValue) {
+        // If coming from lobby, lobbyMatchId is the authoritative signal - fetch the new
+        // match by that id. Do NOT gate on matchState == null: GameData is DontDestroyOnLoad,
+        // so a client that ran a previous match still holds that stale matchState, which would
+        // otherwise skip this fetch and leave the player polling a dead match ("stuck on
+        // waiting for opponent").
+        if (gameData.lobbyMatchId.HasValue) {
             gameData.matchState = serverApi.GetMatchState(gameData.accountData, gameData.lobbyMatchId.Value);
             gameData.lobbyMatchId = null;  // Clear after use
             // Skip the first CheckForMatchStateChanges since we just fetched and it would overwrite our events
@@ -1939,6 +1942,10 @@ public class GameManager : MonoBehaviour {
     public void ConfirmQuitToMenu() {
         StopAllCoroutines();  // stop match-state polling and any running animations
         LeaveCurrentMatch();
+        // Clear per-match state so the next match (esp. a lobby game on this same client)
+        // doesn't inherit a dead matchState from GameData (DontDestroyOnLoad)
+        gameData.matchState = null;
+        gameData.lobbyMatchId = null;
         UnityEngine.SceneManagement.SceneManager.LoadScene("Main Menu");
     }
 
@@ -2666,6 +2673,11 @@ public class GameManager : MonoBehaviour {
         int bestOf = matchState.bestOf;
 
         if (bestOf == 1 || seriesOver) {
+            // Match fully over - clear per-match state so the next match doesn't inherit a
+            // dead matchState from GameData (DontDestroyOnLoad). Not done in the series
+            // branch below, which intentionally continues the same match.
+            gameData.matchState = null;
+            gameData.lobbyMatchId = null;
             // Return to main menu
             UnityEngine.SceneManagement.SceneManager.LoadScene("Main Menu");
         } else {

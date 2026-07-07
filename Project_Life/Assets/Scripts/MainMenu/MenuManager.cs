@@ -149,6 +149,10 @@ public class MenuManager : MonoBehaviour {
         foreach (GameObject deckObj in deckObjs) {
             deckObj.GetComponent<Selectable>().interactable = false;
         }
+        // Clear any stale matchState from a previous game - QueueRefresh loops
+        // `while (matchState == null)` and would exit instantly on leftover state
+        gameData.matchState = null;
+        gameData.lobbyMatchId = null;
         StartCoroutine(QueueRefresh());
         matchMakingTimer.SetActive(true);
     }
