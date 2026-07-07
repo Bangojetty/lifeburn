@@ -53,6 +53,8 @@ Engine invariants:
 - Effects that cause visual changes followed by user input must halt resolution (`ShouldHaltAfterResolve`) so the client doesn't batch the animations.
 - Client UI state for repeated prompts (ordering, selection) must be explicitly cleared between prompts.
 
+Conditions that read a card's COMPUTED stats (`oneOneInPlay`, `targetAttack`) are dangerous on a card's own passive: computing attack/defense evaluates the card's passive conditions, so a self-referential stat condition recurses. `GetAttack`/`GetDefense` now have re-entrancy guards (return base stat when re-entered), but prefer base-stat checks in new conditions.
+
 Common card-JSON typo bugs seen historically: `statModfiers`, `restricion`, `optoinal`, `amountModifer` — nothing validates property names yet, so typos silently no-op. Check spelling against `LifeServer/Data/CardSchema.json`.
 
 ## Docs & trackers

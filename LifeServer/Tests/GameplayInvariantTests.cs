@@ -52,6 +52,30 @@ public class GameplayInvariantTests {
     }
 
     [Test]
+    public void StatConditionOnSelf_DoesNotInfiniteRecurse() {
+        // Merfolk Elite (251): "While either player controls a 1/1 summon, Merfolk Elite
+        // has Spectral." Its OneOneInPlay condition reads every in-play card's attack -
+        // including its own, whose computation re-checks the condition. Before the
+        // re-entrancy guard this overflowed the stack and killed the process.
+        GameMatch match = NewMatch(out Player p1, out _);
+        Card elite = Card.GetCard(700, 251, match);
+        elite.currentZone = Zone.Play;
+        p1.playField.Add(elite);
+        // A real 1/1 in play so the condition is actually satisfied (Golem token is 1/1)
+        p1.tokens.Add(new Token(TokenType.Golem, match));
+
+        // None of these may recurse; a failure would be a StackOverflow crashing the runner
+        Assert.That(elite.GetAttack(), Is.EqualTo(3));
+        Assert.That(elite.GetDefense(), Is.EqualTo(3));
+        Assert.That(elite.GetKeywords(), Does.Contain(Keyword.Spectral),
+            "1/1 in play should grant Merfolk Elite Spectral");
+
+        // And with no 1/1 present, no Spectral - and still no recursion
+        p1.tokens.Clear();
+        Assert.That(elite.GetKeywords(), Does.Not.Contain(Keyword.Spectral));
+    }
+
+    [Test]
     public void ConcurrentMatches_AreIndependent() {
         GameMatch matchA = NewMatch(out Player a1, out _, matchId: 1, playerIdBase: 1);
         GameMatch matchB = NewMatch(out Player b1, out _, matchId: 2, playerIdBase: 3);

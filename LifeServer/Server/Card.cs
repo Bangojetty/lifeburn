@@ -307,57 +307,73 @@ public void Reveal() {
             .ToList();
     }
 
+    // Re-entrancy guards: a passive condition (e.g. OneOneInPlay) can read this same card's
+    // attack/defense while we're mid-computation. Without these, that recursion overflows the
+    // stack and aborts the whole process (uncatchable in .NET). When re-entered we return the
+    // base stat (+counters) to break the cycle.
+    private bool _resolvingAttack;
+    private bool _resolvingDefense;
+
     public int GetAttack() {
         Debug.Assert(attack != null, "card does not have attack");
         if (currentGameMatch == null) return attack.Value;
-        int tempAttack = (int)attack;
-        // Apply counter bonuses
-        tempAttack += plusOnePlusOneCounters;
-        tempAttack -= minusOneMinusOneCounters;
-        foreach (PassiveEffect pEffect in GetVerifiedPassives()) {
-            // this prevents checking for passives if the card is not in play (combat stats can't be altered outside of play)
-            if (currentZone != Zone.Play) continue;
-            if(pEffect.statModifiers == null) continue;
-            // Skip innate passives with scope=OthersOnly (auras that only affect other cards)
-            if (pEffect.scope == Scope.OthersOnly && passiveEffects != null && passiveEffects.Contains(pEffect)) continue;
-            foreach (StatModifier statMod in pEffect.statModifiers) {
-                if (statMod.statType != StatType.Attack) continue;
-                if (statMod.amountBasedOn != null) {
-                    // you must set the stat modifiers amount before applying it if it has an amountBasedOn
-                    statMod.amount = ResolveAmount(statMod.amountBasedOn.Value, statMod.scope) * (statMod.amountMultiplier ?? 1);
-                }
+        // Apply counter bonuses to the base value
+        int baseAttack = (int)attack + plusOnePlusOneCounters - minusOneMinusOneCounters;
+        if (_resolvingAttack) return baseAttack;
+        _resolvingAttack = true;
+        try {
+            int tempAttack = baseAttack;
+            foreach (PassiveEffect pEffect in GetVerifiedPassives()) {
+                // this prevents checking for passives if the card is not in play (combat stats can't be altered outside of play)
+                if (currentZone != Zone.Play) continue;
+                if (pEffect.statModifiers == null) continue;
+                // Skip innate passives with scope=OthersOnly (auras that only affect other cards)
+                if (pEffect.scope == Scope.OthersOnly && passiveEffects != null && passiveEffects.Contains(pEffect)) continue;
+                foreach (StatModifier statMod in pEffect.statModifiers) {
+                    if (statMod.statType != StatType.Attack) continue;
+                    if (statMod.amountBasedOn != null) {
+                        // you must set the stat modifiers amount before applying it if it has an amountBasedOn
+                        statMod.amount = ResolveAmount(statMod.amountBasedOn.Value, statMod.scope) * (statMod.amountMultiplier ?? 1);
+                    }
 
-                tempAttack = statMod.Apply(tempAttack);
+                    tempAttack = statMod.Apply(tempAttack);
+                }
             }
+            return tempAttack;
+        } finally {
+            _resolvingAttack = false;
         }
-        return tempAttack;
     }
 
     public int GetDefense() {
         Debug.Assert(defense != null, "card does not have defense");
         if (currentGameMatch == null) return defense.Value;
-        int tempDefense = (int)defense;
-        // Apply counter bonuses
-        tempDefense += plusOnePlusOneCounters;
-        tempDefense -= minusOneMinusOneCounters;
-        foreach (PassiveEffect pEffect in GetVerifiedPassives()) {
-            // this prevents checking for passives if the card is not in play (combat stats can't be altered outside of play)
-            if (currentZone != Zone.Play) continue;
-            if(pEffect.statModifiers == null) continue;
-            // Skip innate passives with scope=OthersOnly (auras that only affect other cards)
-            if (pEffect.scope == Scope.OthersOnly && passiveEffects != null && passiveEffects.Contains(pEffect)) continue;
-            foreach (StatModifier statMod in pEffect.statModifiers) {
-                if (statMod.statType != StatType.Defense) continue;
-                if (statMod.amountBasedOn != null) {
-                    // you must set the stat modifiers amount before applying it if it has an amountBasedOn
-                    statMod.amount = ResolveAmount(statMod.amountBasedOn.Value, statMod.scope) * (statMod.amountMultiplier ?? 1);
-                }
+        int baseDefense = (int)defense + plusOnePlusOneCounters - minusOneMinusOneCounters;
+        if (_resolvingDefense) return baseDefense - damageTaken;
+        _resolvingDefense = true;
+        try {
+            int tempDefense = baseDefense;
+            foreach (PassiveEffect pEffect in GetVerifiedPassives()) {
+                // this prevents checking for passives if the card is not in play (combat stats can't be altered outside of play)
+                if (currentZone != Zone.Play) continue;
+                if (pEffect.statModifiers == null) continue;
+                // Skip innate passives with scope=OthersOnly (auras that only affect other cards)
+                if (pEffect.scope == Scope.OthersOnly && passiveEffects != null && passiveEffects.Contains(pEffect)) continue;
+                foreach (StatModifier statMod in pEffect.statModifiers) {
+                    if (statMod.statType != StatType.Defense) continue;
+                    if (statMod.amountBasedOn != null) {
+                        // you must set the stat modifiers amount before applying it if it has an amountBasedOn
+                        statMod.amount = ResolveAmount(statMod.amountBasedOn.Value, statMod.scope) * (statMod.amountMultiplier ?? 1);
+                    }
 
-                tempDefense = statMod.Apply(tempDefense);
+                    tempDefense = statMod.Apply(tempDefense);
+                }
             }
+            tempDefense -= damageTaken;
+            return tempDefense;
+        } finally {
+            _resolvingDefense = false;
         }
-        tempDefense -= damageTaken;
-        return tempDefense;
     }
 
     public int GetCost() {

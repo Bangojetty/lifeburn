@@ -1,9 +1,9 @@
 # Card Test Tracker
 
 **Total Cards:** 281
-**Untested:** 232
-**Passed:** 43
-**Failed:** 6
+**Untested:** 195
+**Passed:** 74
+**Failed:** 12
 
 ---
 
@@ -22,7 +22,7 @@
 | 0 | PerfectEarthBlessing | golem | 0 | Passed |  |  |
 | 1 | GolemBlinker | golem | 0 | Passed | Optional trigger from hand, bot auto-decline fix |  |
 | 2 | GolemThrower | golem | 0 | Passed | Choose effect with targeting |  |
-| 3 | GolemTrampler | golem | 0 | Failed | Trample, activated sacrifice |  |
+| 3 | GolemTrampler | golem | 0 | Fixed | Trample, activated sacrifice |  |
 | 4 | GoldGolem | golem | 0 | Passed |  |  |
 | 5 | StoneSculptor | golem | 0 | Passed |  |  |
 | 6 | Golem | golem | 0 | Passed |  |  |
@@ -43,7 +43,7 @@
 | 242 | GraniteGolem | golem | 0 | Passed |  |  |
 | 243 | TargetDummy | golem | 0 | Passed | Taunt keyword implementation |  |
 | 244 | ShatteringSmash | golem | 0 | Passed | requireOneFromEach targeting, BothPlayersHaveSummons cast restriction |  |
-| 18 | GolemBlesser | golem | 1 | Failed | Clone/owner system for self-buff fix |  |
+| 18 | GolemBlesser | golem | 1 | Fixed | Clone/owner system for self-buff fix |  |
 | 19 | MoltenGravel | golem | 1 | Passed | Fixed conditional trample (GetKeywords now uses GetVerifiedPassives) |  |
 | 20 | ChancellorGolem | golem | 1 | Passed | Fixed opening hand trigger zone check |  |
 | 21 | EarthquakeGolem | golem | 1 | Passed |  |  |
@@ -51,65 +51,65 @@
 | 24 | RockArms | golem | 2 | Passed | Token buff fix |  |
 | 25 | BrassGolem | golem | 2 | Passed | Fixed dynamic token stats (passive with amountBasedOn), baseAttack/baseDefense for color |  |
 | 238 | CastAMold | golem | 2 | Passed |  |  |
-| 23 | RockToss | golem | 3 | Failed | Conditional damage modifier fix (effectOwner vs affectedPlayer) |  |
-| 29 | Quarry | golem | 3 | Failed | isPlayerTurn, description fix |  |
+| 23 | RockToss | golem | 3 | Fixed | Conditional damage modifier fix (effectOwner vs affectedPlayer) |  |
+| 29 | Quarry | golem | 3 | Fixed | isPlayerTurn, description fix |  |
 | 30 | DigUp | golem | 3 | Passed |  |  |
 | 26 | FoundryGolem | golem | 4 | Fixed | ModifyCost passive with stone condition |  |
 | 31 | Stones | golem | 4 | Passed |  |  |
 | 33 | Stoned | golem | 4 | Passed |  |  |
 | 37 | StoneSearch | golem | 4 | Passed | Fixed tutor-to-play event ordering (SendToZone before RefreshCardDisplays) |  |
 | 32 | StoneToss | golem | 5 | Passed | Variable X sacrifice, X-based life cost, 2X damage |  |
-| 239 | GroundTactics | golem | 5 | Failed |  |  |
+| 239 | GroundTactics | golem | 5 | Fixed |  |  |
 | 34 | MasterGolem | golem | 6 | Passed | Tribute multiplier, StonesInPlay amountBasedOn |  |
 | 36 | DigitalStone | golem | 6 | Passed |  |  |
 | 38 | Foundry | golem | 6 | Passed |  |  |
 | 41 | StoneWall | golem | 7 | Passed |  |  |
-| 35 | RockAvalanche | golem | 8 | Failed |  |  |
+| 35 | RockAvalanche | golem | 8 | Fixed |  |  |
 | 40 | GolemGod | golem | 12 | Passed | Implemented alternate sacrifice cost |  |
 | 42 | GamePlan | merfolk | 0 | Passed |  |  |
-| 43 | MerfolkBalancer | merfolk | 0 | Untested |  |  |
-| 44 | SeagateMerfolk | merfolk | 0 | Untested |  |  |
-| 45 | Calculate | merfolk | 0 | Untested | Counter spell targeting stack items |  |
+| 43 | MerfolkBalancer | merfolk | 0 | Passed |  |  |
+| 44 | SeagateMerfolk | merfolk | 0 | Passed |  |  |
+| 45 | Calculate | merfolk | 0 | Passed | Counter spell targeting stack items |  |
 | 46 | ChancellorMerfolk | merfolk | 0 | Passed |  |  |
 | 47 | RiverSiren | merfolk | 0 | Untested |  |  |
-| 48 | EidolonOfTheTides | merfolk | 0 | Untested |  |  |
-| 49 | PoseidonsBlessing | merfolk | 0 | Untested |  |  |
-| 50 | Fishies | merfolk | 0 | Untested |  |  |
-| 51 | MerfolkGazer | merfolk | 0 | Untested |  |  |
+| 48 | EidolonOfTheTides | merfolk | 0 | Passed |  |  |
+| 49 | PoseidonsBlessing | merfolk | 0 | Passed |  |  |
+| 50 | Fishies | merfolk | 0 | Failed |  |  |
+| 51 | MerfolkGazer | merfolk | 0 | Passed |  |  |
 | 52 | DiverMerfolk | merfolk | 0 | Untested |  |  |
-| 53 | MerfolkRusher | merfolk | 0 | Untested |  |  |
-| 54 | CuriousMerfolk | merfolk | 0 | Untested |  |  |
-| 55 | MerfolkKeeper | merfolk | 0 | Untested | Draw trigger with notFirst restriction, +1/+1 counters |  |
-| 56 | MerfolkRevealer | merfolk | 0 | Untested | Self-sacrifice, reveal target selection |  |
-| 57 | MerfolkScrollkeeper | merfolk | 0 | Untested |  |  |
-| 59 | MerfolkGang | merfolk | 0 | Untested | Cast from hand trigger, optional, cost restrictions |  |
-| 60 | MerfolkLeader | merfolk | 0 | Untested |  |  |
-| 61 | MerfolkFatekeeper | merfolk | 0 | Untested |  |  |
-| 62 | MerfolkDeceiver | merfolk | 0 | Untested | KeywordsOrAbilities restriction |  |
-| 63 | Denial | merfolk | 0 | Untested |  |  |
-| 236 | DreamBig | merfolk | 0 | Untested |  |  |
+| 53 | MerfolkRusher | merfolk | 0 | Passed |  |  |
+| 54 | CuriousMerfolk | merfolk | 0 | Passed |  |  |
+| 55 | MerfolkKeeper | merfolk | 0 | Passed | Draw trigger with notFirst restriction, +1/+1 counters |  |
+| 56 | MerfolkRevealer | merfolk | 0 | Failed | Self-sacrifice, reveal target selection |  |
+| 57 | MerfolkScrollkeeper | merfolk | 0 | Passed |  |  |
+| 59 | MerfolkGang | merfolk | 0 | Failed | Cast from hand trigger, optional, cost restrictions |  |
+| 60 | MerfolkLeader | merfolk | 0 | Passed |  |  |
+| 61 | MerfolkFatekeeper | merfolk | 0 | Passed |  |  |
+| 62 | MerfolkDeceiver | merfolk | 0 | Passed | KeywordsOrAbilities restriction |  |
+| 63 | Denial | merfolk | 0 | Failed |  |  |
+| 236 | DreamBig | merfolk | 0 | Passed |  |  |
 | 245 | PutridFolks | merfolk | 0 | Untested | ExileAndReturn with SendToZone |  |
-| 247 | MerfolkFateseer | merfolk | 0 | Untested |  |  |
-| 248 | BeachedMerfolk | merfolk | 0 | Untested |  |  |
-| 250 | SlipspaceMerfolk | merfolk | 0 | Untested | Auto-sacrifice, targetType permanent |  |
-| 252 | MerfolkMage | merfolk | 0 | Untested | Copy spell trigger, TriggeredEffect type, rootEffect clone fix |  |
-| 254 | Typhoon | merfolk | 0 | Untested |  |  |
-| 255 | Rewind | merfolk | 0 | Untested | GoToPhase event for turn restart |  |
-| 64 | MerfolkShifter | merfolk | 1 | Untested |  |  |
-| 65 | MerfolkFinder | merfolk | 1 | Untested |  |  |
-| 66 | EadroMerfolkGod | merfolk | 1 | Untested | DiscardOrSacrificeMerfolk cost, thisTurn passives, self-sacrifice, death trigger tokens |  |
-| 67 | MerfolkScoper | merfolk | 1 | Untested |  |  |
-| 68 | MerfolkSummoner | merfolk | 1 | Untested |  |  |
-| 253 | SkyScryerMerfolk | merfolk | 1 | Untested | TopCardRevealed passive, deck top card UI, click-to-cast |  |
-| 70 | Dream | merfolk | 2 | Untested |  |  |
-| 71 | MerfolkBase | merfolk | 2 | Untested |  |  |
-| 72 | MerfolkSwarm | merfolk | 2 | Untested |  |  |
-| 73 | MerfolkMaster | merfolk | 2 | Untested | self:false aura fix for innate passives |  |
+| 247 | MerfolkFateseer | merfolk | 0 | Passed |  |  |
+| 248 | BeachedMerfolk | merfolk | 0 | Passed |  |  |
+| 250 | SlipspaceMerfolk | merfolk | 0 | Passed | Auto-sacrifice, targetType permanent |  |
+| 252 | MerfolkMage | merfolk | 0 | Failed | Copy spell trigger, TriggeredEffect type, rootEffect clone fix |  |
+| 254 | Typhoon | merfolk | 0 | Failed |  |  |
+| 255 | Rewind | merfolk | 0 | Failed | GoToPhase event for turn restart |  |
+| 64 | MerfolkShifter | merfolk | 1 | Passed |  |  |
+| 65 | MerfolkFinder | merfolk | 1 | Passed |  |  |
+| 66 | EadroMerfolkGod | merfolk | 1 | Failed | DiscardOrSacrificeMerfolk cost, thisTurn passives, self-sacrifice, death trigger tokens |  |
+| 67 | MerfolkScoper | merfolk | 1 | Passed |  |  |
+| 68 | MerfolkSummoner | merfolk | 1 | Failed |  |  |
+| 253 | SkyScryerMerfolk | merfolk | 1 | Failed | TopCardRevealed passive, deck top card UI, click-to-cast |  |
+| 70 | Dream | merfolk | 2 | Passed |  |  |
+| 71 | MerfolkBase | merfolk | 2 | Passed |  |  |
+| 72 | MerfolkSwarm | merfolk | 2 | Passed |  |  |
+| 73 | MerfolkMaster | merfolk | 2 | Passed | self:false aura fix for innate passives |  |
 | 74 | Consider | merfolk | 2 | Untested |  |  |
-| 75 | SiftRubble | merfolk | 2 | Untested |  |  |
-| 81 | Opt | merfolk | 2 | Untested | Fixed infinite loop with resolve index, optional shuffle |  |
-| 246 | Riptide | merfolk | 2 | Untested | Token destruction includes Token class instances |  |
-| 251 | MerfolkElite | merfolk | 2 | Untested |  |  |
+| 75 | SiftRubble | merfolk | 2 | Failed |  |  |
+| 81 | Opt | merfolk | 2 | Failed | Fixed infinite loop with resolve index, optional shuffle |  |
+| 246 | Riptide | merfolk | 2 | Passed | Token destruction includes Token class instances |  |
+| 251 | MerfolkElite | merfolk | 2 | Untested |  | Fixed: caused server stack-overflow crash (self-referential oneOneInPlay); re-entrancy guard added |
 | 76 | Snag | merfolk | 3 | Untested |  |  |
 | 77 | BackSnap | merfolk | 3 | Untested | Spell alternate cost ordering fix (cost choice before target selection) |  |
 | 78 | DrawCounter | merfolk | 3 | Untested | Counter target selection fix |  |
